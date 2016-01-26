@@ -1,80 +1,77 @@
 module Kafka::Protocol
   class Request
-    macro fields(properties)
-      include Format
+    include Format
 
-      {% for key, value in properties %}
-        {% if key == :key || key == :ver %}
-          {% properties[key] = {type: Int16, default: value} %}
-        {% else %}
-          {% properties[key] = {type: value} unless value.is_a?(HashLiteral) %}
-        {% end %}
-      {% end %}
-      {% full_args = properties.keys.map(&.id) %}
-      {% minimum_args = properties.to_a.reject { |a| a[1][:default] }.map(&.[0].id) %}
+    macro request(no)
+      # +--------+--------+----------------+-------------------+
+      # | key    | api    | correlation    |(head)  | client   |
+      # +--------+--------+----------------+-------------------+
+      #  unt16    unt16    unt32            unt16    bytes
 
-      def initialize({{ *full_args }})
-        {% for arg in minimum_args %}
-          self.{{ arg }} = {{ arg }}
-        {% end %}
-      end
+      field api_key        : Int16 , {{no.id}}_i16  # request no
+      field api_version    : Int16 , 0_i16          # current api version is 0
+      field correlation_id : Int32 , 1
+      field client_id      : String, "cr"
 
-      def initialize({{ *minimum_args }})
-        {% for arg in minimum_args %}
-          self.{{ arg }} = {{ arg }}
-        {% end %}
-      end
+      {{ yield }}
 
-      {% for key, value in properties %}
-        {% properties[key] = {type: value} unless value.is_a?(HashLiteral) %}
-
-        def {{key.id}}=(_{{key.id}} : {{value[:type]}})
-          @{{key.id}} = _{{key.id}}
-          self
-        end
-
-        def default_{{key.id}} : {{value[:type]}}
-          {% if value[:default] && value[:type].id.symbolize == :Int16 %}
-            {{value[:default]}}.to_i16
-          {% elsif value[:default] %}
-            {{value[:default]}}
-          {% else %}
-            raise "{{@type.name}}#{{key.id}} is not set"
-          {% end %}
-        end
-
-        def {{key.id}} : {{value[:type]}}
-          if @{{key.id}}.nil?
-            default_{{key.id}}
-          else
-            @{{key.id}}.not_nil!
-          end
-        end
-      {% end %}
-
-      def to_payload(io : IO)
-        {% for key, value in properties %}
-          write(io, {{key.id}})
-        {% end %}
-      end
-
-      def to_payload : Slice
-        io = MemoryIO.new
-        to_payload(io)
-        io.to_slice
-      end
-
+      # binary for kafka protocol
       def to_binary(io : IO) : Slice
-        body = to_payload
+        body = to_slice
         head = body.size.to_u32
         write(io, head)
         write(io, body)
       end
 
+      # binary for kafka protocol
       def to_binary : Slice
         io = MemoryIO.new
         to_binary(io)
         io.to_slice
+      end
+
+      def to_slice : Slice
+        io = MemoryIO.new
+        to_slice(io)
+        io.to_slice
+      end
+    end
+
+    macro field(declare, default)
+      {% var = declare.var %}
+      {% type = declare.type %}
+
+      def {{var.id}}=(_{{var.id}} : {{type}})
+        @{{var.id}} = _{{var.id}}
+        self
+      end
+
+      def {{var.id}}! : {{type}}
+        if @{{var.id}}.nil?
+          {% if default %}
+            {{default}}
+          {% else %}
+            raise "{{@type.name}}#{{var.id}} is not set"
+          {% end %}
+        else
+          @{{var.id}}.not_nil!
+        end
+      end
+
+      private def write_field_{{var.id}}(io : IO)
+        write(io, {{var.id}}!)
+      end
+    end
+
+    macro field(prop)
+      field({{prop}}, nil)
+    end
+
+    macro response(klass)
+      def to_slice(io : IO)
+        {% for m in @type.methods.map(&.name).select{|s| s =~ /^write_field_/} %}
+          {{ m.id }}(io)
+        {% end %}
       end
     end
   end

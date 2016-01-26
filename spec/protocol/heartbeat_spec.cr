@@ -4,16 +4,8 @@ include Kafka::Protocol
 
 describe HeartbeatRequest do
   it "create request" do
-    bin = HeartbeatRequest.new(
-      group_id = "x",
-      generation_id = 0,
-      member_id = "y"
-    ).to_binary
-    #                                         generation_id ---+
-    #               +-----------+------+-----+-----------+-----|-----+-----------+
-    #               |    size   |  key | api |SIZE |g_id |     o     |SIZE| m_id |
-    #               +-----------+------+-----+-----------+-----------+-----------+
-    #                    unt32    unt16 unt16 unt16 bytes  unt32      unt16 bytes
-    bin.should eq(u8(0, 0, 0, 14, 0, 12, 0, 0, 0, 1, 120, 0, 0, 0, 0, 0, 1, 121))
+    req = HeartbeatRequest.new
+    bin = req.to_slice
+    bin.should eq(u8(0, 12, 0, 0, 0, 0, 0, 1, 0, 2, 99, 114, 0, 1, 120, 255, 255, 255, 255, 0, 2, 99, 114))
   end
 end
