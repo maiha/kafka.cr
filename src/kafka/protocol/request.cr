@@ -17,7 +17,7 @@ module Kafka::Protocol
 
       # binary for kafka protocol
       def to_binary(io : IO) : Slice
-        body = to_slice
+        body = to_bytes
         head = body.size.to_u32
         write(io, head)
         write(io, body)
@@ -30,9 +30,9 @@ module Kafka::Protocol
         io.to_slice
       end
 
-      def to_slice : Slice
+      def to_bytes : Slice
         io = MemoryIO.new
-        to_slice(io)
+        to_bytes(io)
         io.to_slice
       end
     end
@@ -68,7 +68,7 @@ module Kafka::Protocol
     end
 
     macro response(klass)
-      def to_slice(io : IO)
+      def to_bytes(io : IO)
         {% for m in @type.methods.map(&.name).select { |s| s =~ /^write_field_/ } %}
           {{ m.id }}(io)
         {% end %}

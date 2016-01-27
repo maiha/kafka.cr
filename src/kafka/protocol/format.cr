@@ -8,6 +8,13 @@ module Kafka::Protocol::Format
     io.write(value.to_slice)
   end
 
+  def write(io : IO, array : Array(Object))
+    io.write_bytes(array.size.to_u32, IO::ByteFormat::BigEndian)
+    array.each do |obj|
+      write(io, obj)
+    end
+  end
+
   def write(io : IO, bytes : Slice)
     bytes.each { |byte| io.write_byte byte.to_u8 }
   end

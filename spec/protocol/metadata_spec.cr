@@ -5,7 +5,8 @@ include Kafka::Protocol
 describe MetadataRequest do
   it "create request" do
     req = MetadataRequest.new
-    bin = req.to_slice
-    bin.should eq(u8(0, 3, 0, 0, 0, 0, 0, 1, 0, 2, 99, 114))
+    req.topics = [""]
+    bin = req.to_bytes
+    bin.should eq(bytes(0, 3, 0, 0, 0, 0, 0, 1, 0, 2, 99, 114, 0, 0, 0, 1, 0, 0))
   end
 end
