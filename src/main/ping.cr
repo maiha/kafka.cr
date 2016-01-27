@@ -1,6 +1,6 @@
 require "option_parser"
-require "../kafka"
 require "socket"
+require "../kafka"
 require "./utils/*"
 require "./ping/*"
 

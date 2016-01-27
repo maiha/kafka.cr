@@ -3,7 +3,7 @@ require "./spec_helper"
 include Kafka::Protocol
 
 describe MetadataRequest do
-  it "create request" do
+  it "create request binary" do
     req = MetadataRequest.new
     req.topics = [""]
     bin = req.to_bytes

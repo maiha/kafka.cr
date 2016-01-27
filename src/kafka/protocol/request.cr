@@ -15,7 +15,7 @@ module Kafka::Protocol
 
       {{ yield }}
 
-      # binary for kafka protocol
+      # binary for kafka protocol that consists of header and bytes
       def to_binary(io : IO) : Slice
         body = to_bytes
         head = body.size.to_u32
@@ -23,7 +23,7 @@ module Kafka::Protocol
         write(io, body)
       end
 
-      # binary for kafka protocol
+      # binary for kafka protocol that consists of header and bytes
       def to_binary : Slice
         io = MemoryIO.new
         to_binary(io)

@@ -2,11 +2,11 @@ LINK_FLAGS=--link-flags "-static"
 
 all: build
 
-build: heartbeat kafka-ping
+build: kafka-heartbeat kafka-ping
 
-heartbeat: src/main/heartbeat.cr
+kafka-heartbeat: src/main/heartbeat.cr
 	@mkdir -p bin
-	crystal build --release src/main/heartbeat.cr -o bin/heartbeat ${LINK_FLAGS}
+	crystal build --release src/main/heartbeat.cr -o bin/kafka-heartbeat ${LINK_FLAGS}
 
 kafka-ping: src/main/ping.cr
 	@mkdir -p bin
