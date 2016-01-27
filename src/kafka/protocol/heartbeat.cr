@@ -1,7 +1,7 @@
 require "./request"
 
 module Kafka::Protocol
-  class HeartbeatRequest < Request
+  class HeartbeatRequest < Request::Base
     #                           generation_id ---+
     # +-----------+------+-----+-----------+-----|-----+-----------+
     # |    size   |  key | api |SIZE |g_id |     o     |SIZE| m_id |
@@ -13,8 +13,6 @@ module Kafka::Protocol
       field generation_id : Int32, -1
       field member_id : String, "cr"
     end
-
-    response HeartbeatResponse
   end
 
   class HeartbeatResponse

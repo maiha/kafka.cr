@@ -1,12 +1,10 @@
 require "./request"
 
 module Kafka::Protocol
-  class MetadataRequest < Request
+  class MetadataRequest < Request::Base
     request 3 do
       field topics : Array(String)
     end
-
-    response MetadataResponse
   end
 
   class MetadataResponse
