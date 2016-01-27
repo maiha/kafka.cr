@@ -69,7 +69,7 @@ module Kafka::Protocol
 
     macro response(klass)
       def to_slice(io : IO)
-        {% for m in @type.methods.map(&.name).select{|s| s =~ /^write_field_/} %}
+        {% for m in @type.methods.map(&.name).select { |s| s =~ /^write_field_/ } %}
           {{ m.id }}(io)
         {% end %}
       end

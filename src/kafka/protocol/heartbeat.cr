@@ -9,9 +9,9 @@ module Kafka::Protocol
     #      unt32    unt16 unt16 unt16 bytes  unt32      unt16 bytes
 
     request 12 do
-      field group_id      : String, "x"
+      field group_id : String, "x"
       field generation_id : Int32, -1
-      field member_id     : String, "cr"
+      field member_id : String, "cr"
     end
 
     response HeartbeatResponse
