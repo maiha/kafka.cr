@@ -4,8 +4,6 @@ require "../kafka"
 require "./utils/*"
 require "./ping/*"
 
-include Kafka::Protocol
-
 ######################################################################
 ### args and usage
 
