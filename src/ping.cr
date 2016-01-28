@@ -4,7 +4,7 @@ require "./kafka"
 require "./ping/*"
 
 module Ping
-  def self.run
-    Main.new.run
+  def self.run(args)
+    Main.new(args).run
   end
 end

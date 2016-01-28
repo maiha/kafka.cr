@@ -57,7 +57,7 @@ class Heartbeat::Main
 end
 
 module Heartbeat
-  def self.run
-    Main.new(ARGV).run
+  def self.run(args)
+    Main.new(args).run
   end
 end

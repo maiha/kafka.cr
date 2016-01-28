@@ -4,18 +4,18 @@ require "socket"
 class Ping::Main
   getter :count, :usage, :guess, :dests, :help
 
-  def initialize
+  def initialize(args)
     @count = 86400
     @usage = false
     @guess = false
 
-    opts = OptionParser.parse(ARGV) do |parser|
+    opts = OptionParser.parse(args) do |parser|
       parser.on("-c NUM", "--count=NUM", "Stop after sending count requests") { |num| count = num.to_i }
       parser.on("-g", "--guess", "Guess kafka version rather than errno") { @guess = true }
       parser.on("-h", "--help", "Show this help") { @usage = true }
     end
 
-    @dests = ARGV.map{|s| Kafka::Cluster::Broker.parse(s)}.not_nil!
+    @dests = args.map{|s| Kafka::Cluster::Broker.parse(s)}.not_nil!
     
     @help = -> {
       puts "Usage: kafka-ping [options] destination(s)"

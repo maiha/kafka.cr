@@ -1,5 +1,5 @@
 require "./spec_helper"
-require "../../src/main/ping"
+require "../../src/ping"
 
 describe Ping do
   describe "SingleHost" do

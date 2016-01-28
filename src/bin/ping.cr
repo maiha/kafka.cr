@@ -1,3 +1,2 @@
 require "../ping"
-
-Ping.run
+Ping.run(ARGV)

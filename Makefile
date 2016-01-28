@@ -1,16 +1,30 @@
-LINK_FLAGS=--link-flags "-static"
+LINK_FLAGS = --link-flags "-static"
+BIN_SRCS = src/bin/*.cr
+
+.PHONY : all build clean test spec test-compile-bin bin
+.PHONY : kafka-heartbeat kafka-ping
 
 all: build
 
-build: kafka-heartbeat kafka-ping
+build: bin kafka-heartbeat kafka-ping
+
+bin:
+	@mkdir -p bin
 
 kafka-heartbeat: src/bin/heartbeat.cr
-	@mkdir -p bin
-	crystal build --release src/bin/heartbeat.cr -o bin/kafka-heartbeat ${LINK_FLAGS}
+	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
 kafka-ping: src/bin/ping.cr
-	@mkdir -p bin
-	crystal build --release src/bin/ping.cr -o bin/kafka-ping ${LINK_FLAGS}
+	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
+
+test: test-compile-bin spec
+
+spec:
+	crystal spec -v
+
+test-compile-bin:
+	crystal build src/bin/heartbeat.cr -o /dev/null
+	crystal build src/bin/ping.cr -o /dev/null
 
 clean:
-	@rm -rf bin
+	@rm -rf bin tmp
