@@ -1,22 +1,54 @@
-# kafka
+# kafka.cr
 
-TODO: Write a description here
+kafka utils for crystal
+
+- still in the pre-alpha stage
 
 ## Installation
 
-
-TODO: Write installation instructions here
-
+- `make` generates `bin/kafka-*`
+- NOTE: works on only 0.11.1
 
 ## Usage
 
+### kafka-ping
 
+- `bin/kafka-ping` works like unix `ping` command
 
-TODO: Write usage instructions here
+```
+% ./bin/kafka-ping localhost
+Kafka PING localhost:9092 (by HeartbeatRequest)
+[2016-01-28 00:27:30 +0000] errno=16 from localhost:9092 req_seq=1 time=7.354 ms
+[2016-01-28 00:27:31 +0000] errno=16 from localhost:9092 req_seq=2 time=3.433 ms
+^C
+--- localhost:9092 kafka ping statistics ---
+2 requests transmitted, 2 received, ok: 2, error: 0
+```
+
+- `-g` option can be used for checking version
+
+```
+% ./bin/kafka-ping localhost -g
+Kafka PING localhost:9092 (by HeartbeatRequest)
+[2016-01-28 00:29:16 +0000] (0.8.x) from localhost:9092 req_seq=1 time=8.459 ms
+...
+```
+
+- write reports about changing state into stderr
+% ./bin/kafka-ping localhost -g
+(stdout)
+[2016-01-28 00:30:32 +0000] (0.8.x) from localhost:9092 req_seq=76 time=3.194 ms
+[2016-01-28 00:30:33 +0000] (0.8.x) from localhost:9092 req_seq=77 time=3.122 ms
+[2016-01-28 00:30:34 +0000] (broker is down) from localhost:9092 req_seq= time=0.511 ms
+(stderr)
+[2016-01-28 00:30:34 +0000] localhost:9092 : (0.8.x) -> (broker is down)
+```
 
 ## Development
 
-TODO: Write development instructions here
+## Test
+
+- `crystal spec`
 
 ## Contributing
 
@@ -28,4 +60,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name]) maiha - creator, maintainer
+- [[maiha]](https://github.com/maiha) maiha - creator, maintainer
