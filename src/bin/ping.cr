@@ -1,0 +1,3 @@
+require "../ping"
+
+Ping.run

@@ -1,5 +1,5 @@
 class Ping::MultiHosts
-  def initialize(@dests : Array(Dest))
+  def initialize(@dests : Array(Kafka::Cluster::Broker))
     @stats = Utils::EnumStatistics(Result::Code).new
   end
 

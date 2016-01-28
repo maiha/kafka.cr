@@ -1,7 +1,6 @@
 require "option_parser"
 require "socket"
 require "../kafka"
-require "./utils/*"
 
 dump = false
 usage = false

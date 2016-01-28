@@ -21,7 +21,7 @@ module Ping
     end
 
     def run : Result
-      req = HeartbeatRequest.new
+      req = Kafka::Protocol::HeartbeatRequest.new
       req.client_id = "kafka-ping"
       req.correlation_id = no
 
@@ -29,7 +29,7 @@ module Ping
       socket.write(req.to_binary)
       socket.flush
 
-      res = HeartbeatResponse.from_io(socket)
+      res = Kafka::Protocol::HeartbeatResponse.from_io(socket)
       req_seq = "#{res.correlation_id}"
 
       @state = "errno=#{res.error_code}"
