@@ -3,7 +3,7 @@ require "./request"
 module Kafka::Protocol
   class MetadataRequest < Request::Base
     request 3 do
-      field topics : Array(String)
+      field topics : Array(String), [] of String
     end
   end
 
