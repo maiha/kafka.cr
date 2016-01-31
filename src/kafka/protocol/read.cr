@@ -9,5 +9,8 @@ module Kafka::Protocol
     out.write_bytes(size, format = IO::ByteFormat::BigEndian)
     out.write(body)
     out.to_slice
+  rescue err
+    p err
+    raise err.to_s
   end
 end

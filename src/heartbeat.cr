@@ -39,8 +39,8 @@ class Heartbeat::Main
     broker = Kafka::Cluster::Broker.parse(args.shift.not_nil!)
     socket = TCPSocket.new broker.host, broker.port
 
-    req = Kafka::Protocol::HeartbeatRequest.new
-    bytes = req.to_binary
+    req = Kafka::Protocol::HeartbeatRequest.new(0, "kafka-heartbeart", "x", -1, "cr")
+    bytes = req.to_slice
 
     spawn do
       socket.write bytes
@@ -51,7 +51,7 @@ class Heartbeat::Main
     if dump
       p Kafka::Protocol.read(socket)
     else
-      p Kafka::Protocol::HeartbeatResponse.from_io(socket)
+#      p Kafka::Protocol::HeartbeatResponse.from_io(socket)
     end
   end
 end

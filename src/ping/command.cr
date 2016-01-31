@@ -21,12 +21,10 @@ module Ping
     end
 
     def run : Result
-      req = Kafka::Protocol::HeartbeatRequest.new
-      req.client_id = "kafka-ping"
-      req.correlation_id = no
+      req = Kafka::Protocol::HeartbeatRequest.new(no, "kafka-ping", "x", -1, "cr")
 
       socket = TCPSocket.new host, port
-      socket.write(req.to_binary)
+      socket.write(req.to_slice)
       socket.flush
 
       res = Kafka::Protocol::HeartbeatResponse.from_io(socket)

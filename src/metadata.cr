@@ -3,16 +3,18 @@ require "socket"
 require "./kafka"
 
 class Metadata::Main
-  getter :args, :nop, :dump, :usage, :help
+  getter :args, :topic, :nop, :dump, :usage, :help
 
   def initialize(@args)
     @nop = false
     @dump = false
     @usage = false
+    @topic = ""
 
     opts = OptionParser.parse(args) do |parser|
       parser.on("-d", "--dump", "Dump octal data") { @dump = true }
       parser.on("-n", "--nop", "Show request data") { @nop = true }
+      parser.on("-t", "--topic=TOPIC", "The topic to get metadata") { |t| @topic = t }
       parser.on("-h", "--help", "Show this help") { @usage = true }
     end
 
@@ -38,8 +40,9 @@ class Metadata::Main
       help.call
     end
 
-    req = Kafka::Protocol::MetadataRequest.new
-    bytes = req.to_binary
+    topics = [topic].reject(&.empty?)
+    req = Kafka::Protocol::MetadataRequest.new(0, "kafak-metadata", topics)
+    bytes = req.to_slice
 
     if nop
       if dump
@@ -62,7 +65,8 @@ class Metadata::Main
     if dump
       p Kafka::Protocol.read(socket)
     else
-      p Kafka::Protocol::MetadataResponse.from_io(socket)
+      p Kafka::Protocol.read(socket)
+#      p Kafka::Protocol::MetadataResponse.from_io(socket)
     end
   end
 end
