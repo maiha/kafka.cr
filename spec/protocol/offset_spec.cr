@@ -6,11 +6,11 @@ describe Kafka::Protocol::OffsetRequest do
     taps = [Structure::TopicAndPartitions.new("t1", [partition])]
 
     req = Kafka::Protocol::OffsetRequest.new(
-          correlation_id = 0,
-          client_id = "kafka-offset",
-          replica = -1,
-          taps
-        )
+      correlation_id = 0,
+      client_id = "kafka-offset",
+      replica = -1,
+      taps
+    )
     bin = req.to_slice
     bin.should eq(bytes(0, 0, 0, 54, 0, 2, 0, 0, 0, 0, 0, 0, 0, 12, 107, 97, 102, 107, 97, 45, 111, 102, 102, 115, 101, 116, 255, 255, 255, 255, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 59, 154, 201, 255))
   end
@@ -30,7 +30,7 @@ describe Kafka::Protocol::OffsetResponse do
       po = tpo.partition_offsets.first.not_nil!
       po.partition.should eq(0)
       po.error_code.should eq(0)
-      po.offsets.should eq([5,0])
+      po.offsets.should eq([5, 0])
     end
   end
 end

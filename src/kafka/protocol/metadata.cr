@@ -9,7 +9,7 @@ module Kafka::Protocol
     response
 
     def to_s
-      b = "{" + brokers.map{|b| "#{b.node_id} => #{b.host}:#{b.port}"}.join(", ") + "}"
+      b = "{" + brokers.map { |b| "#{b.node_id} => #{b.host}:#{b.port}" }.join(", ") + "}"
       t = topics.map(&.to_s).join(", ")
       <<-EOF
         brokers: #{b}

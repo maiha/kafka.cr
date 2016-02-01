@@ -41,7 +41,6 @@ module Ping
       end
 
       return Result.new(Result::Code::OK, @state)
-
     rescue err : Errno
       case err.message
       when /Connection refused/i
@@ -53,7 +52,6 @@ module Ping
       end
 
       return Result.new(Result::Code::ER, @state)
-
     ensure
       now = Time.now
       msec = (now - started_at).total_milliseconds.to_s
@@ -65,7 +63,6 @@ module Ping
         STDERR.puts "[#{time}] #{host}:#{port} : #{last_state} -> #{state}"
         STDERR.flush
       end
-      
       socket.try &.close
     end
   end
