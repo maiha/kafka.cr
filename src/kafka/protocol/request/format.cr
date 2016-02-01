@@ -13,7 +13,7 @@ module Kafka::Protocol::Request::Format
     to_kafka(io)
     io.to_slice
   end
-  
+
   # only bytes
   def to_bytes : Slice
     io = MemoryIO.new

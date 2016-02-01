@@ -6,7 +6,7 @@ class Kafka::Cluster::Broker
 
   def initialize(@host : String, @port = DEFAULT_PORT : Int32)
   end
-    
+
   def self.parse(str : String) : Broker
     case str
     when /\A[a-zA-Z0-9_\-\.]+\Z/

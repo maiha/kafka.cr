@@ -1,8 +1,9 @@
 module Kafka::Protocol::Response
   abstract class Base
     include Kafka::Protocol::Format
-#    include Kafka::Protocol::Request::Format
-#    include Kafka::Protocol::Request::Macros
+
+    #    include Kafka::Protocol::Request::Format
+    #    include Kafka::Protocol::Request::Macros
 
     # +--------+--------+----------------+-------------------+
     # | key    | api    | correlation    |(head)  | client   |

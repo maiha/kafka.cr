@@ -12,6 +12,6 @@ describe Kafka::Protocol::HeartbeatResponse do
   it "from_kafka" do
     res = Kafka::Protocol::HeartbeatResponse.from_kafka(bytes(0, 0, 0, 6, 0, 0, 0, 0, 0, 16))
     res.correlation_id.should eq(0)
-    res.error_code.should eq(16) 
+    res.error_code.should eq(16)
   end
 end
