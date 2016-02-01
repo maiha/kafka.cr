@@ -1,6 +1,6 @@
 require "option_parser"
 require "socket"
-require "./kafka"
+require "../kafka"
 require "./ping/*"
 
 module Ping

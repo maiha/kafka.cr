@@ -1,3 +1,3 @@
-require "../metadata"
+require "../prog/metadata"
 
 Metadata.run(ARGV)

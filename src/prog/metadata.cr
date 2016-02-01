@@ -1,21 +1,28 @@
 require "option_parser"
 require "socket"
-require "./kafka"
+require "../kafka"
 
-class Heartbeat::Main
-  getter :args, :dump, :usage, :help
+module Metadata
+end
+
+class Metadata::Main
+  getter :args, :topic, :nop, :dump, :usage, :help
 
   def initialize(@args)
+    @nop = false
     @dump = false
     @usage = false
+    @topic = ""
 
     opts = OptionParser.parse(args) do |parser|
       parser.on("-d", "--dump", "Dump octal data") { @dump = true }
+      parser.on("-n", "--nop", "Show request data") { @nop = true }
+      parser.on("-t TOPIC", "--topic=TOPIC", "The topic to get metadata") { |t| @topic = t }
       parser.on("-h", "--help", "Show this help") { @usage = true }
     end
 
     @help = -> {
-      puts "Usage: kafka-heartbeat [options] destination"
+      puts "Usage: kafka-metadata [options] destination"
       puts "  A destination is `host:port` or `host` (default port: 9092)"
       puts ""
       puts "Options:"
@@ -36,11 +43,21 @@ class Heartbeat::Main
       help.call
     end
 
+    topics = [topic].reject(&.empty?)
+    req = Kafka::Protocol::MetadataRequest.new(0, "kafak-metadata", topics)
+    bytes = req.to_slice
+
+    if nop
+      if dump
+        p bytes
+      else
+        p req
+      end
+      exit
+    end
+
     broker = Kafka::Cluster::Broker.parse(args.shift.not_nil!)
     socket = TCPSocket.new broker.host, broker.port
-
-    req = Kafka::Protocol::HeartbeatRequest.new(0, "kafka-heartbeart", "x", -1, "cr")
-    bytes = req.to_slice
 
     spawn do
       socket.write bytes
@@ -51,12 +68,24 @@ class Heartbeat::Main
     if dump
       p Kafka::Protocol.read(socket)
     else
-#      p Kafka::Protocol::HeartbeatResponse.from_kafka(socket)
+      puts Kafka::Protocol::MetadataResponse.from_kafka(socket).to_s
+    end
+
+    socket.close
+
+  rescue err : Errno
+    case err.message
+    when /Connection refused/i
+      STDERR.puts "#{err}"
+      STDERR.flush
+      exit 1
+    else
+      raise err
     end
   end
 end
 
-module Heartbeat
+module Metadata
   def self.run(args)
     Main.new(args).run
   end

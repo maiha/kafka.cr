@@ -1,3 +1,3 @@
-require "../heartbeat"
+require "../prog/heartbeat"
 
 Heartbeat.run(ARGV)

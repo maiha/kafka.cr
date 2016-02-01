@@ -1,2 +1,3 @@
-require "../ping"
+require "../prog/ping"
+
 Ping.run(ARGV)
