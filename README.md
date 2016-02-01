@@ -2,7 +2,7 @@
 
 kafka utils for crystal
 
-- still in the pre-alpha stage
+- still in the alpha stage
 
 ## Installation
 
@@ -10,6 +10,26 @@ kafka utils for crystal
 - NOTE: works on only 0.11.1
 
 ## Usage
+
+### kafka-topics
+
+- `bin/kafka-topics` shows topic names and metadatas
+
+```
+% ./bin/kafka-topics -l
+t1
+
+% ./bin/kafka-topics t1
+t1
+
+% ./bin/kafka-topics t1 t2
+t1
+ERROR: t2
+
+% ./bin/kafka-topics t1 t2 -v
+t1(0 => {leader=1,replica=[1],isr=[1]})
+ERROR: t2(UnknownTopicOrPartitionCode (3))
+```
 
 ### kafka-ping
 
@@ -48,11 +68,11 @@ Kafka PING localhost:9092 (by HeartbeatRequest)
 
 ## Test
 
-- `crystal spec`
+- `make test`
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/kafka/fork )
+1. Fork it ( https://github.com/maiha/kafka.cr/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
