@@ -51,7 +51,7 @@ class Heartbeat::Main
     if dump
       p Kafka::Protocol.read(socket)
     else
-#      p Kafka::Protocol::HeartbeatResponse.from_io(socket)
+#      p Kafka::Protocol::HeartbeatResponse.from_kafka(socket)
     end
   end
 end

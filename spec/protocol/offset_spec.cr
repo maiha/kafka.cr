@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 describe Kafka::Protocol::OffsetRequest do
-  it "to_io" do
+  it "to_kafka" do
     req = Kafka::Protocol::OffsetRequest.new(
           correlation_id = 0,
           client_id = "x",

@@ -1,5 +1,5 @@
 module Kafka::Protocol
-  # read raw binary data into slice
+  # read raw kafka binary data as slice
   def self.read(io : IO) : Slice
     size = io.read_bytes(Int32, IO::ByteFormat::BigEndian)
     body = Slice(UInt8).new(size)

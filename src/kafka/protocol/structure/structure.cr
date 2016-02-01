@@ -1,15 +1,56 @@
 module Kafka::Protocol::Structure
+  ######################################################################
+  ### Parts
+
   structure Partition,
     partition : Int32,
     time : Int64,
     max_number_of_offsets : Int32
 
+  structure Broker,
+    node_id : Int32,
+    host : String,
+    port : Int32 do
+
+    def to_s
+      "Broker(#{node_id}, #{host}:#{port})"
+    end
+  end
+
   structure TopicAndPartitions,
     topic : String,
-    partitions : Array(Partition)
+    partitions : Array(Partition) do
 
-  structure MetadataRequestMessage,
-    topics : Array(String)
+    def to_s
+      %(#{topic}(#{partitions.map(&.to_s).join(", ")}))
+    end
+  end
+
+  structure PartitionMetadata,
+    error_code : Int16,
+    id : Int32,
+    leader : Int32,
+    replicas : Array(Int32),
+    isrs : Array(Int32) do
+
+    def to_s
+      msg = errmsg(error_code, "{leader=#{leader},replica=#{replicas.inspect},isr=#{isrs.inspect}}")
+      %(#{id} => #{msg})
+    end
+  end
+
+  structure TopicMetadata,
+    error_code : Int16,
+    name : String,
+    partitions : Array(PartitionMetadata) do
+
+    def to_s
+      %(#{name}(#{errmsg(error_code, partitions.map(&.to_s).join(", "))}))
+    end
+  end
+
+  ######################################################################
+  ### Request and Response
 
   structure MetadataRequest,
     api_key : Int16,
@@ -18,12 +59,16 @@ module Kafka::Protocol::Structure
     client_id : String,
     topics : Array(String)
 
+  structure MetadataResponse,
+    correlation_id : Int32,
+    brokers : Array(Broker),
+    topics : Array(TopicMetadata)
+
   structure OffsetRequest,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
     client_id : String,
-    # message
     replica_id : Int32,
     topic_partitions : Array(TopicAndPartitions)
 

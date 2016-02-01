@@ -27,7 +27,7 @@ module Ping
       socket.write(req.to_slice)
       socket.flush
 
-      res = Kafka::Protocol::HeartbeatResponse.from_io(socket)
+      res = Kafka::Protocol::HeartbeatResponse.from_kafka(socket)
       req_seq = "#{res.correlation_id}"
 
       @state = "errno=#{res.error_code}"
