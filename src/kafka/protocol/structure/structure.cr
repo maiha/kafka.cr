@@ -2,11 +2,6 @@ module Kafka::Protocol::Structure
   ######################################################################
   ### Parts
 
-  structure Partition,
-    partition : Int32,
-    time : Int64,
-    max_number_of_offsets : Int32
-
   structure Broker,
     node_id : Int32,
     host : String,
@@ -14,6 +9,16 @@ module Kafka::Protocol::Structure
 
     def to_s
       "Broker(#{node_id}, #{host}:#{port})"
+    end
+  end
+
+  structure Partition,
+    partition : Int32,
+    time : Int64,
+    max_offsets : Int32 do
+
+    def to_s
+      "(#{partition}, #{time}, #{offsets})"
     end
   end
 
@@ -49,6 +54,15 @@ module Kafka::Protocol::Structure
     end
   end
 
+  structure PartitionOffset,
+    partition : Int32,
+    error_code : Int16,
+    offsets : Array(Int64)
+
+  structure TopicPartitionOffset,
+    topic : String,
+    partition_offsets : Array(PartitionOffset)
+
   ######################################################################
   ### Request and Response
 
@@ -71,6 +85,10 @@ module Kafka::Protocol::Structure
     client_id : String,
     replica_id : Int32,
     topic_partitions : Array(TopicAndPartitions)
+
+  structure OffsetResponse,
+    correlation_id : Int32,
+    topic_partition_offsets : Array(TopicPartitionOffset)
 
   structure HeartbeatRequest,
     api_key : Int16,

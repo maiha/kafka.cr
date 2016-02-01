@@ -1,9 +1,13 @@
+def Int16.from_kafka(io : IO)
+  io.read_bytes(Int16, IO::ByteFormat::BigEndian)
+end
+
 def Int32.from_kafka(io : IO)
   io.read_bytes(Int32, IO::ByteFormat::BigEndian)
 end
 
-def Int16.from_kafka(io : IO)
-  io.read_bytes(Int16, IO::ByteFormat::BigEndian)
+def Int64.from_kafka(io : IO)
+  io.read_bytes(Int64, IO::ByteFormat::BigEndian)
 end
 
 def String.from_kafka(io : IO)

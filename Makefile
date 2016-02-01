@@ -1,6 +1,6 @@
 LINK_FLAGS = --link-flags "-static"
 BIN_SRCS = src/bin/*.cr
-PROGS = kafka-heartbeat kafka-metadata kafka-ping kafka-topics
+PROGS = kafka-heartbeat kafka-metadata kafka-offset kafka-ping kafka-topics
 
 .PHONY : all build clean test spec test-compile-bin bin
 .PHONY : ${PROGS}
@@ -16,6 +16,9 @@ kafka-heartbeat: src/bin/heartbeat.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
 kafka-metadata: src/bin/metadata.cr
+	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
+
+kafka-offset: src/bin/offset.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
 kafka-ping: src/bin/ping.cr
