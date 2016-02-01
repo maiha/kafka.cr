@@ -64,5 +64,9 @@ module Kafka::Protocol::Structure
       size = io.read_bytes(Int32, IO::ByteFormat::BigEndian)  # drop checksum
       super(io)
     end
+
+    def self.from_io(slice : Slice)
+      from_io(MemoryIO.new(slice))
+    end
   end
 end
