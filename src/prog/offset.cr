@@ -5,7 +5,7 @@ require "../kafka"
 class Offset::Main
   include Kafka::Protocol
 
-  getter :args, :list, :topic, :broker, :verbose, :usage, :help
+  getter :args, :usage, :help, :list, :topic, :broker, :verbose
 
   def initialize(@args)
     @usage = false
