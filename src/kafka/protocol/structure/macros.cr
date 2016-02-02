@@ -2,7 +2,6 @@ module Kafka::Protocol::Structure
   macro structure(name, *properties)
     class {{name.id}}
       include Kafka::Protocol::Structure
-      include Kafka::Protocol::Format
 
       getter {{*properties}}
 
@@ -17,7 +16,7 @@ module Kafka::Protocol::Structure
 
       def to_kafka(io : IO)
         {% for field in properties %}
-           to_kafka(io, {{field.var}})
+           {{field.var}}.to_kafka(io)
         {% end %}
       end
 
