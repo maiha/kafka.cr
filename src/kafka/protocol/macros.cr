@@ -8,8 +8,15 @@ module Kafka::Protocol::Structure
       def initialize({{ *properties.map { |field| "@#{field.id}".id } }})
       end
 
-      def self.from_kafka(io : IO)
-        new({{ *properties.map { |field| "#{field.type}.from_kafka(io)".id } }})
+      def self.from_kafka(io : IO, debug_level = -1, hint = "")
+        on_debug_head_padding
+        label = self.to_s.sub(/Kafka::Protocol::Structure::/, "")
+        on_debug "(#{label}.from_kafka)"
+        new({{ *properties.map { |field| "#{field.type}.from_kafka(io, debug_level_succ, :#{field.var})".id } }})
+      end
+
+      def self.from_kafka(slice : Slice, debug_level = -1, hint = "")
+        from_kafka(MemoryIO.new(slice), debug_level, hint)
       end
 
       {{yield}}
@@ -37,14 +44,7 @@ module Kafka::Protocol::Structure
           true
       end
 
-      private def errmsg(code : Int16)
-        msg = Kafka::Protocol::Errors.from_value?(code) || "???"
-        "#{msg} (#{code})"
-      end
-
-      private def errmsg(code : Int16, okmsg : String)
-        code == 0 ? okmsg : errmsg(code)
-      end
+      delegate :errmsg, "Kafka::Protocol"
     end
   end
 
@@ -64,13 +64,37 @@ module Kafka::Protocol::Structure
   end
 
   macro response
-    def self.from_kafka(io : IO)
-      size = io.read_bytes(Int32, IO::ByteFormat::BigEndian)  # drop checksum
-      super(io)
+    def self.from_kafka(io : IO, debug_level = -1, hint = "")
+#      on_debug_head_padding
+#      size = io_read_bytes_with_debug(:cyan, Int32)  # drop message_size
+      size = io_read_int32  # drop message_size
+
+      # copy from socket to memory to avoid "Illegal seek"
+      body = Slice(UInt8).new(size)
+      io.read_fully(body)
+      io = MemoryIO.new(body)
+
+      super(io, debug_level_succ)
     end
 
-    def self.from_kafka(slice : Slice)
-      from_kafka(MemoryIO.new(slice))
+    def self.from_kafka(io : IO, verbose : Bool)
+      from_kafka(io, (verbose ? 0 : -1))
+    end
+  end
+end
+
+module Kafka::Protocol
+  macro api(no, name)
+    class {{name}}Response < Structure::{{name}}Response
+      response
+    end
+
+    class {{name}}Request < Structure::{{name}}Request
+      request {{no}}, 0
+
+      def self.response
+        Kafka::Protocol::{{name}}Response
+      end
     end
   end
 end

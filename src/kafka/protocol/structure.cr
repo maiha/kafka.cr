@@ -2,6 +2,26 @@ module Kafka::Protocol::Structure
   ######################################################################
   ### Parts
 
+  alias Bytes = Slice(UInt8)
+
+  structure Message,
+    crc : Int32,
+    magic_byte : Int8,
+    attributes : Int8,
+    key : Bytes,
+    value : Bytes
+
+  structure MessageSet,
+    offset : Int64,
+    bytesize : Int32,
+    message : Message
+
+  class MessageSetEntry
+    getter size, message_sets
+    def initialize(@size : Int32, @message_sets : Array(MessageSet))
+    end
+  end
+  
   structure Broker,
     node_id : Int32,
     host : String,
@@ -22,11 +42,6 @@ module Kafka::Protocol::Structure
     leader : Int32,
     replicas : Array(Int32),
     isrs : Array(Int32)
-
-  structure TopicMetadata,
-    error_code : Int16,
-    name : String,
-    partitions : Array(PartitionMetadata)
 
   structure PartitionOffset,
     partition : Int32,
@@ -52,6 +67,11 @@ module Kafka::Protocol::Structure
     brokers : Array(Broker),
     topics : Array(TopicMetadata)
 
+    structure TopicMetadata,
+      error_code : Int16,
+      name : String,
+      partitions : Array(PartitionMetadata)
+
   structure OffsetRequest,
     api_key : Int16,
     api_version : Int16,
@@ -76,4 +96,72 @@ module Kafka::Protocol::Structure
   structure HeartbeatResponse,
     correlation_id : Int32,
     error_code : Int16
+
+  structure FetchRequest,
+    api_key : Int16,
+    api_version : Int16,
+    correlation_id : Int32,
+    client_id : String,
+    replica_id : Int32,
+    max_wait_time : Int32,
+    min_bytes : Int32,
+    topics : Array(FetchRequestTopics)
+
+    structure FetchRequestTopics,
+      topic : String,
+      partitions : Array(FetchRequestPartitions)
+
+      structure FetchRequestPartitions,
+        partition : Int32,
+        offset : Int64,
+        max_bytes : Int32
+  
+  structure FetchResponse,
+    correlation_id : Int32,
+    topics : Array(FetchResponseTopic)
+
+    structure FetchResponseTopic,
+      topic : String,
+      partitions : Array(FetchResponsePartition)
+
+    structure FetchResponsePartition,
+      partition : Int32,
+      error_code : Int16,
+      high_water_mark : Int64,
+      message_set_entry : MessageSetEntry
+
+  ######################################################################
+  ### accessor
+
+  class FetchResponsePartition
+    delegate message_sets, "message_set_entry"
+  end
+
+  ######################################################################
+  ### Codec
+
+  def MessageSetEntry.from_kafka(io : IO, debug_level = -1, hint = "")
+    on_debug_head_padding
+    on_debug "MessageSetEntry".colorize(:cyan)
+    size = Int32.from_kafka(io, debug_level_succ, :size)
+    sets = [] of MessageSet
+
+    start_pos = io.pos
+    limit_pos = start_pos + size
+    begin
+      loop do
+        break if io.pos == io.bytesize  # maybe no more MessageSet
+        sets << MessageSet.from_kafka(io, debug_level_succ, :message_set)
+      end
+    rescue err : IO::EOFError
+      if io.pos == limit_pos
+        on_debug_head_address
+        on_debug "[DONE] expected offset=#{limit_pos}(size=#{size}), current offset=#{io.pos}"
+        # expected size
+      else
+        raise err
+      end
+    end
+    return new(size, sets)
+  end
 end

@@ -3,13 +3,14 @@ require "socket"
 require "../kafka"
 
 class Topics::Main
-  getter :args, :verbose, :usage, :list, :create, :topic, :broker, :partitions, :replication_factor
+  getter :args, :verbose, :simple, :usage, :list, :create, :topic, :broker, :partitions, :replication_factor
 
   def initialize(@args)
     @usage = false
     @list  = false
     @create = false
     @verbose = false
+    @simple = false
     @partitions = 1
     @replication_factor = 1
     @topic = ""
@@ -23,6 +24,7 @@ class Topics::Main
       parser.on("-l", "--list", "List all available topics") { @list = true }
       parser.on("-p NUM", "--partitions=NUM", "The number of partitions for the topic") { |p| @partitions = p }
       parser.on("-r NUM", "--replication-factor=NUM", "The number of replication factor for the topic") { |r| @replication_factor = r }
+      parser.on("-s", "--simple", "Show topic names only") { @simple = true }
       parser.on("-t TOPIC", "--topic=TOPIC", "The topic to get metadata") { |t| @topic = t }
       parser.on("-v", "--verbose", "Verbose output") { @verbose = true }
       parser.on("-h", "--help", "Show this help") { @usage = true }
@@ -56,7 +58,18 @@ class Topics::Main
     res = execute req
     res.topics.each do |meta|
       if meta.error_code == 0
-        STDOUT.puts verbose ? meta.to_s : meta.name
+        if simple
+          STDOUT.puts meta.name
+        else
+          meta.partitions.each do |pm|
+            if pm.error_code == 0
+              STDOUT.puts "#{meta.name}##{pm.id}\tleader=#{pm.leader}, replicas=#{pm.replicas.inspect}, isrs=#{pm.isrs.inspect}"
+            else
+              err = Kafka::Protocol.errmsg(pm.error_code)
+              STDOUT.puts "#{meta.name}##{pm.id}\t#{err}"
+            end
+          end
+        end
       else
         STDERR.puts "ERROR: #{meta.to_s}"
       end
@@ -106,7 +119,7 @@ class Topics::Main
   end
 
   private def die(msg)
-    STDERR.puts "ERROR: #{msg}\n\n"
+    STDERR.puts "ERROR: #{msg}\n".colorize(:red)
     STDERR.flush
     help.call
   end
@@ -138,7 +151,7 @@ class Topics::Main
         socket.flush
         sleep 0
       end
-      return Kafka::Protocol::MetadataResponse.from_kafka(socket)
+      return Kafka::Protocol::MetadataResponse.from_kafka(socket, verbose)
     end
   end
 

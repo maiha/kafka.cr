@@ -2,6 +2,7 @@ class Kafka::Cluster::Broker
   getter! host
   getter! port
 
+  DEFAULT_HOST = "127.0.0.1"
   DEFAULT_PORT = 9092
 
   def initialize(@host : String, @port = DEFAULT_PORT : Int32)
@@ -9,6 +10,8 @@ class Kafka::Cluster::Broker
 
   def self.parse(str : String) : Broker
     case str
+    when /\A:([0-9]+)\Z/
+      new(DEFAULT_HOST, $1.to_i)
     when /\A[a-zA-Z0-9_\-\.]+\Z/
       new(str)
     when /\A([a-zA-Z0-9_\-\.]+):(\d+)\Z/

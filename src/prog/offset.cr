@@ -4,9 +4,9 @@ require "../kafka"
 
 class Offset::Main
   include Kafka::Protocol
-
+  
   getter :args, :usage, :help, :list, :topic, :broker, :verbose
-
+  
   def initialize(@args)
     @usage = false
     @list  = false
@@ -49,7 +49,14 @@ class Offset::Main
     req = Kafka::Protocol::OffsetRequest.new(0, "kafka-offset", replica, taps)
     res = execute req
     res.topic_partition_offsets.each do |meta|
-      p meta
+      meta.partition_offsets.each do |po|
+        if po.error_code == 0
+          puts "#{meta.topic}##{po.partition}\t#{po.offsets.inspect}"
+        else
+          errmsg = Kafka::Protocol.errmsg(po.error_code)
+          puts "#{meta.topic}##{po.partition}\t#{errmsg}"
+        end
+      end
     end
   end
 
@@ -102,7 +109,7 @@ class Offset::Main
         socket.flush
         sleep 0
       end
-      return Kafka::Protocol::OffsetResponse.from_kafka(socket)
+      return Kafka::Protocol::OffsetResponse.from_kafka(socket, verbose)
     end
   end
 

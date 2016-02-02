@@ -34,4 +34,13 @@ module Kafka::Protocol
     GroupAuthorizationCode              = 30
     ClusterAuthorizationCode            = 31
   end
+
+  def self.errmsg(code : Int16)
+    msg = Errors.from_value?(code) || "???"
+    "#{msg} (#{code})"
+  end
+
+  def self.errmsg(code : Int16, okmsg : String)
+    code == 0 ? okmsg : errmsg(code)
+  end
 end

@@ -19,6 +19,9 @@ bin:
 kafka-error: src/bin/error.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
+kafka-fetch: src/bin/fetch.cr
+	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
+
 kafka-heartbeat: src/bin/heartbeat.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 

@@ -1,29 +1,69 @@
 ######################################################################
 ### from kafak
 
-def Int16.from_kafka(io : IO)
-  io.read_bytes(Int16, IO::ByteFormat::BigEndian)
+def Int8.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  io_read_bytes_with_debug(:cyan)
 end
 
-def Int32.from_kafka(io : IO)
-  io.read_bytes(Int32, IO::ByteFormat::BigEndian)
+def Int16.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  io_read_bytes_with_debug(:cyan)
 end
 
-def Int64.from_kafka(io : IO)
-  io.read_bytes(Int64, IO::ByteFormat::BigEndian)
+def Int32.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  io_read_bytes_with_debug(:cyan)
 end
 
-def String.from_kafka(io : IO)
-  len = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
-  slice = Slice(UInt8).new(len).tap { |s| io.read_fully(s) }
-  String.new(slice)
+def Int64.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  io_read_bytes_with_debug(:cyan)
 end
 
-def Array.from_kafka(io : IO)
+def String.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  name = hint.to_s.empty? ? "" : "(#{hint})"
+
+  len = io_read_int16
+
+  if len == -1
+    on_debug "String[2]#{name} -> (null)".colorize(:cyan)
+    return ""
+  else
+    slice = Slice(UInt8).new(len).tap { |s| io.read_fully(s) }
+    str = String.new(slice)
+    on_debug "String[2]#{name} -> (#{len})#{str.inspect}".colorize(:cyan)
+    return str
+  end
+end
+
+def Slice(UInt8).from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  len = io_read_int32
+
+  name = hint.to_s.empty? ? "" : "(#{hint})"
+  if len == -1
+    on_debug "Binary[4]#{name} -> (-1)(null)".colorize(:cyan)
+    Slice(UInt8).new(0)
+  elsif len == 0
+    on_debug "Binary[4]#{name} -> (0)(zero?)".colorize(:red)
+    Slice(UInt8).new(0)
+  else
+    binary = Slice(UInt8).new(len).tap { |s| io.read_fully(s) }
+    on_debug "Binary[4]#{name} -> (#{len})#{binary.inspect}".colorize(:cyan)
+    return binary
+  end
+end
+
+def Array.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  label = self.to_s.sub(/Kafka::Protocol::Structure::/, "").sub(/^Array/, "Array[4]")
+  on_debug "#{label}".colorize(:cyan)
   ary = new
-  len = io.read_bytes(Int32, IO::ByteFormat::BigEndian)
+  len = io_read_int32
   (1..len).each do
-    ary << T.from_kafka(io)
+    ary << T.from_kafka(io, debug_level_succ)
   end
   return ary
 end
@@ -51,6 +91,13 @@ end
 class String
   def to_kafka(io : IO)
     io.write_bytes(bytesize.to_u16, IO::ByteFormat::BigEndian)
+    io.write(to_slice)
+  end
+end
+
+struct Slice(T)
+  def to_kafka(io : IO)
+    io.write_bytes(bytesize.to_u32, IO::ByteFormat::BigEndian)
     io.write(to_slice)
   end
 end

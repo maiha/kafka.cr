@@ -1,4 +1,10 @@
 module Kafka::Protocol::Structure
+  class Broker
+    def to_s
+      "(#{node_id} => #{host}:#{port})"
+    end
+  end
+
   class PartitionMetadata
     def to_s
       msg = errmsg(error_code, "{leader=#{leader},replica=#{replicas.inspect},isr=#{isrs.inspect}}")
