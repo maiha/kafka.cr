@@ -1,6 +1,7 @@
+SHELL = /bin/bash
 LINK_FLAGS = --link-flags "-static"
-BIN_SRCS = src/bin/*.cr
-PROGS = kafka-error kafka-heartbeat kafka-metadata kafka-offset kafka-ping kafka-topics
+SRCS = ${wildcard src/bin/*.cr}
+PROGS = $(SRCS:src/bin/%.cr=kafka-%)
 
 .PHONY : all build clean test spec test-compile-bin bin
 .PHONY : ${PROGS}
@@ -11,6 +12,9 @@ build: bin ${PROGS}
 
 bin:
 	@mkdir -p bin
+
+#kafka-%: src/bin/%.cr
+#	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
 kafka-error: src/bin/error.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
@@ -29,6 +33,7 @@ kafka-ping: src/bin/ping.cr
 
 kafka-topics: src/bin/topics.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
+
 
 test: test-compile-bin spec
 
