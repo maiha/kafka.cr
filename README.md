@@ -3,6 +3,7 @@
 kafka utils for crystal
 
 - still in the alpha stage
+- master branch will be force pushed without announcement
 
 ## Installation
 
