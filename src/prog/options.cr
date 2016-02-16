@@ -112,7 +112,28 @@ module Options
         socket.close
       end
     end
-  end  
+
+    protected def execute(request)
+      connect do |socket|
+        bytes = request.to_slice
+        spawn do
+          socket.write bytes
+          socket.flush
+          sleep 0
+        end
+
+        recv = Kafka::Protocol.read(socket)
+
+        if verbose
+          STDERR.puts "recv: #{recv}"
+          STDERR.flush
+        end
+
+        fake_io = MemoryIO.new(recv)
+        return request.class.response.from_kafka(fake_io, verbose)
+      end
+    end
+  end
 
   macro option_topic
     option topic : String, "-t TOPIC", "--topic=TOPIC", "The topic to get metadata", ""

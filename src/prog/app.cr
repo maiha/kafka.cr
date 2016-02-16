@@ -17,5 +17,8 @@ abstract class App
     execute
   rescue err
     die err
+  ensure
+    STDOUT.flush
+    STDERR.flush
   end
 end
