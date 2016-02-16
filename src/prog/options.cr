@@ -48,10 +48,20 @@ module Options
     if help
       die("")
     end
+    if version
+      show_version
+    end
   rescue err
     die(err)
   end
 
+  protected def show_version
+    STDERR.puts "#{$0} #{Kafka::Info::VERSION}"
+    STDERR.puts "License #{Kafka::Info::LICENSES}"
+    STDERR.puts "Written by #{Kafka::Info::AUTHORS} (#{Kafka::Info::HOMEPAGE})"
+    exit 0
+  end
+  
   protected def die(msg)
     STDERR.puts "ERROR: #{msg}\n".colorize(:red) unless msg.to_s.empty?
     STDERR.puts usage
@@ -76,6 +86,10 @@ module Options
   
   macro option_verbose
     option verbose : Bool, "-v", "--verbose", "Verbose output", false
+  end
+
+  macro option_version
+    option version : Bool, "-V", "--version", "Show version information", false
   end
 
   macro option_help

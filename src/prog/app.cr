@@ -1,8 +1,4 @@
-require "option_parser"
-require "socket"
-require "../kafka"
-require "./macros"
-require "./options"
+require "./deps"
 
 abstract class App
   abstract def execute

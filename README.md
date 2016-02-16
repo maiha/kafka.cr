@@ -56,6 +56,8 @@ Kafka PING localhost:9092 (by HeartbeatRequest)
 ```
 
 - write reports about changing state into stderr
+
+```
 % ./bin/kafka-ping localhost -g
 (stdout)
 [2016-01-28 00:30:32 +0000] (0.8.x) from localhost:9092 req_seq=76 time=3.194 ms

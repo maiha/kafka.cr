@@ -1,9 +1,9 @@
-require "./app"
+require "../app"
 
 class Fetch < App
   include Options
     
-  options :broker, :topic, :offset, :max_bytes, :verbose, :help
+  options :broker, :topic, :offset, :max_bytes, :verbose, :version, :help
 
   usage <<-EOF
 Usage: kafka-fetch [options] [topics]

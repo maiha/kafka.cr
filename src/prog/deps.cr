@@ -1,0 +1,5 @@
+require "option_parser"
+require "socket"
+require "../kafka"
+require "./macros"
+require "./options"
