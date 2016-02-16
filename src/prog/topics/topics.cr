@@ -29,7 +29,7 @@ EOF
   end
 
   def do_show(topics)
-    req = Kafka::Protocol::MetadataRequest.new(0, "kafak-topics", topics)
+    req = Kafka::Protocol::MetadataRequest.new(0, "kafka-topics", topics)
     res = execute req
     print_res(res)
   end

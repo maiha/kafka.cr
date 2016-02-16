@@ -88,6 +88,10 @@ module Options
     option all : Bool, "-a", "--all", "Process all data", false
   end
 
+  macro option_count
+    option count : Bool, "-c", "--count", "Print a count of entries", false
+  end
+
   macro option_verbose
     option verbose : Bool, "-v", "--verbose", "Verbose output", false
   end
@@ -98,6 +102,10 @@ module Options
 
   macro option_help
     option help : Bool, "-h", "--help", "Show this help", false
+  end
+
+  macro option_json
+    option json : Bool, "-j", "--json", "Use json output", false
   end
 
   macro option_broker

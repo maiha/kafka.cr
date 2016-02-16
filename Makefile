@@ -16,6 +16,9 @@ bin:
 #kafka-%: src/bin/%.cr
 #	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
+kafka-broker: src/bin/broker.cr
+	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
+
 kafka-error: src/bin/error.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 

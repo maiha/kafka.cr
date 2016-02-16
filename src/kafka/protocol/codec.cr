@@ -1,5 +1,5 @@
 ######################################################################
-### from kafak
+### from kafka
 
 def Int8.from_kafka(io : IO, debug_level = -1, hint = "")
   on_debug_head_address
@@ -69,7 +69,7 @@ def Array.from_kafka(io : IO, debug_level = -1, hint = "")
 end
 
 ######################################################################
-### to kafak
+### to kafka
 struct Int16
   def to_kafka(io : IO)
     io.write_bytes(to_u16, IO::ByteFormat::BigEndian)

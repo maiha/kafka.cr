@@ -37,7 +37,7 @@ EOF
   end
 
   def do_topics(topics)
-    req = Kafka::Protocol::MetadataRequest.new(0, "kafak-metadata", topics)
+    req = Kafka::Protocol::MetadataRequest.new(0, "kafka-metadata", topics)
     if nop
       do_nop(req)
     else
