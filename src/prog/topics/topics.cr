@@ -8,7 +8,6 @@ class Topics < App
   # parser.on("-p NUM", "--partitions=NUM", "The number of partitions for the topic") { |p| @partitions = p }
   # parser.on("-r NUM", "--replication-factor=NUM", "The number of replication factor for the topic") { |r| @replication_factor = r }
   option simple : Bool, "-s", "--simple", "Show topic names only", false
-  # parser.on("-t TOPIC", "--topic=TOPIC", "The topic to get metadata") { |t| @topic = t }
     
   options :broker, :verbose, :version, :help
   
