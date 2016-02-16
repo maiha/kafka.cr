@@ -1,3 +1,3 @@
-require "../prog/fetch/fetch"
+require "../prog/fetch"
 
 Fetch.run(ARGV)
