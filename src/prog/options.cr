@@ -84,6 +84,10 @@ module Options
   ######################################################################
   ### concrete options
   
+  macro option_all
+    option all : Bool, "-a", "--all", "Process all data", false
+  end
+
   macro option_verbose
     option verbose : Bool, "-v", "--verbose", "Verbose output", false
   end
