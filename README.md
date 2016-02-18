@@ -8,7 +8,7 @@ kafka utils for crystal
 ## Installation
 
 - `make` generates `bin/kafka-*`
-- NOTE: works on only 0.11.1
+- NOTE: works on only 0.11.1 and 0.12.0
 
 ## Usage
 
