@@ -92,8 +92,20 @@ module Options
     option count : Bool, "-c", "--count", "Print a count of entries", false
   end
 
+  macro option_consumer_offsets
+    option consumer_offsets : Bool, "-c", "--consumer_offsets", "Show consumer offsets", false
+  end
+
+  macro option_dump
+    option dump : Bool, "-d", "--dump", "Dump octal data (Simulation mode)", false
+  end
+
   macro option_guess
     option guess : Bool, "-g", "--guess", "Use guess mode", false
+  end
+
+  macro option_nop
+    option nop : Bool, "-n", "--nop", "Show request data (Simulation mode)", false
   end
 
   macro option_verbose

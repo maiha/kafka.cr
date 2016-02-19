@@ -3,13 +3,12 @@ require "../app"
 class Topics < App
   include Options
 
-  option create : Bool, "-c", "--create", "Create a new topic", false
-  option list : Bool, "-l", "--list", "List all available topics", false
+#  option create : Bool, "-c", "--create", "Create a new topic", false
   # parser.on("-p NUM", "--partitions=NUM", "The number of partitions for the topic") { |p| @partitions = p }
   # parser.on("-r NUM", "--replication-factor=NUM", "The number of replication factor for the topic") { |r| @replication_factor = r }
   option simple : Bool, "-s", "--simple", "Show topic names only", false
     
-  options :broker, :verbose, :version, :help
+  options :all, :broker, :consumer_offsets, :verbose, :version, :help
   
   usage <<-EOF
 Usage: kafka-topics [options] [topics]
@@ -17,12 +16,12 @@ Usage: kafka-topics [options] [topics]
 Options:
 
 Example:
-  #{$0} -b :9092 --list
+  #{$0} -b :9092 --all
   #{$0} topic1
   #{$0} topic1 topic2
   #{$0} -v topic1 
-  [not implemented] #{$0} --create --partitions=1 --replication-factor=1 --topic=topic1
 EOF
+#  [not implemented] #{$0} --create --partitions=1 --replication-factor=1 --topic=topic1
 
   def do_list
     do_show([] of String)
@@ -39,19 +38,19 @@ EOF
   end
 
   def execute
-    if list
+    if all
       return do_list
     end
 
     topics = args.reject(&.empty?)
 
-    if create
-      case topics.size
-      when 1 ; return do_create(topics.first.not_nil!)
-      when 0 ; die "no topics. `create' needs one topic"
-      else   ; die "too many topics. `create' needs one topic"
-      end
-    end
+#    if create
+#      case topics.size
+#      when 1 ; return do_create(topics.first.not_nil!)
+#      when 0 ; die "no topics. `create' needs one topic"
+#      else   ; die "too many topics. `create' needs one topic"
+#      end
+#    end
 
     if topics.any?
       return do_show(topics)
@@ -66,7 +65,9 @@ EOF
   private def print_res(res)
     res.topics.each do |meta|
       if meta.error_code == 0
-        if simple
+        if !consumer_offsets && meta.name == "__consumer_offsets"
+          # skip
+        elsif simple
           STDOUT.puts meta.name
         else
           meta.partitions.each do |pm|

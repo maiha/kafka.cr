@@ -3,11 +3,7 @@ require "../app"
 class Metadata < App
   include Options
 
-  option all : Bool, "-a", "--all", "Get all topics", false
-  option consumer_offsets : Bool, "-c", "--consumer_offsets", "Show consumer offsets", false
-  option dump : Bool, "-d", "--dump", "Dump octal data (Simulation mode)", false
-  option nop : Bool, "-n", "--nop", "Show request data (Simulation mode)", false
-  options :broker, :topic, :verbose, :version, :help
+  options :all, :broker, :consumer_offsets, :dump, :topic, :nop, :verbose, :version, :help
 
   usage <<-EOF
 Usage: kafka-metadata [options] [topics]
