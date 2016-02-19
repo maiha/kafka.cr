@@ -2,8 +2,9 @@ require "../app"
 
 class Fetch < App
   include Options
-    
-  options :broker, :topic, :offset, :max_bytes, :verbose, :version, :help
+  include Utils::GuessBinary
+  
+  options :broker, :topic, :offset, :max_bytes, :guess, :verbose, :version, :help
 
   usage <<-EOF
 Usage: kafka-fetch [options] [topics]
@@ -11,9 +12,10 @@ Usage: kafka-fetch [options] [topics]
 Options:
 
 Example:
-  ./bin/kafka-fetch topic1
-  ./bin/kafka-fetch topic1 topic2
-  ./bin/kafka-fetch -v topic1
+  #{$0} topic1
+  #{$0} topic1 topic2
+  #{$0} topic1 -v
+  #{$0} topic1 -g  # to guess binary for like MessagePack
 EOF
 
   def do_list
@@ -44,7 +46,9 @@ EOF
         head = "#{t.topic}##{p.partition}"
         if p.error_code == 0
           p.message_sets.each do |m|
-            STDOUT.puts "#{head}\t#{m.offset}: #{m.message.value}"
+            bytes = m.message.value
+            value = guess ? guess_binary(bytes) : bytes
+            STDOUT.puts "#{head}\t#{m.offset}: #{value.to_s}"
           end
         else
           errmsg = Kafka::Protocol.errmsg(p.error_code)

@@ -4,4 +4,8 @@ version: 0.3.0
 authors:
   - maiha <maiha@wota.jp>
 
+dependencies:
+  msgpack:
+    github: benoist/msgpack-crystal
+  
 license: MIT

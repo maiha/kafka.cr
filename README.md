@@ -7,7 +7,8 @@ kafka utils for crystal
 
 ## Installation
 
-- `make` generates `bin/kafka-*`
+- first type `crystal deps` to download related library
+- then, type `make` that generates `bin/kafka-*`
 - NOTE: works on only 0.11.1 and 0.12.0
 
 ## Usage
@@ -68,6 +69,11 @@ Kafka PING localhost:9092 (by HeartbeatRequest)
 ```
 
 ## Development
+
+```
+crystal deps
+make
+```
 
 ## Test
 

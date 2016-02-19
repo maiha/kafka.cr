@@ -92,6 +92,10 @@ module Options
     option count : Bool, "-c", "--count", "Print a count of entries", false
   end
 
+  macro option_guess
+    option guess : Bool, "-g", "--guess", "Use guess mode", false
+  end
+
   macro option_verbose
     option verbose : Bool, "-v", "--verbose", "Verbose output", false
   end
