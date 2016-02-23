@@ -130,8 +130,7 @@ module Options
       Kafka::Cluster::Broker.parse(self.broker)
     end
 
-    protected def connect
-      broker = build_broker
+    protected def connect(broker = build_broker)
       socket = TCPSocket.new broker.host, broker.port
 
       begin
@@ -141,8 +140,8 @@ module Options
       end
     end
 
-    protected def execute(request)
-      connect do |socket|
+    protected def execute(request, broker = build_broker)
+      connect(broker) do |socket|
         bytes = request.to_slice
         spawn do
           socket.write bytes

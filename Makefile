@@ -19,6 +19,9 @@ bin:
 kafka-cluster-watch: src/bin/cluster-watch.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
+kafka-info: src/bin/info.cr
+	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
+
 kafka-broker: src/bin/broker.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
