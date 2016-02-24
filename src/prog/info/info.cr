@@ -30,38 +30,43 @@ EOF
     return execute(req)
   end
 
-  def do_show(topics)
-    meta = fetch_topic_metadata(topics)
+  private def fetch_offsets(meta : Kafka::Protocol::MetadataResponse, latest_offset : Int64)
     maps = meta.broker_maps
-    chan = Channel(String).new
+    broker = ->(id : Int32) {maps[id] || raise "[BUG] broker(#{id}) not found: meta=#{meta.brokers.inspect}"}
 
     builder = Builder::LeaderBasedOffsetRequestsBuilder.new(meta)
-    builder.latest_offset = before.to_i64
+    builder.latest_offset = latest_offset
     reqs = builder.build
     
+    chan = Channel(Kafka::Protocol::OffsetResponse).new
     reqs.each do |leader, req|
       spawn {
         req = Kafka::Protocol::OffsetRequest.new(0, "kafka-info", -1, req.topic_partitions)
-        broker = maps[leader] || raise "[BUG] broker(#{leader}) not found: meta=#{meta.brokers.inspect}"
-        res = execute(req, broker)
-        write_offset_res(res, chan)
+        res = execute(req, broker.call(leader))
+        chan.send(res)
       }
     end
 
-    num = meta.topics.sum{|t| t.partitions.size} # sum up all partition numbers
-    num.times do
-      puts chan.receive
+    return (1..reqs.size).map{|_| chan.receive}
+  end
+  
+  def do_show(topics)
+    meta = fetch_topic_metadata(topics)
+    ress = fetch_offsets(meta, before.to_i64)
+
+    ress.each do |res|
+      print_offset_res(res)
     end
   end
 
-  private def write_offset_res(res, chan)
+  private def print_offset_res(res)
     res.topic_partition_offsets.each do |meta|
       meta.partition_offsets.each do |po|
         if po.error_code == 0
-          chan.send "#{meta.topic}##{po.partition}\tcount=#{po.count} #{po.offsets.inspect}"
+          puts "#{meta.topic}##{po.partition}\tcount=#{po.count} #{po.offsets.inspect}"
         else
           errmsg = Kafka::Protocol.errmsg(po.error_code)
-          chan.send "#{meta.topic}##{po.partition}\t#{errmsg}"
+          puts "#{meta.topic}##{po.partition}\t#{errmsg}"
         end
       end
     end
