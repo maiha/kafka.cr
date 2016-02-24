@@ -48,10 +48,6 @@ module Kafka::Protocol::Structure
     error_code : Int16,
     offsets : Array(Int64)
 
-  structure TopicPartitionOffset,
-    topic : String,
-    partition_offsets : Array(PartitionOffset)
-
   ######################################################################
   ### Request and Response
 
@@ -83,6 +79,10 @@ module Kafka::Protocol::Structure
   structure OffsetResponse,
     correlation_id : Int32,
     topic_partition_offsets : Array(TopicPartitionOffset)
+
+    structure TopicPartitionOffset,
+      topic : String,
+      partition_offsets : Array(PartitionOffset)
 
   structure HeartbeatRequest,
     api_key : Int16,

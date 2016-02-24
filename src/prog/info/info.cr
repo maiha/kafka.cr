@@ -45,7 +45,8 @@ EOF
       }
     end
 
-    reqs.size.times do
+    num = meta.topics.sum{|t| t.partitions.size} # sum up all partition numbers
+    num.times do
       puts chan.receive
     end
   end
