@@ -42,6 +42,14 @@ t1#0     count=1 [1, 0]
 t1#1     count=0 [0]
 ```
 
+- count messages in all topics
+
+```
+% ./bin/kafka-info -c -a
+2       a
+0       b
+```
+
 ### kafka-topics
 
 - `bin/kafka-topics` shows topic names and metadatas

@@ -11,7 +11,7 @@ class Info < App
   option count : Bool, "-c", "--count", "Just count simply", false
   option before : Int64, "--before MSEC", "Used to ask for all messages before a certain time (ms)", -1
   option days : Int32, "--days NUM", "Show histogram publish counts for NUM days (causes NUM times reqs to kafka)[experimental]", 0
-  options :broker, :topic, :json, :verbose, :version, :help
+  options :all, :broker, :topic, :json, :verbose, :version, :help
 
   usage <<-EOF
 Usage: kafka-info [options] [topics]
@@ -76,8 +76,12 @@ EOF
   end
 
   def execute
-    topics = ([topic] + args).reject(&.empty?).uniq
-
+    if all
+      topics = fetch_topic_names
+    else
+      topics = ([topic] + args).reject(&.empty?).uniq
+    end
+    
     if topics.any?
       if days > 0
         return do_histogram_days(topics, days)
@@ -89,6 +93,29 @@ EOF
     die "no topics"
   end
 
+  private def fetch_topic_names
+    names = [] of String
+
+    req = Kafka::Protocol::MetadataRequest.new(0, app_name, [] of String)
+    res = execute req
+    res.topics.map do |meta|
+      unless meta.error_code == 0
+        errmsg = Kafka::Protocol.errmsg(meta.error_code)
+        STDERR.puts "#{meta.name}#\t#{errmsg}"
+        next
+      end
+
+      case meta.name
+      when "__consumer_offsets"
+        next                    # skip
+      else
+        names << meta.name
+      end
+    end
+
+    return names
+  end
+    
   private def fetch_topic_metadata(topics)
     req = Kafka::Protocol::MetadataRequest.new(0, app_name, topics)
     return execute(req)
