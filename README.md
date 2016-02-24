@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/maiha/kafka.cr.svg?branch=master)](https://travis-ci.org/maiha/kafka.cr)
 # kafka.cr
 
 kafka utils for crystal
