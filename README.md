@@ -32,15 +32,22 @@ kafka utils for crystal
 
 ## Usage
 
+### kafka-info
+
+```
+% ./bin/kafka-info t1 t2
+t2#0     count=18 [37, 36, 19]
+t1#2     count=1 [1, 0]
+t1#0     count=1 [1, 0]
+t1#1     count=0 [0]
+```
+
 ### kafka-topics
 
 - `bin/kafka-topics` shows topic names and metadatas
 
 ```
-% ./bin/kafka-topics -l
-t1
-
-% ./bin/kafka-topics t1
+% ./bin/kafka-topics -a
 t1
 
 % ./bin/kafka-topics t1 t2

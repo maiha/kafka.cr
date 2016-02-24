@@ -43,11 +43,6 @@ module Kafka::Protocol::Structure
     replicas : Array(Int32),
     isrs : Array(Int32)
 
-  structure PartitionOffset,
-    partition : Int32,
-    error_code : Int16,
-    offsets : Array(Int64)
-
   ######################################################################
   ### Request and Response
 
@@ -83,6 +78,11 @@ module Kafka::Protocol::Structure
     structure TopicPartitionOffset,
       topic : String,
       partition_offsets : Array(PartitionOffset)
+
+      structure PartitionOffset,
+        partition : Int32,
+        error_code : Int16,
+        offsets : Array(Int64)
 
   structure HeartbeatRequest,
     api_key : Int16,

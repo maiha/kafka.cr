@@ -55,7 +55,7 @@ EOF
     res.topic_partition_offsets.each do |meta|
       meta.partition_offsets.each do |po|
         if po.error_code == 0
-          chan.send "#{meta.topic}##{po.partition}\t#{po.offsets.inspect}"
+          chan.send "#{meta.topic}##{po.partition}\tcount=#{po.count} #{po.offsets.inspect}"
         else
           errmsg = Kafka::Protocol.errmsg(po.error_code)
           chan.send "#{meta.topic}##{po.partition}\t#{errmsg}"

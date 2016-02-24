@@ -16,6 +16,15 @@ module Kafka::Protocol::Structure
     end
   end
 
+  class PartitionOffset
+    def count
+      return 0 if offsets.empty?
+      first = offsets.first.not_nil!
+      last  = offsets.last.not_nil!
+      return [first - last, 0].max
+    end
+  end
+  
   class MetadataResponse
     def broker_maps
       brokers.reduce({} of Int32 => Kafka::Cluster::Broker){|hash, b| hash[b.node_id] = Kafka::Cluster::Broker.new(b.host, b.port); hash}
