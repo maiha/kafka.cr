@@ -12,7 +12,7 @@ describe Kafka::Protocol::Structure::Builder do
       # a#2     leader=2,replica=[2, 1],isr=[2, 1]
       # b#0     leader=2,replica=[2],isr=[2]
 
-      req = Builder::LeaderBasedOffsetRequestsBuilder.new(res).build
+      req = res.to_offset_requests
       req.keys.sort.should eq([1,2])
 
       # [leader:1]

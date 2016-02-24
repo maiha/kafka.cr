@@ -31,16 +31,15 @@ EOF
 
   def do_show(topics)
     meta = fetch_topic_metadata(topics)
-    reqs = Builder::LeaderBasedOffsetRequestsBuilder.new(meta).build
-
-    brokers = meta.broker_maps
+    reqs = meta.to_offset_requests
+    maps = meta.broker_maps
 
     chan = Channel(String).new
     
     reqs.each do |leader, req|
       spawn {
         req = Kafka::Protocol::OffsetRequest.new(0, "kafka-info", -1, req.topic_partitions)
-        broker = brokers[leader] || raise "[BUG] broker(#{leader}) not found: meta=#{meta.brokers.inspect}"
+        broker = maps[leader] || raise "[BUG] broker(#{leader}) not found: meta=#{meta.brokers.inspect}"
         res = execute(req, broker)
         write_offset_res(res, chan)
       }
