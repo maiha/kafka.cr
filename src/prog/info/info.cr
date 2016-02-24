@@ -5,6 +5,7 @@ class Info < App
   include Utils::GuessBinary
   include Kafka::Protocol::Structure
   
+  option before : Int64, "--before MSEC", "Used to ask for all messages before a certain time (ms)", -1
   options :broker, :topic, :verbose, :version, :help
 
   usage <<-EOF
@@ -31,10 +32,12 @@ EOF
 
   def do_show(topics)
     meta = fetch_topic_metadata(topics)
-    reqs = meta.to_offset_requests
     maps = meta.broker_maps
-
     chan = Channel(String).new
+
+    builder = Builder::LeaderBasedOffsetRequestsBuilder.new(meta)
+    builder.latest_offset = before.to_i64
+    reqs = builder.build
     
     reqs.each do |leader, req|
       spawn {

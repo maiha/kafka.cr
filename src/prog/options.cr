@@ -1,9 +1,29 @@
 module Options
+  macro option(declare, long_flag, description, default)
+    var {{declare}}, {{default}}
+
+    def register_option_{{declare.var.id}}(parser)
+      {% if long_flag.stringify =~ /[\s=]/ %}
+        {% if declare.type.stringify == "Int64" %}
+          parser.on({{long_flag}}, {{description}}) {|x| self.{{declare.var}} = x.to_i64}
+        {% elsif declare.type.stringify == "Int32" %}
+          parser.on({{long_flag}}, {{description}}) {|x| self.{{declare.var}} = x.to_i32}
+        {% elsif declare.type.stringify == "Int16" %}
+          parser.on({{long_flag}}, {{description}}) {|x| self.{{declare.var}} = x.to_i16}
+        {% else %}
+          parser.on({{long_flag}}, {{description}}) {|x| self.{{declare.var}} = x}
+        {% end %}
+      {% else %}
+        parser.on({{long_flag}}, {{description}}) {self.{{declare.var}} = true}
+      {% end %}
+    end
+  end
+
   macro option(declare, short_flag, long_flag, description, default)
     var {{declare}}, {{default}}
 
     def register_option_{{declare.var.id}}(parser)
-      {% if short_flag.stringify =~ /[\s=]/ %}
+      {% if long_flag.stringify =~ /[\s=]/ %}
         {% if declare.type.stringify == "Int64" %}
           parser.on({{short_flag}}, {{long_flag}}, {{description}}) {|x| self.{{declare.var}} = x.to_i64}
         {% elsif declare.type.stringify == "Int32" %}

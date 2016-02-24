@@ -4,12 +4,16 @@ module Kafka::Protocol::Structure
       getter req
       property! name
       property! replica
+      property! latest_offset : Int64
+      property! max_num_offsets : Int32
       
       record LeaderTopicPartition, leader, topic, partition
       
       def initialize(@req : MetadataResponse)
         @name = "LeaderBasedOffsetRequestsBuilder"
         @replica = -1
+        @latest_offset = -1.to_i64
+        @max_num_offsets = 999999999
       end
 
       def build # : Hash(Int32, OffsetRequest)
@@ -41,7 +45,7 @@ module Kafka::Protocol::Structure
           leader = lt[0].not_nil!.to_i # 2
           topic  = lt[1].not_nil!.to_s # "a"
           hash[leader] ||= [] of TopicAndPartitions
-          hash[leader] << TopicAndPartitions.new(topic, ary.map{|p| Partition.build(p.partition)})
+          hash[leader] << TopicAndPartitions.new(topic, ary.map{|p| Partition.new(p.partition, latest_offset, max_num_offsets)})
         end
 
         return hash
