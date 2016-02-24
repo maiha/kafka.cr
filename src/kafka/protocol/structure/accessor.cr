@@ -23,6 +23,11 @@ module Kafka::Protocol::Structure
       last  = offsets.last.not_nil!
       return [first - last, 0].max
     end
+
+    def offset
+      return 0 if offsets.empty?
+      return offsets.first.not_nil!
+    end
   end
   
   class MetadataResponse

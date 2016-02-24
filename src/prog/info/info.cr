@@ -8,7 +8,7 @@ class Info < App
   record TopicDayCount, topic, day, count
   
   option before : Int64, "--before MSEC", "Used to ask for all messages before a certain time (ms)", -1
-  option days : Int32, "--days NUM", "Show histogram publish counts for NUM days (causes NUM times reqs to kafka)", 0
+  option days : Int32, "--days NUM", "Show histogram publish counts for NUM days (causes NUM times reqs to kafka)[experimental]", 0
   options :broker, :topic, :verbose, :version, :help
 
   usage <<-EOF
@@ -36,11 +36,11 @@ EOF
   def do_histogram_days(topics, num)
     meta = fetch_topic_metadata(topics)
 
-    # now = Time.now.epoch_ms
     today = Time.now.at_end_of_day # midnight of today
     records = (0..num).map{|n|
+#      p [n, today, (today - n.days), (today - n.days).epoch_ms]
       ress = fetch_offsets(meta, (today - n.days).epoch_ms)
-      ress.map{|res| extract_topic_day_counts(res, n)}
+      ress.map{|res| extract_topic_day_offsets(res, n)}
     }.flatten
 
     grouped = records.group_by{|r| [r.topic, r.day]}.map{|key, ary|
@@ -110,6 +110,15 @@ EOF
     res.topic_partition_offsets.map{ |meta|
       meta.partition_offsets.map{|po|
         TopicDayCount.new(meta.topic, day, po.count)
+      }
+    }
+  end
+  
+  private def extract_topic_day_offsets(res, day)
+    res.topic_partition_offsets.map{ |meta|
+      meta.partition_offsets.map{|po|
+#        p [meta.topic, day, po.offsets]
+        TopicDayCount.new(meta.topic, day, po.offset)
       }
     }
   end
