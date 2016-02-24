@@ -4,6 +4,9 @@ class Fetch < App
   include Options
   include Utils::GuessBinary
   
+  option partition : Int32, "-p NUM", "--partition NUM", "Specify partition number", 0
+  option max_wait : Int32, "--max-wait MSEC", "The max wait time is the maximum amount of time in milliseconds to block waiting", 1000
+  option min_bytes : Int32, "--max-bytes SIZE", "This is the minimum number of bytes of messages", 0
   options :broker, :topic, :offset, :max_bytes, :guess, :verbose, :version, :help
 
   usage <<-EOF
@@ -24,11 +27,9 @@ EOF
 
   def do_show(topics)
     replica = -1
-    max_wait = 1000
-    min_bytes = 0
     
     ps = Kafka::Protocol::Structure::FetchRequestPartitions.new(
-      partition = 0, offset, max_bytes
+      partition, offset, max_bytes
     )
     ts = topics.map{|t|
       Kafka::Protocol::Structure::FetchRequestTopics.new(t, [ps])
