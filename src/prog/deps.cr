@@ -1,5 +1,6 @@
 require "option_parser"
 require "socket"
+require "json"
 require "../kafka"
 require "./macros"
 require "./options"

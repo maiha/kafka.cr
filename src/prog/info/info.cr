@@ -6,10 +6,12 @@ class Info < App
   include Kafka::Protocol::Structure
 
   record TopicDayCount, topic, day, count
+  record TopicCount, topic, count
   
+  option count : Bool, "-c", "--count", "Just count simply", false
   option before : Int64, "--before MSEC", "Used to ask for all messages before a certain time (ms)", -1
   option days : Int32, "--days NUM", "Show histogram publish counts for NUM days (causes NUM times reqs to kafka)[experimental]", 0
-  options :broker, :topic, :verbose, :version, :help
+  options :broker, :topic, :json, :verbose, :version, :help
 
   usage <<-EOF
 Usage: kafka-info [options] [topics]
@@ -28,8 +30,14 @@ EOF
     meta = fetch_topic_metadata(topics)
     ress = fetch_offsets(meta, time)
 
-    ress.each do |res|
-      print_offset_res(res)
+    if json
+      print_offset_json(ress)
+    elsif count
+      print_offset_count(ress)
+    else
+      ress.each do |res|
+        print_offset_res(res)
+      end
     end
   end
 
@@ -106,9 +114,25 @@ EOF
     return (1..reqs.size).map{|_| chan.receive}
   end
 
+  private def extract_topic_counts(res)
+    res.topic_partition_offsets.map{ |meta|
+      meta.partition_offsets.map{|po|
+        unless po.error_code == 0
+          errmsg = Kafka::Protocol.errmsg(po.error_code)
+          STDERR.puts "#{meta.topic}##{po.partition}\t#{errmsg}"
+        end
+        TopicCount.new(meta.topic, po.count)
+      }
+    }
+  end
+  
   private def extract_topic_day_counts(res, day)
     res.topic_partition_offsets.map{ |meta|
       meta.partition_offsets.map{|po|
+        unless po.error_code == 0
+          errmsg = Kafka::Protocol.errmsg(po.error_code)
+          STDERR.puts "#{meta.topic}##{po.partition}\t#{errmsg}"
+        end
         TopicDayCount.new(meta.topic, day, po.count)
       }
     }
@@ -134,5 +158,21 @@ EOF
         end
       end
     end
+  end
+
+  private def print_offset_count(ress)
+    records = ress.map{|res| extract_topic_counts(res)}.flatten
+    counts  = records.group_by(&.topic).map{|topic, ary| TopicCount.new(topic, ary.sum(&.count))}
+    # [Info::TopicCount(@topic="a", @count=2), Info::TopicCount(@topic="b", @count=0)]
+    counts.sort_by(&.topic).each do |r|
+      puts "#{r.count}\t#{r.topic}"
+    end
+  end
+
+  private def print_offset_json(ress)
+    records = ress.map{|res| extract_topic_counts(res)}.flatten
+    counts  = records.group_by(&.topic).map{|topic, ary| [topic, ary.sum(&.count)]}
+    # [["a", 2], ["b", 0]]
+    puts counts.to_h.to_json
   end
 end
