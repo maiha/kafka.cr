@@ -12,6 +12,24 @@ kafka utils for crystal
 - then, type `make` that generates `bin/kafka-*`
 - NOTE: works on only 0.11.1 and 0.12.0
 
+## bin
+
+#### utils
+
+- kafka-broker : Show broker information. "-j" causes json output.
+- kafka-cluster-watch : Report cluster information continually.
+- kafka-error : Lookup kafka error code.
+- kafka-fetch : Fetch logs from kafka. "-g" tries to resolve payload.
+- kafka-info : Show topic information about offsets. (need only a broker)
+- kafka-ping : Ping to a broker like unix ping.
+- kafka-topics : Show topic information about leader, replicas, isrs. (need exact leaders)
+
+#### kafka protocols study
+
+- kafka-heartbeat : Send heartbeat request(api:12). [experimental]
+- kafka-metadata : Send metadata request(api:3).
+- kafka-offset : Send offset request(api:2).
+
 ## Usage
 
 ### kafka-topics
