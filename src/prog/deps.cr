@@ -1,6 +1,7 @@
 require "option_parser"
 require "socket"
 require "json"
+require "colorize"
 require "../kafka"
 require "./macros"
 require "./options"

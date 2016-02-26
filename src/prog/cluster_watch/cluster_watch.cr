@@ -4,6 +4,7 @@ class ClusterWatch < App
   include Options
     
   option interval : Int32, "-i SECONDS", "--interval=SECONDS", "Specify update interval seconds.", 60
+  option colorize : Bool, "-c", "--color", "Colorize the output.", false
   options :verbose, :version, :help
 
   usage <<-EOF
@@ -34,7 +35,10 @@ EOF
     getter :host, :port, :expected_count, :last_result
     getter :msec, :started_at, :code, :state
 
-    def initialize(@host, @port, @expected_count, @last_result, @out, @err)
+    record Setting,
+      colorize : Bool
+    
+    def initialize(@host, @port, @expected_count, @last_result, @out, @err, @setting)
       # ## essential variables (used by finalizer)
       @code = Result::Code::ER
       @state = "(not executed yet)"
@@ -67,7 +71,7 @@ EOF
 
       @state = build_state(res)
 
-      code = (res.brokers.size == @expected_count) ? Result::Code::OK : Result::Code::KO
+      @code = (res.brokers.size == @expected_count) ? Result::Code::OK : Result::Code::KO
       return Result.new(code, @state)
     rescue err : Errno
       case err.message
@@ -84,13 +88,30 @@ EOF
       now = Time.now
       msec = (now - started_at).total_milliseconds.to_s
       time = now.to_s
-
-      @out.send "[#{time}] #{state} from #{host}:#{port} time=#{msec} ms"
+      mark = ok? ? "OK: " : "NG: "
+      
+      @out.send colorize("#{mark}[#{time}] #{state} from #{host}:#{port} time=#{msec} ms")
 
       if state_changed?
-        @err.send "[#{time}] #{host}:#{port} : #{last_state} -> #{state}"
+        @err.send colorize("#{mark}[#{time}] #{host}:#{port} : #{last_state} -> #{state}")
       end
       socket.try &.close
+    end
+
+    private def ok?
+      @code == Result::Code::OK
+    end
+
+    private def colorize(msg : String) : String
+      unless @setting.colorize
+        return msg
+      end
+      
+      if ok?
+        msg.colorize(:green).to_s
+      else
+        msg.colorize(:yellow).to_s
+      end
     end
   end
 
@@ -100,11 +121,12 @@ EOF
 
     getter :interval, :stats, :no
 
-    def initialize(@dest : Kafka::Cluster::Broker, @broker_count : Int32)
+    def initialize(@dest : Kafka::Cluster::Broker, @broker_count : Int32, @colorize : Bool)
       @stats = Utils::EnumStatistics(Result::Code).new
       @ch  = Channel(Result).new
       @out = Channel(String).new
       @err = Channel(String).new
+      @command_setting = Command::Setting.new(@colorize)
     end
 
     def start(interval)
@@ -112,7 +134,7 @@ EOF
       spawn do
         loop do
           sleep interval
-          @last_result = Command.new(host, port, @broker_count, @last_result, @out, @err).execute
+          @last_result = Command.new(host, port, @broker_count, @last_result, @out, @err, @command_setting).execute
           @ch.send(@last_result.not_nil!)
           stats << @last_result.not_nil!.code
         end
@@ -132,7 +154,7 @@ EOF
   end
   
   def execute
-    watchers = args.map{|b| BrokerWatcher.new(Kafka::Cluster::Broker.parse(b), args.size) }
+    watchers = args.map{|b| BrokerWatcher.new(Kafka::Cluster::Broker.parse(b), args.size, colorize) }
     if watchers.empty?
       die "no brokers"
     end
