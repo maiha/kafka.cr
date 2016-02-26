@@ -1,4 +1,6 @@
 module ResponseOperations
+  record TopicCount, topic, count
+
   protected def not_leader?(res)
     res.topics.each do |t|
       t.partitions.each do |p|
@@ -24,5 +26,46 @@ module ResponseOperations
         end
       end
     end
+  end
+
+  protected def print_res(res : Kafka::Protocol::OffsetResponse)
+    res.topic_partition_offsets.each do |meta|
+      meta.partition_offsets.each do |po|
+        if po.error_code == 0
+          puts "#{meta.topic}##{po.partition}\tcount=#{po.count} #{po.offsets.inspect}"
+        else
+          errmsg = Kafka::Protocol.errmsg(po.error_code)
+          puts "#{meta.topic}##{po.partition}\t#{errmsg}"
+        end
+      end
+    end
+  end
+
+  protected def print_count(ress : Array(Kafka::Protocol::OffsetResponse))
+    records = ress.map{|res| extract_topic_counts(res)}.flatten
+    counts  = records.group_by(&.topic).map{|topic, ary| TopicCount.new(topic, ary.sum(&.count))}
+    # [Info::TopicCount(@topic="a", @count=2), Info::TopicCount(@topic="b", @count=0)]
+    counts.sort_by(&.topic).each do |r|
+      puts "#{r.count}\t#{r.topic}"
+    end
+  end
+
+  protected def print_json(ress : Array(Kafka::Protocol::OffsetResponse))
+    records = ress.map{|res| extract_topic_counts(res)}.flatten
+    counts  = records.group_by(&.topic).map{|topic, ary| [topic, ary.sum(&.count)]}
+    # [["a", 2], ["b", 0]]
+    puts counts.to_h.to_json
+  end
+
+  protected def extract_topic_counts(res)
+    res.topic_partition_offsets.map{ |meta|
+      meta.partition_offsets.map{|po|
+        unless po.error_code == 0
+          errmsg = Kafka::Protocol.errmsg(po.error_code)
+          STDERR.puts "#{meta.topic}##{po.partition}\t#{errmsg}"
+        end
+        TopicCount.new(meta.topic, po.count)
+      }
+    }
   end
 end

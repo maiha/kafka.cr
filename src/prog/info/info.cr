@@ -6,7 +6,6 @@ class Info < App
   include Kafka::Protocol::Structure
 
   record TopicDayCount, topic, day, count
-  record TopicCount, topic, count
   
   option count : Bool, "-c", "--count", "Just count simply", false
   option before : Int64, "--before MSEC", "Used to ask for all messages before a certain time (ms)", -1
@@ -14,7 +13,7 @@ class Info < App
   options :all, :broker, :topic, :json, :verbose, :version, :help
 
   usage <<-EOF
-Usage: kafka-info [options] [topics]
+Usage: #{app_name} [options] [topics]
 
 Options:
 
@@ -27,12 +26,12 @@ EOF
     ress = fetch_offsets(meta, time)
 
     if json
-      print_offset_json(ress)
+      print_json(ress)
     elsif count
-      print_offset_count(ress)
+      print_count(ress)
     else
       ress.each do |res|
-        print_offset_res(res)
+        print_res(res)
       end
     end
   end
@@ -89,29 +88,6 @@ EOF
     die "no topics"
   end
 
-  private def fetch_topic_names
-    names = [] of String
-
-    req = Kafka::Protocol::MetadataRequest.new(0, app_name, [] of String)
-    res = execute req
-    res.topics.map do |meta|
-      unless meta.error_code == 0
-        errmsg = Kafka::Protocol.errmsg(meta.error_code)
-        STDERR.puts "#{meta.name}#\t#{errmsg}"
-        next
-      end
-
-      case meta.name
-      when "__consumer_offsets"
-        next                    # skip
-      else
-        names << meta.name
-      end
-    end
-
-    return names
-  end
-    
   private def fetch_offsets(meta : Kafka::Protocol::MetadataResponse, latest_offset : Int64)
     maps = meta.broker_maps
     broker = ->(id : Int32) {maps[id] || raise "[BUG] broker(#{id}) not found: meta=#{meta.brokers.inspect}"}
@@ -132,18 +108,6 @@ EOF
     return (1..reqs.size).map{|_| chan.receive}
   end
 
-  private def extract_topic_counts(res)
-    res.topic_partition_offsets.map{ |meta|
-      meta.partition_offsets.map{|po|
-        unless po.error_code == 0
-          errmsg = Kafka::Protocol.errmsg(po.error_code)
-          STDERR.puts "#{meta.topic}##{po.partition}\t#{errmsg}"
-        end
-        TopicCount.new(meta.topic, po.count)
-      }
-    }
-  end
-  
   private def extract_topic_day_counts(res, day)
     res.topic_partition_offsets.map{ |meta|
       meta.partition_offsets.map{|po|
@@ -163,34 +127,5 @@ EOF
         TopicDayCount.new(meta.topic, day, po.offset)
       }
     }
-  end
-  
-  private def print_offset_res(res)
-    res.topic_partition_offsets.each do |meta|
-      meta.partition_offsets.each do |po|
-        if po.error_code == 0
-          puts "#{meta.topic}##{po.partition}\tcount=#{po.count} #{po.offsets.inspect}"
-        else
-          errmsg = Kafka::Protocol.errmsg(po.error_code)
-          puts "#{meta.topic}##{po.partition}\t#{errmsg}"
-        end
-      end
-    end
-  end
-
-  private def print_offset_count(ress)
-    records = ress.map{|res| extract_topic_counts(res)}.flatten
-    counts  = records.group_by(&.topic).map{|topic, ary| TopicCount.new(topic, ary.sum(&.count))}
-    # [Info::TopicCount(@topic="a", @count=2), Info::TopicCount(@topic="b", @count=0)]
-    counts.sort_by(&.topic).each do |r|
-      puts "#{r.count}\t#{r.topic}"
-    end
-  end
-
-  private def print_offset_json(ress)
-    records = ress.map{|res| extract_topic_counts(res)}.flatten
-    counts  = records.group_by(&.topic).map{|topic, ary| [topic, ary.sum(&.count)]}
-    # [["a", 2], ["b", 0]]
-    puts counts.to_h.to_json
-  end
+  end 
 end

@@ -11,6 +11,29 @@ module RequestOperations
     end
   end
 
+  protected def fetch_topic_names
+    names = [] of String
+
+    req = Kafka::Protocol::MetadataRequest.new(0, app_name, [] of String)
+    res = execute req
+    res.topics.map do |meta|
+      unless meta.error_code == 0
+        errmsg = Kafka::Protocol.errmsg(meta.error_code)
+        STDERR.puts "#{meta.name}#\t#{errmsg}"
+        next
+      end
+
+      case meta.name
+      when "__consumer_offsets"
+        next                    # skip
+      else
+        names << meta.name
+      end
+    end
+
+    return names
+  end
+    
   protected def resolve_leader!(topic, partition)
     meta = fetch_topic_metadata([topic], app_name)
     meta.topics.each do |t|
