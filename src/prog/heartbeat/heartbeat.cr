@@ -6,7 +6,7 @@ class Heartbeat < App
   options :broker, :verbose, :version, :help
 
   usage <<-EOF
-Usage: kafka-heartbeat [options]
+Usage: #{app_name} [options]
 
 Options:
 

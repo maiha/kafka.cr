@@ -8,7 +8,7 @@ class ClusterWatch < App
   options :verbose, :version, :help
 
   usage <<-EOF
-Usage: kafka-cluster-watch [options] broker(s)
+Usage: #{app_name} [options]  broker(s)
 
 Options:
 

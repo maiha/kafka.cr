@@ -7,7 +7,7 @@ class Broker < App
   options :broker, :count, :json, :verbose, :version, :help
 
   usage <<-EOF
-Usage: kafka-broker [options]
+Usage: #{app_name} [options]
 
 Options:
 

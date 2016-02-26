@@ -6,7 +6,7 @@ class Metadata < App
   options :all, :broker, :consumer_offsets, :dump, :topic, :nop, :verbose, :version, :help
 
   usage <<-EOF
-Usage: kafka-metadata [options] [topics]
+Usage: #{app_name} [options] [topics]
 
 Options:
 

@@ -7,7 +7,7 @@ class Error < App
   options :verbose, :version, :help
 
   usage <<-EOF
-Usage: kafka-error [options] [codes]
+Usage: #{app_name} [options] [codes]
 
 Options:
 

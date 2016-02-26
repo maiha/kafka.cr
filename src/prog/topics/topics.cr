@@ -11,7 +11,7 @@ class Topics < App
   options :all, :broker, :consumer_offsets, :verbose, :version, :help
   
   usage <<-EOF
-Usage: kafka-topics [options] [topics]
+Usage: #{app_name} [options] [topics]
 
 Options:
 

@@ -6,7 +6,7 @@ class Offset < App
   options :broker, :topic, :verbose, :version, :help
 
   usage <<-EOF
-Usage: kafka-offset [options] [topics]
+Usage: #{app_name} [options] [topics]
 
 Options:
 
