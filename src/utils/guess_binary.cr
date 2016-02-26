@@ -1,6 +1,9 @@
 require "msgpack"
+require "./pretty_binary"
 
 module Utils::GuessBinary
+  include Utils::PrettyBinary
+
   abstract class Guessed
     getter text, bytes
 

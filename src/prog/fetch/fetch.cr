@@ -2,7 +2,6 @@ require "../app"
 
 class Fetch < App
   include Options
-  include Utils::GuessBinary
   
   option max_wait : Int32, "--max-wait MSEC", "The max wait time is the maximum amount of time in milliseconds to block waiting", 1000
   option min_bytes : Int32, "--max-bytes SIZE", "This is the minimum number of bytes of messages", 0

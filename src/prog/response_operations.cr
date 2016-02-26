@@ -1,4 +1,6 @@
 module ResponseOperations
+  include Utils::GuessBinary
+
   record TopicCount, topic, count
 
   protected def not_leader?(res)
@@ -31,6 +33,7 @@ module ResponseOperations
               STDOUT.write bytes
             when :GUESS
               value = guess_binary(bytes)
+              value = pretty_binary(value.to_s)
               STDOUT.puts "#{head}\t#{m.offset}: #{value.to_s}"
             else
               STDOUT.puts "#{head}\t#{m.offset}: #{bytes.to_s}"
