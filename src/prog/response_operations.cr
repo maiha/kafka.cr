@@ -10,19 +10,35 @@ module ResponseOperations
     return false
   end
 
-  protected def print_res(res : Kafka::Protocol::FetchResponse, guess = false : Bool)
+  protected def not_leader?(res : Kafka::Protocol::OffsetResponse)
+    res.topic_partition_offsets.each do |meta|
+      meta.partition_offsets.each do |po|
+        return true if po.error_code == 6
+      end
+    end
+    return false
+  end
+  
+  protected def print_res(res : Kafka::Protocol::FetchResponse, format)
     res.topics.each do |t|
       t.partitions.each do |p|
         head = "#{t.topic}##{p.partition}"
         if p.error_code == 0
           p.message_sets.each do |m|
             bytes = m.message.value
-            value = guess ? guess_binary(bytes) : bytes
-            STDOUT.puts "#{head}\t#{m.offset}: #{value.to_s}"
+            case format
+            when :RAW
+              STDOUT.write bytes
+            when :GUESS
+              value = guess_binary(bytes)
+              STDOUT.puts "#{head}\t#{m.offset}: #{value.to_s}"
+            else
+              STDOUT.puts "#{head}\t#{m.offset}: #{bytes.to_s}"
+            end
           end
         else
           errmsg = Kafka::Protocol.errmsg(p.error_code)
-          STDOUT.puts "#{head}\t#{errmsg}".colorize(:red)
+          STDERR.puts "#{head}\t#{errmsg}".colorize(:red)
         end
       end
     end

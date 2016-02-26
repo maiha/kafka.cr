@@ -25,7 +25,7 @@ module Kafka::Protocol::Structure
     end
 
     def offset
-      return 0 if offsets.empty?
+      return 0_i64 if offsets.empty?
       return offsets.first.not_nil!
     end
   end

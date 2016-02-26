@@ -177,6 +177,10 @@ module Options
     option offset : Int64, "-o OFFSET", "--offset=OFFSET", "The offset to get from.", 0_i64
   end
 
+  macro option_raw
+    option raw : Bool, "--raw", "Show raw data for output.", false
+  end
+
   macro option_max_bytes
     option max_bytes : Int32, "-M BYTES", "--max_bytes=BYTES", "The max byte size for MessageSet.", 1024
   end

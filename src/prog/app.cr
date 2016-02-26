@@ -36,9 +36,9 @@ abstract class App
     exit 0
   end
   
-  protected def die(msg)
+  protected def die(msg, show_usage = true)
     STDERR.puts "ERROR: #{msg}\n".colorize(:red) unless msg.to_s.empty?
-    STDERR.puts usage
+    STDERR.puts usage if show_usage
     STDERR.flush
     exit
   end
