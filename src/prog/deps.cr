@@ -5,4 +5,6 @@ require "colorize"
 require "../kafka"
 require "./macros"
 require "./options"
-require "./operations"
+require "./request_operations"
+require "./response_operations"
+

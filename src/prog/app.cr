@@ -3,8 +3,9 @@ require "./deps"
 abstract class App
   abstract def execute
 
-  include Operations
-    
+  include RequestOperations
+  include ResponseOperations
+  
   def self.run(args)
     new(args).run
   end

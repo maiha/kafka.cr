@@ -23,8 +23,8 @@ EOF
   def do_show(topic)
     req = build_fetch_request(topic)
     res = execute(req)
-    res = execute(req, resolve_leader!(topic, partition)) if not_reader?(res) && !strict
-    print_res(res)
+    res = execute(req, resolve_leader!(topic, partition)) if not_leader?(res) && !strict
+    print_res(res, guess)
   end
  
   private def build_fetch_request(topic)
@@ -34,33 +34,6 @@ EOF
     return Kafka::Protocol::FetchRequest.new(0, app_name, replica, max_wait, min_bytes, ts)
   end
 
-  private def not_reader?(res)
-    res.topics.each do |t|
-      t.partitions.each do |p|
-        return true if p.error_code == 6
-      end
-    end
-    return false
-  end
-  
-  private def print_res(res)
-    res.topics.each do |t|
-      t.partitions.each do |p|
-        head = "#{t.topic}##{p.partition}"
-        if p.error_code == 0
-          p.message_sets.each do |m|
-            bytes = m.message.value
-            value = guess ? guess_binary(bytes) : bytes
-            STDOUT.puts "#{head}\t#{m.offset}: #{value.to_s}"
-          end
-        else
-          errmsg = Kafka::Protocol.errmsg(p.error_code)
-          STDOUT.puts "#{head}\t#{errmsg}".colorize(:red)
-        end
-      end
-    end
-  end
-
   def execute
     topics = ([topic] + args).reject(&.empty?).uniq
 
@@ -68,7 +41,7 @@ EOF
     when 0
       die "no topics"
     when 1
-      return do_show(topics.first.not_nil!)
+      do_show(topics.first.not_nil!)
     else
       die "please specify one topic"
     end

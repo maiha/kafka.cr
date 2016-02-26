@@ -1,4 +1,4 @@
-module Operations
+module RequestOperations
   protected def execute(request)
     bytes = request.to_slice
     connect do |socket|
