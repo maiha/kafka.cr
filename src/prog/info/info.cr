@@ -22,12 +22,8 @@ Example:
   #{$0} topic1
 EOF
 
-  private def app_name
-    "kafka-info"
-  end
-  
   def do_show(topics, time)
-    meta = fetch_topic_metadata(topics)
+    meta = fetch_topic_metadata(topics, app_name)
     ress = fetch_offsets(meta, time)
 
     if json
@@ -42,7 +38,7 @@ EOF
   end
 
   def do_histogram_days(topics, num)
-    meta = fetch_topic_metadata(topics)
+    meta = fetch_topic_metadata(topics, app_name)
 
     today = Time.now.at_end_of_day # midnight of today
     records = (0..num).map{|n|
@@ -116,11 +112,6 @@ EOF
     return names
   end
     
-  private def fetch_topic_metadata(topics)
-    req = Kafka::Protocol::MetadataRequest.new(0, app_name, topics)
-    return execute(req)
-  end
-
   private def fetch_offsets(meta : Kafka::Protocol::MetadataResponse, latest_offset : Int64)
     maps = meta.broker_maps
     broker = ->(id : Int32) {maps[id] || raise "[BUG] broker(#{id}) not found: meta=#{meta.brokers.inspect}"}

@@ -75,32 +75,6 @@ module Options
     die(err)
   end
 
-  protected def show_version
-    STDERR.puts "#{$0} #{Kafka::Info::VERSION}"
-    STDERR.puts "License #{Kafka::Info::LICENSES}"
-    STDERR.puts "Written by #{Kafka::Info::AUTHORS} (#{Kafka::Info::HOMEPAGE})"
-    exit 0
-  end
-  
-  protected def die(msg)
-    STDERR.puts "ERROR: #{msg}\n".colorize(:red) unless msg.to_s.empty?
-    STDERR.puts usage
-    STDERR.flush
-    exit
-  end
-  
-  protected def execute(request)
-    bytes = request.to_slice
-    connect do |socket|
-      spawn do
-        socket.write bytes
-        socket.flush
-        sleep 0
-      end
-      return request.class.response.from_kafka(socket)
-    end
-  end
-
   ######################################################################
   ### concrete options
   
@@ -179,6 +153,11 @@ module Options
         fake_io = MemoryIO.new(recv)
         return request.class.response.from_kafka(fake_io, verbose)
       end
+    end
+
+    protected def fetch_topic_metadata(topics, app_name)
+      req = Kafka::Protocol::MetadataRequest.new(0, app_name, topics)
+      return execute(req)
     end
   end
 

@@ -35,6 +35,10 @@ module Kafka::Protocol::Structure
       brokers.reduce({} of Int32 => Kafka::Cluster::Broker){|hash, b| hash[b.node_id] = Kafka::Cluster::Broker.new(b.host, b.port); hash}
     end
 
+    def broker!(id : Int32)
+      broker_maps[id] || raise "[BUG] broker(#{id}) not found: meta=#{brokers.inspect}"
+    end
+
     def to_offset_requests
       Builder::LeaderBasedOffsetRequestsBuilder.new(self).build
     end
