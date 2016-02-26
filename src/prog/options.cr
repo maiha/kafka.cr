@@ -118,6 +118,10 @@ module Options
     option json : Bool, "-j", "--json", "Use json output", false
   end
 
+  macro option_partition
+    option partition : Int32, "-p NUM", "--partition NUM", "Specify partition number", 0
+  end
+
   macro option_broker
     option broker : String, "-b URL", "--broker=URL", "The connection string for broker", "127.0.0.1:9092"
     private def build_broker

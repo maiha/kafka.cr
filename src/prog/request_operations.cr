@@ -11,6 +11,13 @@ module RequestOperations
     end
   end
 
+  protected def fetch_offset(topics, partition, replica = -1)
+    po = Kafka::Protocol::Structure::Partition.new(partition, latest_offset = -1_i64, max_offsets = 999999999)
+    taps = topics.map{|t| Kafka::Protocol::Structure::TopicAndPartitions.new(t, [po])}
+    req = Kafka::Protocol::OffsetRequest.new(0, app_name, replica, taps)
+    return execute req
+  end
+
   protected def fetch_topic_names
     names = [] of String
 
