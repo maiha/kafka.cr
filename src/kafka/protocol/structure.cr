@@ -20,6 +20,17 @@ module Kafka::Protocol::Structure
     getter size, message_sets
     def initialize(@size : Int32, @message_sets : Array(MessageSet))
     end
+
+    def self.new(message_sets : Array(MessageSet))
+      new(message_sets.size, message_sets)
+    end
+
+    def to_kafka(io : IO)
+      size.to_kafka(io)
+      message_sets.each do |set|
+        set.to_kafka(io)
+      end
+    end
   end
   
   structure Broker,
@@ -62,6 +73,26 @@ module Kafka::Protocol::Structure
       error_code : Int16,
       name : String,
       partitions : Array(PartitionMetadata)
+
+  structure ProduceRequest,
+    api_key : Int16,
+    api_version : Int16,
+    correlation_id : Int32,
+    client_id : String,
+    required_acks : Int16,
+    timeout : Int32,
+    topic_partitions : Array(TopicAndPartitionMessages)
+
+    structure TopicAndPartitionMessages,
+      topic : String,
+      partition_messages : Array(PartitionMessage)
+
+      structure PartitionMessage,
+        partition : Int32,
+        message_set_entry : MessageSetEntry
+
+  structure ProduceResponse,
+    correlation_id : Int32
 
   structure OffsetRequest,
     api_key : Int16,

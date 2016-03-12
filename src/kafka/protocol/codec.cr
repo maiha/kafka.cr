@@ -68,8 +68,14 @@ def Array.from_kafka(io : IO, debug_level = -1, hint = "")
   return ary
 end
 
-# #####################################################################
-# ## to kafka
+######################################################################
+### to kafka
+struct Int8
+  def to_kafka(io : IO)
+    io.write_bytes(to_u8, IO::ByteFormat::BigEndian)
+  end
+end
+
 struct Int16
   def to_kafka(io : IO)
     io.write_bytes(to_u16, IO::ByteFormat::BigEndian)

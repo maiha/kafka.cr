@@ -1,6 +1,31 @@
+require "zlib"
+
 module Kafka::Protocol::Structure
-  # #####################################################################
-  # ## accessor
+  ######################################################################
+  ### constructor
+
+  def null
+    Slice(UInt8).new(0)
+  end
+  
+  def Message.new(key : Bytes, value : Bytes)
+    bytes = Message.new(0, 0.to_i8, 0.to_i8, key, value).to_slice
+    slice = Slice(UInt8).new(bytes.bytesize - 4){|i| bytes[i]}
+    crc32 = Zlib.crc32(slice).to_i32
+    Message.new(crc32, 0.to_i8, 0.to_i8, key, value)
+  end
+
+  def Message.new(value : Bytes)
+    Message.new(null, value)
+  end
+  
+  def MessageSet.new(offset : Int64, message : Message)
+    bytesize = message.to_slice.bytesize
+    MessageSet.new(offset, bytesize, message)
+  end
+
+  ######################################################################
+  ### accessor
 
   class FetchResponsePartition
     delegate message_sets, "message_set_entry"
