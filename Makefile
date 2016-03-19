@@ -3,7 +3,7 @@ LINK_FLAGS = --link-flags "-static"
 SRCS = ${wildcard src/bin/*.cr}
 PROGS = $(SRCS:src/bin/%.cr=kafka-%)
 
-.PHONY : all build clean test spec test-compile-bin bin
+.PHONY : all build clean test spec test-compile-bin spec-real bin
 .PHONY : ${PROGS}
 
 all: build
@@ -54,6 +54,9 @@ test: test-compile-bin spec
 
 spec:
 	crystal spec -v
+
+spec-real:
+	crystal spec -v spec-real
 
 test-compile-bin:
 	@for x in src/bin/*.cr ; do\

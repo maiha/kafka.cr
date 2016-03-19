@@ -113,6 +113,12 @@ make
 
 - `make test`
 
+#### with real brokers (experimental)
+
+- `make spec-real`
+- this expects kafka broker is running on "localhost:9092"
+- this expects kafka broker has a topic named "t1"
+
 ## Contributing
 
 1. Fork it ( https://github.com/maiha/kafka.cr/fork )

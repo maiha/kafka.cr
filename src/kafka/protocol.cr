@@ -1,6 +1,12 @@
 require "./protocol/*"
 
 module Kafka::Protocol
+  module Request
+  end
+
+  module Response
+  end
+
   ######################################################################
   ### Api Code
 

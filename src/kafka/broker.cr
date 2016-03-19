@@ -8,6 +8,10 @@ class Kafka::Broker
   def initialize(@host : String, @port = DEFAULT_PORT : Int32)
   end
 
+  def self.default
+    Kafka::Broker.new(DEFAULT_HOST, DEFAULT_PORT)
+  end
+
   def self.parse(str : String) : Broker
     case str
     when /\A:([0-9]+)\Z/

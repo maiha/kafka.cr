@@ -8,5 +8,8 @@ dependencies:
   msgpack:
     github: maiha/msgpack-crystal
     branch: support-binary
+  spec2:
+    github: waterlink/spec2.cr
+    version: ~> 0.7.1
   
 license: MIT
