@@ -32,7 +32,7 @@ module Kafka::Protocol::Structure
   
   class MetadataResponse
     def broker_maps
-      brokers.reduce({} of Int32 => Kafka::Cluster::Broker){|hash, b| hash[b.node_id] = Kafka::Cluster::Broker.new(b.host, b.port); hash}
+      brokers.reduce({} of Int32 => Kafka::Broker){|hash, b| hash[b.node_id] = Kafka::Broker.new(b.host, b.port); hash}
     end
 
     def broker!(id : Int32)

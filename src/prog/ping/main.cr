@@ -15,7 +15,7 @@ class Ping::Main
       parser.on("-h", "--help", "Show this help") { @usage = true }
     end
 
-    @dests = args.map{|s| Kafka::Cluster::Broker.parse(s)}.not_nil!
+    @dests = args.map{|s| Kafka::Broker.parse(s)}.not_nil!
     
     @help = -> {
       puts "Usage: kafka-ping [options] destination(s)"

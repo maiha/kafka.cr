@@ -125,7 +125,7 @@ module Options
   macro option_broker
     option broker : String, "-b URL", "--broker=URL", "The connection string for broker", "127.0.0.1:9092"
     private def build_broker
-      Kafka::Cluster::Broker.parse(self.broker)
+      Kafka::Broker.parse(self.broker)
     end
 
     protected def connect(broker = build_broker)

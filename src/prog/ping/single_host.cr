@@ -4,7 +4,7 @@ class Ping::SingleHost
 
   getter :count, :guess, :interval, :stats, :no, :last_result
 
-  def initialize(@dest : Kafka::Cluster::Broker, @count : Int32, @guess : Bool)
+  def initialize(@dest : Kafka::Broker, @count : Int32, @guess : Bool)
     @interval = 1.second
     @stats = Utils::EnumStatistics(Result::Code).new
     @no = 0

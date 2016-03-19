@@ -1,4 +1,4 @@
-class Kafka::Cluster::Broker
+class Kafka::Broker
   getter! host
   getter! port
 

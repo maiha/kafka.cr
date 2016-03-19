@@ -121,7 +121,7 @@ EOF
 
     getter :interval, :stats, :no
 
-    def initialize(@dest : Kafka::Cluster::Broker, @broker_count : Int32, @colorize : Bool)
+    def initialize(@dest : Kafka::Broker, @broker_count : Int32, @colorize : Bool)
       @stats = Utils::EnumStatistics(Result::Code).new
       @ch  = Channel(Result).new
       @out = Channel(String).new
@@ -154,7 +154,7 @@ EOF
   end
   
   def execute
-    watchers = args.map{|b| BrokerWatcher.new(Kafka::Cluster::Broker.parse(b), args.size, colorize) }
+    watchers = args.map{|b| BrokerWatcher.new(Kafka::Broker.parse(b), args.size, colorize) }
     if watchers.empty?
       die "no brokers"
     end
