@@ -17,17 +17,7 @@ module Kafka::Protocol::Structure
   end
 
   class PartitionOffset
-    def count
-      return 0 if offsets.empty?
-      first = offsets.first.not_nil!
-      last = offsets.last.not_nil!
-      return [first - last, 0].max
-    end
-
-    def offset
-      return 0_i64 if offsets.empty?
-      return offsets.first.not_nil!
-    end
+    include Kafka::OffsetsReader
   end
 
   class MetadataResponse

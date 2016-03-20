@@ -11,7 +11,11 @@ class Kafka
     offset : Int64 do
 
     def inspect(io : IO)
-      io << %{"%s[%s]#%s"} % [topic, partition, offset]
+      if offset == -1
+        io << %{"%s[%s]"} % [topic, partition]
+      else
+        io << %{"%s[%s]#%s"} % [topic, partition, offset]
+      end
     end
   end
 
@@ -39,8 +43,45 @@ class Kafka
   end
 
   class MessageNotFound < Exception
+    getter! index
+
     def initialize(@index : Kafka::Index)
       super("message not found: #{@index}")
+    end
+  end
+
+  module OffsetsReader
+    abstract def offsets : Array(Int64)
+
+    def count
+      return 0 if offsets.empty?
+      first = offsets.first.not_nil!
+      last = offsets.last.not_nil!
+      return [first - last, 0].max
+    end
+
+    def offset
+      return 0_i64 if offsets.empty?
+      return offsets.first.not_nil!
+    end
+  end
+
+  record Offset,
+    index : Kafka::Index,
+    offsets : Array(Int64) do
+
+    include OffsetsReader
+
+    def inspect(io : IO)
+      io << "Kafka::Offset(" << index << ", count=" << count << ", offsets=" << offsets << ")"
+    end
+  end
+
+  class OffsetNotFound < Exception
+    getter! index
+
+    def initialize(@index : Kafka::Index, msg : String = "offset not found")
+      super("#{msg}: #{@index}")
     end
   end
 end

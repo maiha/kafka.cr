@@ -44,7 +44,10 @@ module Kafka::Protocol::Structure
           true
       end
 
-      delegate :errmsg, "Kafka::Protocol"
+      # expects error_code
+      def errmsg
+        Kafka::Protocol.errmsg(error_code)
+      end
     end
   end
 

@@ -1,13 +1,12 @@
 name: kafka
-version: 0.4.0
+version: 0.5.0
 
 authors:
   - maiha <maiha@wota.jp>
 
 dependencies:
   msgpack:
-    github: maiha/msgpack-crystal
-    branch: support-binary
+    github: benoist/msgpack-crystal
   spec2:
     github: waterlink/spec2.cr
     version: ~> 0.7.1
