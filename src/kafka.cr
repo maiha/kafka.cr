@@ -1,10 +1,7 @@
 class Kafka
-  module Request
-  end
-
-  module Response
-  end
 end
+
+require "./kafka/data"
 
 require "./utils/*"
 require "./kafka/*"
