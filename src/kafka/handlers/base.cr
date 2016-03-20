@@ -6,7 +6,7 @@ module Kafka::Handlers
       false
     end
 
-    def request(request : Kafka::Protocol::Request)
+    def request(request : Kafka::Request)
     end
 
     def request(bytes : Slice(UInt8))
@@ -18,13 +18,13 @@ module Kafka::Handlers
     def recv(bytes : Slice(UInt8))
     end
 
-    def respond(response : Kafka::Protocol::Response)
+    def respond(response : Kafka::Response)
     end
 
-    def completed(request : Kafka::Protocol::Request, response : Kafka::Protocol::Response)
+    def completed(request : Kafka::Request, response : Kafka::Response)
     end
 
-    def failed(request : Kafka::Protocol::Request, err)
+    def failed(request : Kafka::Request, err)
     end
   end
 end

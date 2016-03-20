@@ -12,15 +12,15 @@ module Kafka::Handlers
 
     def initialize
       @verbose   = false
-      @request   = ->(req: Kafka::Protocol::Request) {}
+      @request   = ->(req: Kafka::Request) {}
       @send      = ->(bytes: Slice(UInt8)) {}
       @recv      = ->(bytes: Slice(UInt8)) {}
-      @respond   = ->(res: Kafka::Protocol::Response) {}
-      @completed = ->(req: Kafka::Protocol::Request, res: Kafka::Protocol::Response) {}
-      @failed    = ->(req: Kafka::Protocol::Request, err: Exception) {}
+      @respond   = ->(res: Kafka::Response) {}
+      @completed = ->(req: Kafka::Request, res: Kafka::Response) {}
+      @failed    = ->(req: Kafka::Request, err: Exception) {}
     end
 
-    def request(req : Kafka::Protocol::Request)
+    def request(req : Kafka::Request)
       @request.call(req)
     end
 
@@ -32,15 +32,15 @@ module Kafka::Handlers
       @recv.call(bytes)
     end
 
-    def respond(res : Kafka::Protocol::Response)
+    def respond(res : Kafka::Response)
       @respond.call(res)
     end
 
-    def completed(req : Kafka::Protocol::Request, res : Kafka::Protocol::Response)
+    def completed(req : Kafka::Request, res : Kafka::Response)
       @completed.call(req, res)
     end
 
-    def failed(req : Kafka::Protocol::Request, err : Exception)
+    def failed(req : Kafka::Request, err : Exception)
       @failed.call(req, err)
     end
   end

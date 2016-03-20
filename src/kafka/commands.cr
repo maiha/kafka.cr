@@ -4,11 +4,11 @@ class Kafka
   module Commands
     include Kafka::Protocol::Utils
 
-    def execute(request : Kafka::Protocol::Request, handler : Kafka::Handler)
+    def execute(request : Kafka::Request, handler : Kafka::Handler)
       Kafka::Execution.execute(connection, request, handler)
     end
 
-    def execute(request : Kafka::Protocol::Request)
+    def execute(request : Kafka::Request)
       execute(request, handler)
     end
   end

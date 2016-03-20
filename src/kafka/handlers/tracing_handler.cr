@@ -23,8 +23,8 @@ module Kafka::Handlers
       false
     end
 
-    def request(request : Kafka::Protocol::Request)
-      traces << "request(Kafka::Protocol::Request)"
+    def request(request : Kafka::Request)
+      traces << "request(Kafka::Request)"
     end
 
     def request(bytes : Slice(UInt8))
@@ -39,16 +39,16 @@ module Kafka::Handlers
       traces << "recv(Slice(UInt8))"
     end
 
-    def respond(response : Kafka::Protocol::Response)
-      traces << "respond(Kafka::Protocol::Response)"
+    def respond(response : Kafka::Response)
+      traces << "respond(Kafka::Response)"
     end
 
-    def completed(request : Kafka::Protocol::Request, response : Kafka::Protocol::Response)
-      traces << "completed(Kafka::Protocol::Request,Kafka::Protocol::Response)"
+    def completed(request : Kafka::Request, response : Kafka::Response)
+      traces << "completed(Kafka::Request,Kafka::Response)"
     end
 
-    def failed(request : Kafka::Protocol::Request, err : Exception)
-      traces << "failed(Kafka::Protocol::Request,Exception)"
+    def failed(request : Kafka::Request, err : Exception)
+      traces << "failed(Kafka::Request,Exception)"
     end
   end
 end

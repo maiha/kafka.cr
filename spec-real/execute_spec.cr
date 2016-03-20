@@ -13,11 +13,11 @@ describe Kafka::Execution do
       kafka.execute(request, handler)
 
       expect(handler.traces).to eq [
-        "request(Kafka::Protocol::Request)",
+        "request(Kafka::Request)",
         "send(Slice(UInt8))",
         "recv(Slice(UInt8))",
-        "respond(Kafka::Protocol::Response)",
-        "completed(Kafka::Protocol::Request,Kafka::Protocol::Response)"
+        "respond(Kafka::Response)",
+        "completed(Kafka::Request,Kafka::Response)"
       ]
     end
   end

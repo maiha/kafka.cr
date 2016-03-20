@@ -86,12 +86,12 @@ end
 module Kafka::Protocol
   macro api(no, name)
     class {{name}}Response < Structure::{{name}}Response
-      include Kafka::Protocol::Response
+      include Kafka::Response
       response
     end
 
     class {{name}}Request < Structure::{{name}}Request
-      include Kafka::Protocol::Request
+      include Kafka::Request
       request {{no}}, 0
 
       def self.response

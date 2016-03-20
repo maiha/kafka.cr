@@ -1,4 +1,9 @@
 class Kafka
+  module Request
+  end
+
+  module Response
+  end
 end
 
 require "./utils/*"
