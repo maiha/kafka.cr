@@ -20,7 +20,6 @@ module ResponseOperations
     end
     return false
   end
-  
   protected def print_res(res : Kafka::Protocol::FetchResponse, format)
     res.topics.each do |t|
       t.partitions.each do |p|
@@ -61,8 +60,8 @@ module ResponseOperations
   end
 
   protected def print_count(ress : Array(Kafka::Protocol::OffsetResponse))
-    records = ress.map{|res| extract_topic_counts(res)}.flatten
-    counts  = records.group_by(&.topic).map{|topic, ary| TopicCount.new(topic, ary.sum(&.count))}
+    records = ress.map { |res| extract_topic_counts(res) }.flatten
+    counts = records.group_by(&.topic).map { |topic, ary| TopicCount.new(topic, ary.sum(&.count)) }
     # [Info::TopicCount(@topic="a", @count=2), Info::TopicCount(@topic="b", @count=0)]
     counts.sort_by(&.topic).each do |r|
       puts "#{r.count}\t#{r.topic}"
@@ -70,15 +69,15 @@ module ResponseOperations
   end
 
   protected def print_json(ress : Array(Kafka::Protocol::OffsetResponse))
-    records = ress.map{|res| extract_topic_counts(res)}.flatten
-    counts  = records.group_by(&.topic).map{|topic, ary| [topic, ary.sum(&.count)]}
+    records = ress.map { |res| extract_topic_counts(res) }.flatten
+    counts = records.group_by(&.topic).map { |topic, ary| [topic, ary.sum(&.count)] }
     # [["a", 2], ["b", 0]]
     puts counts.to_h.to_json
   end
 
   protected def extract_topic_counts(res)
-    res.topic_partition_offsets.map{ |meta|
-      meta.partition_offsets.map{|po|
+    res.topic_partition_offsets.map { |meta|
+      meta.partition_offsets.map { |po|
         unless po.error_code == 0
           errmsg = Kafka::Protocol.errmsg(po.error_code)
           STDERR.puts "#{meta.topic}##{po.partition}\t#{errmsg}"

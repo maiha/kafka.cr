@@ -17,13 +17,14 @@ describe Kafka::Execution do
         "send(Slice(UInt8))",
         "recv(Slice(UInt8))",
         "respond(Kafka::Response)",
-        "completed(Kafka::Request,Kafka::Response)"
+        "completed(Kafka::Request,Kafka::Response)",
       ]
     end
   end
 
   describe "(with broken handler)" do
     class BadImplementedError < Exception; end
+
     class BrokenHandler < Kafka::Handlers::Tracing
       def verbose : Bool
         raise BadImplementedError.new("emmulates bad implemented handler")

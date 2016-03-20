@@ -4,7 +4,7 @@ class Kafka::Execution
     bytes = request.to_slice
 
     # send
-    connection.socket!          # to make sure that socket has been opened before spawn
+    connection.socket! # to make sure that socket has been opened before spawn
     spawn do
       connection.write bytes
       sleep 0

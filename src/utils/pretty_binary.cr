@@ -11,8 +11,8 @@ module Utils::PrettyBinary
     line.gsub(/\[((\d+)\s*(,\s*\d+)*)\]/) {
       orig = $1
       ary = orig.split(/\s*,\s*/).map(&.to_u8)
-      if ary.all?{|i| 0 <= i < 256}
-        s = Slice.new(ary.size) {|i| ary[i]}
+      if ary.all? { |i| 0 <= i < 256 }
+        s = Slice.new(ary.size) { |i| ary[i] }
         pretty_binary(s)
       else
         orig

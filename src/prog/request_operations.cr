@@ -13,7 +13,7 @@ module RequestOperations
 
   protected def build_offset_request(topics, partition, replica = -1)
     po = Kafka::Protocol::Structure::Partition.new(partition, latest_offset = -1_i64, max_offsets = 999999999)
-    taps = topics.map{|t| Kafka::Protocol::Structure::TopicAndPartitions.new(t, [po])}
+    taps = topics.map { |t| Kafka::Protocol::Structure::TopicAndPartitions.new(t, [po]) }
     return Kafka::Protocol::OffsetRequest.new(0, app_name, replica, taps)
   end
 
@@ -35,7 +35,7 @@ module RequestOperations
 
       case meta.name
       when "__consumer_offsets"
-        next                    # skip
+        next # skip
       else
         names << meta.name
       end
@@ -43,7 +43,6 @@ module RequestOperations
 
     return names
   end
-    
   protected def resolve_leader!(topic, partition)
     meta = fetch_topic_metadata([topic], app_name)
     meta.topics.each do |t|

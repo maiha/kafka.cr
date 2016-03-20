@@ -13,7 +13,7 @@ describe Kafka::Protocol::Structure::Builder do
       # b#0     leader=2,replica=[2],isr=[2]
 
       req = res.to_offset_requests
-      req.keys.sort.should eq([1,2])
+      req.keys.sort.should eq([1, 2])
 
       # [leader:1]
       # => [("a", [1])]

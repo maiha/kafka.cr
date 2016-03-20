@@ -3,10 +3,10 @@ require "./spec_helper"
 describe Kafka::Protocol::FetchRequest do
   it "to_kafka" do
     partition = Structure::FetchRequestPartitions.new(
-                partition = 0,
-                offset = 0_i64,
-                max_bytes = 1024
-              )
+      partition = 0,
+      offset = 0_i64,
+      max_bytes = 1024
+    )
     tfos = [Structure::FetchRequestTopics.new("t1", [partition])]
 
     req = Kafka::Protocol::FetchRequest.new(
@@ -26,7 +26,6 @@ describe Kafka::Protocol::FetchResponse do
   describe "(3: UnknownTopicOrPartitionCode)" do
     it "from_kafka" do
       res = Kafka::Protocol::FetchResponse.from_kafka(bytes(0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 1, 0, 13, 115, 101, 118, 101, 110, 46, 99, 105, 46, 104, 116, 116, 112, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0))
-                                                            
       res.correlation_id.should eq(0)
       res.topics.size.should eq(1)
 
@@ -37,7 +36,7 @@ describe Kafka::Protocol::FetchResponse do
       partition.partition.should eq(0)
       partition.error_code.should eq(3)
       partition.high_water_mark.should eq(-1)
-#      partition.message_sets.size.should eq(0)
+      #      partition.message_sets.size.should eq(0)
     end
   end
 
@@ -45,8 +44,7 @@ describe Kafka::Protocol::FetchResponse do
     it "from_kafka" do
       res = Kafka::Protocol::FetchResponse.from_kafka(bytes(0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
 
-#      0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116
-      
+      #      0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116
       res.correlation_id.should eq(0)
       res.topics.size.should eq(1)
 
@@ -57,7 +55,7 @@ describe Kafka::Protocol::FetchResponse do
       partition.partition.should eq(0)
       partition.error_code.should eq(0)
       partition.high_water_mark.should eq(1)
-#      partition.message_sets.size.should eq(0)
+      #      partition.message_sets.size.should eq(0)
     end
   end
 end

@@ -4,7 +4,7 @@ class Kafka
       def fetch(topic : String, partition : Int32, offset : Int64, timeout : Time::Span = 1.second, min_bytes : Int32 = 0, max_bytes : Int32 = 1024)
         req = build_fetch_request(topic, partition, offset, timeout.milliseconds, min_bytes, max_bytes)
         res = execute(req, handler)
-#        res = execute(req, resolve_leader!(topic, partition)) if not_leader?(res)
+        #        res = execute(req, resolve_leader!(topic, partition)) if not_leader?(res)
         return res
       end
 
@@ -19,5 +19,3 @@ class Kafka
     include Kafka::Commands::Fetch
   end
 end
-
-

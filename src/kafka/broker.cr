@@ -5,7 +5,7 @@ class Kafka::Broker
   DEFAULT_HOST = "127.0.0.1"
   DEFAULT_PORT = 9092
 
-  def initialize(@host : String, @port = DEFAULT_PORT : Int32)
+  def initialize(@host : String, @port : Int32 = DEFAULT_PORT)
   end
 
   def self.default

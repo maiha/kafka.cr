@@ -44,7 +44,7 @@ module Options
       option_{{name.id.stringify.id}}
     {% end %}
   end
-  
+
   macro def new_parser : OptionParser
     OptionParser.new.tap{|p|
       {% for name in @type.methods.map(&.name.stringify) %}
@@ -62,7 +62,6 @@ module Options
   end
 
   val parser = new_parser
-  
   protected def parse_args!
     parser.parse(args)
     if help
@@ -75,9 +74,8 @@ module Options
     die(err)
   end
 
-  ######################################################################
-  ### concrete options
-  
+  # #####################################################################
+  # ## concrete options
   macro option_all
     option all : Bool, "-a", "--all", "Process all data", false
   end

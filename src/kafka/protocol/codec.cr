@@ -1,5 +1,5 @@
-######################################################################
-### from kafka
+# #####################################################################
+# ## from kafka
 
 def Int8.from_kafka(io : IO, debug_level = -1, hint = "")
   on_debug_head_address
@@ -68,8 +68,8 @@ def Array.from_kafka(io : IO, debug_level = -1, hint = "")
   return ary
 end
 
-######################################################################
-### to kafka
+# #####################################################################
+# ## to kafka
 struct Int16
   def to_kafka(io : IO)
     io.write_bytes(to_u16, IO::ByteFormat::BigEndian)
@@ -108,4 +108,3 @@ class Array
     each(&.to_kafka(io))
   end
 end
-

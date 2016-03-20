@@ -10,7 +10,7 @@ module Utils::GuessBinary
     def self.match?(bytes : Slice(UInt8))
       true
     end
-    
+
     def initialize(@text : String, @bytes : Slice(UInt8))
     end
 
@@ -24,7 +24,7 @@ module Utils::GuessBinary
       super("(unknown) #{bytes.inspect}", bytes)
     end
   end
-  
+
   class Null < Guessed
     def self.match?(bytes : Slice(UInt8))
       bytes.empty?
@@ -34,7 +34,7 @@ module Utils::GuessBinary
       super("(null) #{bytes.inspect}", bytes)
     end
   end
-  
+
   class Msgpack < Guessed
     def self.match?(bytes : Slice(UInt8))
       128 <= bytes.first.not_nil! <= 159
@@ -46,7 +46,7 @@ module Utils::GuessBinary
       super("(msgpack) #{value}", bytes)
     end
   end
-  
+
   def guess_binary(bytes : Slice(UInt8)) : Guessed
     [Null, Msgpack].each do |decoder|
       return decoder.new(bytes) if decoder.match?(bytes)

@@ -1,6 +1,6 @@
 module Kafka::Protocol::Structure
-  ######################################################################
-  ### Codec
+  # #####################################################################
+  # ## Codec
 
   def MessageSetEntry.from_kafka(io : IO, debug_level = -1, hint = "")
     on_debug_head_padding
@@ -12,7 +12,7 @@ module Kafka::Protocol::Structure
     limit_pos = start_pos + size
     begin
       loop do
-        break if io.pos == io.bytesize  # maybe no more MessageSet
+        break if io.pos == io.bytesize # maybe no more MessageSet
         sets << MessageSet.from_kafka(io, debug_level_succ, :message_set)
       end
     rescue err : IO::EOFError

@@ -1,6 +1,6 @@
 module Kafka::Protocol::Structure
-  ######################################################################
-  ### accessor
+  # #####################################################################
+  # ## accessor
 
   class FetchResponsePartition
     delegate message_sets, "message_set_entry"
@@ -12,7 +12,7 @@ module Kafka::Protocol::Structure
 
   class OffsetRequest
     def pretty_topic_partitions
-      topic_partitions.reduce({} of String => Array(Int32)){|hash, tap| hash[tap.topic] = tap.partitions.map(&.partition) ; hash}
+      topic_partitions.reduce({} of String => Array(Int32)) { |hash, tap| hash[tap.topic] = tap.partitions.map(&.partition); hash }
     end
   end
 
@@ -20,7 +20,7 @@ module Kafka::Protocol::Structure
     def count
       return 0 if offsets.empty?
       first = offsets.first.not_nil!
-      last  = offsets.last.not_nil!
+      last = offsets.last.not_nil!
       return [first - last, 0].max
     end
 
@@ -29,10 +29,10 @@ module Kafka::Protocol::Structure
       return offsets.first.not_nil!
     end
   end
-  
+
   class MetadataResponse
     def broker_maps
-      brokers.reduce({} of Int32 => Kafka::Broker){|hash, b| hash[b.node_id] = Kafka::Broker.new(b.host, b.port); hash}
+      brokers.reduce({} of Int32 => Kafka::Broker) { |hash, b| hash[b.node_id] = Kafka::Broker.new(b.host, b.port); hash }
     end
 
     def broker!(id : Int32)

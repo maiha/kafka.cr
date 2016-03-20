@@ -7,4 +7,3 @@ require "./macros"
 require "./options"
 require "./request_operations"
 require "./response_operations"
-
