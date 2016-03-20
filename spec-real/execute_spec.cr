@@ -12,13 +12,7 @@ describe Kafka::Execution do
     it "invoke handlers in order" do
       kafka.execute(request, handler)
 
-      expect(handler.traces).to eq [
-        "request(Kafka::Request)",
-        "send(Slice(UInt8))",
-        "recv(Slice(UInt8))",
-        "respond(Kafka::Response)",
-        "completed(Kafka::Request,Kafka::Response)",
-      ]
+      expect(handler.traces).to eq ["request", "send", "recv", "respond", "completed"]
     end
   end
 
