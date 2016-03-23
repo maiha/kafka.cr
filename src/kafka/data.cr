@@ -50,6 +50,13 @@ class Kafka
     end
   end
 
+  record TopicInfo,
+    name : String,
+    partition : Int32,
+    leader : Int32,
+    replicas : Array(Int32),
+    isrs : Array(Int32)
+
   module OffsetsReader
     abstract def offsets : Array(Int64)
 
