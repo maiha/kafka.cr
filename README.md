@@ -9,12 +9,31 @@ kafka utils for crystal
 ## Installation
 
 - first type `crystal deps` to download related library
-- then, type `make` that generates `bin/kafka-*`
-- NOTE: works on only 0.11.1 and 0.12.0
+- NOTE: works on only 0.11.1, 0.12.x and 0.13.x
+
+## components
+
+- bin: standalone kafka utility applications (x86 static binary)
+- lib: crystal level library to use kafka
+
+## lib
+
+```
+require "kafka"
+
+kafka = Kafka.new("localhost", 9092)
+
+kafka.topics.map(&.name)  # => ["t1", ...]
+kafka.fetch("t1", partition = 0, offset = 0_i64)  # => Kafka::Message("t1[0]#0", "test")
+
+kafka.close
+```
 
 ## bin
 
-#### utils
+- type `make` that generates `bin/kafka-*`
+
+### created binaries (for utils)
 
 - kafka-broker : Show broker information. "-j" causes json output.
 - kafka-cluster-watch : Report cluster information continually.
@@ -24,13 +43,11 @@ kafka utils for crystal
 - kafka-ping : Ping to a broker like unix ping.
 - kafka-topics : Show topic information about leader, replicas, isrs. (need exact leaders)
 
-#### kafka protocols study
+### created binaries (for kafka protocols study)
 
 - kafka-heartbeat : Send heartbeat request(api:12). [experimental]
 - kafka-metadata : Send metadata request(api:3).
 - kafka-offset : Send offset request(api:2).
-
-## Usage
 
 ### kafka-info
 
@@ -113,7 +130,7 @@ make
 
 - `make test`
 
-#### with real brokers (experimental)
+### with real brokers (experimental)
 
 - `make spec-real`
 - this expects kafka broker is running on "localhost:9092"
