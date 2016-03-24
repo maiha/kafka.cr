@@ -4,7 +4,7 @@ class Fetch < App
   include Options
   
   option max_wait : Int32, "--max-wait MSEC", "The max wait time is the maximum amount of time in milliseconds to block waiting", 1000
-  option min_bytes : Int32, "--max-bytes SIZE", "This is the minimum number of bytes of messages", 0
+  option min_bytes : Int32, "--min-bytes SIZE", "This is the minimum number of bytes of messages", 0
   option last : Bool, "-l", "--last", "Show last message", false
   option strict : Bool, "--strict", "Do not discover leader broker automatically", false
   options :broker, :partition, :topic, :offset, :max_bytes, :raw, :guess, :verbose, :version, :help
