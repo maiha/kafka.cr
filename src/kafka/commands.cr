@@ -34,6 +34,42 @@ class Kafka
     end
 
     ######################################################################
+    ### offset
+
+    include Kafka::Commands::Offset
+
+    # Returns the offset information of the topic and partition
+    #
+    # Example:
+    #
+    # ```
+    # kafka.offset("t1", 0) # => Kafka::Offset("t1[0]", count=102, offsets=[102, 0])
+    # ```
+    def offset(topic : String, partition : Int32)
+      idx = Kafka::Index.new(topic, partition, -1_i64)
+      opt = OffsetOption.new(-1_i64, 999999999)
+      offset(idx, opt)
+    end
+    
+    ######################################################################
+    ### fetch
+
+    include Kafka::Commands::Fetch
+
+    # Returns the message in the topic and partition and offset
+    #
+    # Example:
+    #
+    # ```
+    # kafka.fetch("t1", 0, 0_i64) # => Kafka::Message("t1[0]#0", "test")
+    # ```
+    def fetch(topic : String, partition : Int32, offset : Int64, timeout : Time::Span = 1.second, min_bytes : Int32 = 0, max_bytes : Int32 = 1024)
+      idx = Kafka::Index.new(topic, partition, offset)
+      opt = FetchOption.new(timeout, min_bytes, max_bytes)
+      fetch(idx, opt)
+    end
+
+    ######################################################################
     ### general
 
     def execute(request : Kafka::Request, handler : Kafka::Handler)

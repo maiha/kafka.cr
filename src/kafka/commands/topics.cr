@@ -16,7 +16,7 @@ class Kafka
       end
 
       private def fetch_topics_response(req)
-        execute(req, handler)
+        execute(req)
       end
 
       private def extract_message!(req, res, opt)

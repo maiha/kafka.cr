@@ -5,12 +5,6 @@ class Kafka
 
       record FetchOption, timeout, min_bytes, max_bytes
 
-      def fetch(topic : String, partition : Int32, offset : Int64, timeout : Time::Span = 1.second, min_bytes : Int32 = 0, max_bytes : Int32 = 1024)
-        idx = Kafka::Index.new(topic, partition, offset)
-        opt = FetchOption.new(timeout, min_bytes, max_bytes)
-        fetch(idx, opt)
-      end
-
       def fetch(index : Kafka::Index, opt : FetchOption)
         res = fetch_response(index, opt)
         return extract_message!(index, res)
@@ -18,7 +12,7 @@ class Kafka
 
       def fetch_response(index : Kafka::Index, opt : FetchOption)
         req = build_fetch_request(index, opt)
-        res = execute(req, handler)
+        res = execute(req)
         #        res = execute(req, resolve_leader!(topic, partition)) if not_leader?(res)
         return res
       end
@@ -42,7 +36,5 @@ class Kafka
         return FetchRequest.new(0, client_id, replica, opt.timeout.milliseconds, opt.min_bytes, ts)
       end
     end
-
-    include Kafka::Commands::Fetch
   end
 end

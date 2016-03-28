@@ -5,12 +5,6 @@ class Kafka
 
       record OffsetOption, latest_offset, max_offsets
 
-      def offset(topic : String, partition : Int32)
-        idx = Kafka::Index.new(topic, partition, -1_i64)
-        opt = OffsetOption.new(-1_i64, 999999999)
-        offset(idx, opt)
-      end
-
       def offset(index : Kafka::Index, opt : OffsetOption)
         res = offset_response(index, opt)
         return extract_offset!(index, res)
@@ -18,7 +12,7 @@ class Kafka
 
       def offset_response(index : Kafka::Index, opt : OffsetOption)
         req = build_offset_request(index, opt)
-        res = execute(req, handler)
+        res = execute(req)
         return res
       end
 
@@ -43,7 +37,5 @@ class Kafka
         raise Kafka::OffsetNotFound.new(index)
       end
     end
-
-    include Kafka::Commands::Offset
   end
 end
