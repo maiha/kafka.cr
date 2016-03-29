@@ -48,6 +48,10 @@ module Kafka::Protocol::Structure
       def errmsg
         Kafka::Protocol.errmsg(error_code)
       end
+
+      def error?
+        error_code != 0
+      end
     end
   end
 

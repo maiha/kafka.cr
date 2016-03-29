@@ -51,7 +51,8 @@ class Kafka
   end
 
   record MetadataInfo,
-    brokers : Array(Broker)
+    brokers : Array(Broker),
+    topics : Array(TopicInfo | TopicError)
   
   record TopicInfo,
     name : String,
@@ -60,6 +61,12 @@ class Kafka
     replicas : Array(Int32),
     isrs : Array(Int32)
 
+  record TopicError,
+    name : String,
+    partition : Int32,
+    code : Int16,
+    error : String
+  
   module OffsetsReader
     abstract def offsets : Array(Int64)
 

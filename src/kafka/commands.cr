@@ -33,8 +33,11 @@ class Kafka
     # Example:
     #
     # ```
-    # kafka.metadata # => [Kafka::TopicInfo, ...]
+    # kafka.metadata # => [Kafka::MetadataInfo, ...]
+    # kafka.metadata.brokers # => [#<Kafka::Broker @host="localhost", @port=9092>]
+    # kafka.metadata.topics # => [Kafka::TopicInfo(@name="t1", @partition=0, @leader=1, @replicas=[1], @isrs=[1])]
     # ```
+    # - NOTE: topics returns one of Kafka::TopicInfo and Kafka::TopicError
     def metadata(topics : Array(String))
       metadata(topics, MetadataOption.zero)
     end

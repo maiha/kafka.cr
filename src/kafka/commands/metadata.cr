@@ -29,7 +29,20 @@ class Kafka
 
       private def extract_metadata_info!(res : MetadataResponse)
         brokers = res.brokers.map{|b| Kafka::Broker.new(b.host, b.port)}
-        MetadataInfo.new(brokers)
+        topics  = res.topics.map{|t|
+          if t.error?
+            Kafka::TopicError.new(t.name, -1, t.error_code, t.errmsg)
+          else
+            t.partitions.map{|p|
+              if p.error?
+                Kafka::TopicError.new(t.name, p.id, p.error_code, p.errmsg)
+              else
+                Kafka::TopicInfo.new(t.name, p.id, p.leader, p.replicas, p.isrs)
+              end
+            }
+          end
+        }.flatten
+        MetadataInfo.new(brokers, topics)
       end
     end
   end
