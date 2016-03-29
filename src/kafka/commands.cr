@@ -6,6 +6,51 @@ class Kafka
     include Kafka::Protocol::Utils
 
     ######################################################################
+    ### 1: fetch
+
+    include Kafka::Commands::Fetch
+
+    # Returns the message in the topic and partition and offset
+    #
+    # Example:
+    #
+    # ```
+    # kafka.fetch("t1", 0, 0_i64) # => Kafka::Message("t1[0]#0", "test")
+    # ```
+    def fetch(topic : String, partition : Int32, offset : Int64, timeout : Time::Span = 1.second, min_bytes : Int32 = 0, max_bytes : Int32 = 1024)
+      idx = Kafka::Index.new(topic, partition, offset)
+      opt = FetchOption.new(timeout, min_bytes, max_bytes)
+      fetch(idx, opt)
+    end
+
+    ######################################################################
+    ### 3: metadata
+
+    include Kafka::Commands::Metadata
+
+    # Returns the metadata information
+    #
+    # Example:
+    #
+    # ```
+    # kafka.metadata # => [Kafka::TopicInfo, ...]
+    # ```
+    def metadata(topics : Array(String))
+      metadata(topics, MetadataOption.zero)
+    end
+
+    # as same as `metadata` except it returns raw response object
+    #
+    # Example:
+    #
+    # ```
+    # kafka.raw_metadata # => #<Kafka::Protocol::MetadataResponse:0x1651180 @brokers=... @topics...>
+    # ```
+    def raw_metadata(topics : Array(String))
+      raw_metadata(topics, MetadataOption.zero)
+    end
+
+    ######################################################################
     ### topic
 
     include Kafka::Commands::Topics
@@ -49,24 +94,6 @@ class Kafka
       idx = Kafka::Index.new(topic, partition, -1_i64)
       opt = OffsetOption.new(-1_i64, 999999999)
       offset(idx, opt)
-    end
-    
-    ######################################################################
-    ### fetch
-
-    include Kafka::Commands::Fetch
-
-    # Returns the message in the topic and partition and offset
-    #
-    # Example:
-    #
-    # ```
-    # kafka.fetch("t1", 0, 0_i64) # => Kafka::Message("t1[0]#0", "test")
-    # ```
-    def fetch(topic : String, partition : Int32, offset : Int64, timeout : Time::Span = 1.second, min_bytes : Int32 = 0, max_bytes : Int32 = 1024)
-      idx = Kafka::Index.new(topic, partition, offset)
-      opt = FetchOption.new(timeout, min_bytes, max_bytes)
-      fetch(idx, opt)
     end
 
     ######################################################################

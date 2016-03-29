@@ -50,6 +50,9 @@ class Kafka
     end
   end
 
+  record MetadataInfo,
+    brokers : Array(Broker)
+  
   record TopicInfo,
     name : String,
     partition : Int32,
