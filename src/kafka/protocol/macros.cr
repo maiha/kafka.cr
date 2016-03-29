@@ -101,7 +101,7 @@ module Kafka::Protocol
       include Kafka::Request
       request {{no}}, 0
 
-      def self.response
+      def {{name}}Request.response
         Kafka::Protocol::{{name}}Response
       end
     end
