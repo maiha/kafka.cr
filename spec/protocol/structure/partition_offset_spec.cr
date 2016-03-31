@@ -3,33 +3,41 @@ require "./spec_helper"
 include Kafka::Protocol::Structure
 
 describe Kafka::Protocol::Structure::PartitionOffset do
-  describe "count" do
-    testcases = {
-      [] of Int32  => 0,
-      [0]          => 0,
-      [436, 0]     => 436,
-      [97, 96, 94] => 3,
-    }
+  subject { PartitionOffset.new(0, 0_i16, offsets.map(&.to_i64)) }
 
-    testcases.each do |offsets, expected|
-      it "parse #{offsets.inspect} to #{expected}" do
-        PartitionOffset.new(0, 0_i16, offsets.map(&.to_i64)).count.should eq(expected)
-      end
+  describe "[]" do
+    let(offsets) { [] of Int32 }
+
+    it "#count, #offset" do
+      expect(subject.count).to eq(0)
+      expect(subject.offset).to eq(0)
     end
   end
 
-  describe "offset" do
-    testcases = {
-      [] of Int32  => 0,
-      [0]          => 0,
-      [436, 0]     => 436,
-      [97, 96, 94] => 97,
-    }
+  describe "[0]" do
+    let(offsets) { [0] }
 
-    testcases.each do |offsets, expected|
-      it "parse #{offsets.inspect} to #{expected}" do
-        PartitionOffset.new(0, 0_i16, offsets.map(&.to_i64)).offset.should eq(expected)
-      end
+    it "#count, #offset" do
+      expect(subject.count).to eq(0)
+      expect(subject.offset).to eq(0)
+    end
+  end
+
+  describe "[436, 0]" do
+    let(offsets) { [436, 0] }
+
+    it "#count, #offset" do
+      expect(subject.count).to eq(436)
+      expect(subject.offset).to eq(436)
+    end
+  end
+
+  describe "[97, 96, 94]" do
+    let(offsets) { [97, 96, 94] }
+
+    it "#count, #offset" do
+      expect(subject.count).to eq(3)
+      expect(subject.offset).to eq(97)
     end
   end
 end
