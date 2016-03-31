@@ -17,10 +17,14 @@ class Kafka
     # ```
     # kafka.produce_v1("t1", 0, "test")
     # ```
+    def produce_v0(topic : String, partition : Int32, body : String)
+      produce_v0(Kafka::Entry.new(topic, partition), Kafka::Data.new(body), ProduceOption.default)
+    end
+
     def produce_v1(topic : String, partition : Int32, body : String)
       produce_v1(Kafka::Entry.new(topic, partition), Kafka::Data.new(body), ProduceOption.default)
     end
-
+    
     ######################################################################
     ### 1: fetch
 

@@ -7,11 +7,13 @@ describe Kafka::Commands::Produce do
   # [prepare]
   # kafka-topics.sh --zookeeper localhost:2181 --create --topic 'tmp' --replication-factor=1 --partitions 1
 
-  describe "#produce_v1" do
+  describe "#produce_v0" do
     # TODO: this test expects "tmp" topic exists
     it "returns Kafka::Message when exists" do
-      mes = kafka.produce_v1("tmp", 0, "test")
-      expect(mes).to be_a(Kafka::Protocol::ProduceV1Response)
+#      kafka.handler.verbose = true
+      mes = kafka.produce_v0("t1", 0, "test")
+      expect(mes).to be_a(Kafka::Protocol::ProduceV0Response)
+      p mes
     end
 
     it "raises not found exception when missing" do

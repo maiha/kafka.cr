@@ -11,6 +11,28 @@ class Kafka
         ProduceOption.new(-1_i16, 1000)
       end
 
+      ######################################################################
+      ### v0
+
+      def produce_v0(entry : Kafka::Entry, data : Kafka::Data, opt : ProduceOption)
+        res = raw_produce_v0(entry, data, opt)
+        return extract_produce_info!(res)
+      end
+  
+      def raw_produce_v0(entry : Kafka::Entry, data : Kafka::Data, opt : ProduceOption)
+        req = build_produce_request_v0(entry, data, opt)
+        res = fetch_produce_response(req)
+        return res
+      end
+
+      private def build_produce_request_v0(entry : Kafka::Entry, data : Kafka::Data, opt : ProduceOption)
+        tp = Structure::TopicAndPartitionMessages.new(entry, data)
+        Kafka::Protocol::ProduceV0Request.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
+      end
+      
+      ######################################################################
+      ### v1
+      
       def produce_v1(entry : Kafka::Entry, data : Kafka::Data, opt : ProduceOption)
         res = raw_produce_v1(entry, data, opt)
         return extract_produce_info!(res)

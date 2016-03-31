@@ -17,20 +17,40 @@ module Kafka::Protocol::Structure
     message : Message
 
   class MessageSetEntry
+    SIZE_NOT_CALCULATED = -1
+
     getter size, message_sets
+    # NOTE: size is mutable for performance reasons
+
     def initialize(@size : Int32, @message_sets : Array(MessageSet))
     end
 
-    def self.new(message_sets : Array(MessageSet))
-      new(message_sets.size, message_sets)
+    def initialize(message_sets : Array(MessageSet))
+      initialize(SIZE_NOT_CALCULATED, message_sets)
     end
 
     def to_kafka(io : IO)
-      size.to_kafka(io)
-      message_sets.each do |set|
-        set.to_kafka(io)
+      case size
+      when SIZE_NOT_CALCULATED
+        to_kafka_with_calculation(io)
+      else
+        size.to_kafka(io)
+        message_sets.each do |set|
+          set.to_kafka(io)
+        end
       end
     end
+
+    private def to_kafka_with_calculation(io : IO)
+      fake = MemoryIO.new
+      message_sets.each do |set|
+        set.to_kafka(fake)
+      end
+
+      @size = fake.bytesize
+      @size.to_kafka(io)
+      io.write(fake.to_slice)
+    end    
   end
   
   structure Broker,
@@ -74,7 +94,7 @@ module Kafka::Protocol::Structure
       name : String,
       partitions : Array(PartitionMetadata)
 
-  structure ProduceRequest,
+  structure ProduceV0Request,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
@@ -91,21 +111,33 @@ module Kafka::Protocol::Structure
         partition : Int32,
         message_set_entry : MessageSetEntry
 
-  alias ProduceV1Request = ProduceRequest
-  
-  structure ProduceV1Response,
+  # same as ProduceV0Request
+  structure ProduceV1Request,
+    api_key : Int16,
+    api_version : Int16,
     correlation_id : Int32,
-    topics : Array(TopicProducedV1),
-    throttle_time : Int32
+    client_id : String,
+    required_acks : Int16,
+    timeout : Int32,
+    topic_partitions : Array(TopicAndPartitionMessages)
 
-    structure TopicProducedV1,
+  structure ProduceV0Response,
+    correlation_id : Int32,
+    topics : Array(TopicProducedV0)
+
+    structure TopicProducedV0,
       topic : String,
-      partitions : Array(PartitionProducedV1)
+      partitions : Array(PartitionProducedV0)
 
-      structure PartitionProducedV1,
+      structure PartitionProducedV0,
         partition : Int32,
         error_code : Int16,
         offset : Int64
+
+  structure ProduceV1Response,
+    correlation_id : Int32,
+    topics : Array(TopicProducedV0),
+    throttle_time : Int32
   
   structure OffsetRequest,
     api_key : Int16,

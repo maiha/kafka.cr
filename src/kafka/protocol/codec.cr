@@ -96,15 +96,25 @@ end
 
 class String
   def to_kafka(io : IO)
-    io.write_bytes(bytesize.to_u16, IO::ByteFormat::BigEndian)
-    io.write(to_slice)
+    if bytesize == 0
+      # A length of -1 indicates null
+      io.write_bytes(-1.to_u16, IO::ByteFormat::BigEndian)
+    else
+      io.write_bytes(bytesize.to_u16, IO::ByteFormat::BigEndian)
+      io.write(to_slice)
+    end
   end
 end
 
 struct Slice(T)
   def to_kafka(io : IO)
-    io.write_bytes(bytesize.to_u32, IO::ByteFormat::BigEndian)
-    io.write(to_slice)
+    if bytesize == 0
+      # A length of -1 indicates null
+      io.write_bytes(-1.to_u32, IO::ByteFormat::BigEndian)
+    else
+      io.write_bytes(bytesize.to_u32, IO::ByteFormat::BigEndian)
+      io.write(to_slice)
+    end
   end
 end
 
