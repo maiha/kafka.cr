@@ -10,10 +10,8 @@ describe Kafka::Commands::Produce do
   describe "#produce_v0" do
     # TODO: this test expects "tmp" topic exists
     it "returns Kafka::Message when exists" do
-#      kafka.handler.verbose = true
       mes = kafka.produce_v0("t1", 0, "test")
       expect(mes).to be_a(Kafka::Protocol::ProduceV0Response)
-      p mes
     end
 
     it "raises not found exception when missing" do
