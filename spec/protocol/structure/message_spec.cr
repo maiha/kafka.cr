@@ -1,27 +1,29 @@
 require "./spec_helper"
 
-include Kafka::Protocol::Structure
-
 describe Kafka::Protocol::Structure::Message do
-  it "codec" do
-    m1 = Message.new(
+  include Kafka::Protocol::Structure
+
+  describe "codec" do
+    let(m1) { Message.new(
       crc = 1,
       magic_byte = 2.to_i8,
       attributes = 3.to_i8,
       key = bytes(4),
       value = bytes(5,6)
-    )
+    )}
 
-    io = MemoryIO.new
-    m1.to_kafka(io)
+    it "creates binary and restore from it" do
+      io = MemoryIO.new
+      m1.to_kafka(io)
 
-    io.rewind
-    m2 = Message.from_kafka(io)
-    m2.crc.should eq(1)
-    m2.magic_byte.should eq(2)
-    m2.attributes.should eq(3)
-    m2.key.should eq(bytes(4))
-    m2.value.should eq(bytes(5,6))
+      io.rewind
+      m2 = Message.from_kafka(io)
+      expect(m2.crc).to eq(1)
+      expect(m2.magic_byte).to eq(2)
+      expect(m2.attributes).to eq(3)
+      expect(m2.key).to eq(bytes(4))
+      expect(m2.value).to eq(bytes(5,6))
+    end
   end
 
   it "calculates crc" do
@@ -29,9 +31,9 @@ describe Kafka::Protocol::Structure::Message do
     val = bytes(50, 48, 48)
     mes = Message.new(key, val)
 
-    mes.magic_byte.should eq(0)
-    mes.attributes.should eq(0)
-    mes.crc.should eq(1472827614)
+    expect(mes.magic_byte).to eq(0)
+    expect(mes.attributes).to eq(0)
+    expect(mes.crc).to eq(1472827614)
   end
 
   it "to_kafka with null key" do
@@ -46,6 +48,6 @@ describe Kafka::Protocol::Structure::Message do
 
     io = MemoryIO.new
     mes.to_kafka(io)
-    io.to_slice.should eq(bytes(89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
+    expect(io.to_slice).to eq(bytes(89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
   end
 end

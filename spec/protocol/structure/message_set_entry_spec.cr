@@ -15,27 +15,31 @@ describe Kafka::Protocol::Structure::MessageSetEntry do
   # (0000052)                  Binary[4](key) -> (-1)(null)
   # (0000056)                  Binary[4](value) -> (4)[116, 101, 115, 116]
 
-  it "from_kafka" do
-    io = MemoryIO.new(bytes(0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
-    entry = MessageSetEntry.from_kafka(io)
+  describe "from_kafka" do
+    let(io) { MemoryIO.new(bytes(0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116)) }
+    let(entry) { MessageSetEntry.from_kafka(io) }
+    let(set) { entry.message_sets[0].not_nil! }
 
-    entry.size.should eq(30)
+    it "creates object" do
+      expect(entry.size).to eq(30)
 
-    set = entry.message_sets[0].not_nil!
-    set.offset.should eq(0)
-    set.bytesize.should eq(18)
-    set.message.crc.should eq(1495943047)
-    set.message.magic_byte.should eq(0)
-    set.message.attributes.should eq(0)
-    set.message.key.should eq(Null)
-    set.message.value.should eq("test".to_slice)
+      expect(set.offset).to eq(0)
+      expect(set.bytesize).to eq(18)
+      expect(set.message.crc).to eq(1495943047)
+      expect(set.message.magic_byte).to eq(0)
+      expect(set.message.attributes).to eq(0)
+      expect(set.message.key).to eq(Null)
+      expect(set.message.value).to eq("test".to_slice)
+    end
   end
 
-  it "to_kafka" do
-    entry = MessageSetEntry.new([MessageSet.new("test")])
+  describe "to_kafka" do
+    let(entry) { MessageSetEntry.new([MessageSet.new("test")]) }
+    let(io) { MemoryIO.new }
 
-    io = MemoryIO.new
-    entry.to_kafka(io)
-    io.to_slice.should eq(bytes(0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
+    it "create binary" do
+      entry.to_kafka(io)
+      expect(io.to_slice).to eq(bytes(0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
+    end
   end
 end

@@ -17,11 +17,11 @@ class Kafka
     # ```
     # kafka.produce_v1("t1", 0, "test")
     # ```
-    def produce_v0(topic : String, partition : Int32, body : String)
+    def produce_v0(topic : String, partition : Int32, body : String | Slice(UInt8))
       produce_v0(Kafka::Entry.new(topic, partition), Kafka::Data.new(body), ProduceOption.default)
     end
 
-    def produce_v1(topic : String, partition : Int32, body : String)
+    def produce_v1(topic : String, partition : Int32, body : String | Slice(UInt8))
       produce_v1(Kafka::Entry.new(topic, partition), Kafka::Data.new(body), ProduceOption.default)
     end
     
