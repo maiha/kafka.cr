@@ -4,7 +4,7 @@ module Kafka::Protocol
   ######################################################################
   ### Api Code
 
-  api  0, Produce
+  api  0, Produce, 1
   api  1, Fetch
   api  2, Offset
   api  3, Metadata

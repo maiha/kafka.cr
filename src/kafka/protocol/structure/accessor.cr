@@ -8,22 +8,43 @@ module Kafka::Protocol::Structure
     Slice(UInt8).new(0)
   end
   
-  def Message.new(key : Bytes, value : Bytes)
-    bytes = Message.new(0, 0.to_i8, 0.to_i8, key, value).to_slice
-    slice = Slice(UInt8).new(bytes.bytesize - 4){|i| bytes[i]}
-    crc32 = Zlib.crc32(slice).to_i32
-    Message.new(crc32, 0.to_i8, 0.to_i8, key, value)
+  class Message
+    def initialize(key : Bytes, value : Bytes)
+      bytes = Message.new(0, 0.to_i8, 0.to_i8, key, value).to_slice
+      slice = Slice(UInt8).new(bytes.bytesize - 4){|i| bytes[i]}
+      crc32 = Zlib.crc32(slice).to_i32
+      initialize(crc32, 0.to_i8, 0.to_i8, key, value)
+    end
+
+    def initialize(value : Bytes)
+      initialize(Slice(UInt8).new(0), value)
+    end
   end
 
-  def Message.new(value : Bytes)
-    Message.new(null, value)
+  class MessageSet
+    def initialize(offset : Int64, message : Message)
+      bytesize = message.to_slice.bytesize
+      initialize(offset, bytesize, message)
+    end
+
+    # to produce
+    def initialize(message : Message)
+      initialize(-1_i64, message)
+    end
+
+    def initialize(body : Bytes)
+      initialize(Message.new(body))
+    end
+  end
+
+  class TopicAndPartitionMessages
+    def initialize(entry : Kafka::Entry, data : Kafka::Data)
+      ms = MessageSetEntry.new([MessageSet.new(data.body)])
+      pm = PartitionMessage.new(entry.partition, ms)
+      initialize(entry.topic, [pm])
+    end
   end
   
-  def MessageSet.new(offset : Int64, message : Message)
-    bytesize = message.to_slice.bytesize
-    MessageSet.new(offset, bytesize, message)
-  end
-
   ######################################################################
   ### accessor
 

@@ -6,6 +6,22 @@ class Kafka
     include Kafka::Protocol::Utils
 
     ######################################################################
+    ### 0: produce
+
+    include Kafka::Commands::Produce
+
+    # Produces data into kafka by v1
+    #
+    # Example:
+    #
+    # ```
+    # kafka.produce_v1("t1", 0, "test")
+    # ```
+    def produce_v1(topic : String, partition : Int32, body : String)
+      produce_v1(Kafka::Entry.new(topic, partition), Kafka::Data.new(body), ProduceOption.default)
+    end
+
+    ######################################################################
     ### 1: fetch
 
     include Kafka::Commands::Fetch

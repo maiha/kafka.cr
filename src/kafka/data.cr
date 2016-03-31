@@ -5,6 +5,22 @@ class Kafka
   module Response
   end
 
+  # An entry point to produce message, which contains topic and partition
+  record Entry,
+    topic : String,
+    partition : Int32
+
+  # A message itself to produce
+  record Data,
+    body : Slice(UInt8)
+
+  struct Data
+    def initialize(body : String)
+      initialize(body.to_slice)
+    end
+  end
+  
+  # A message index to consume it, which contains topic and partition and offset
   record Index,
     topic : String,
     partition : Int32,

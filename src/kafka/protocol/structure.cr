@@ -91,9 +91,22 @@ module Kafka::Protocol::Structure
         partition : Int32,
         message_set_entry : MessageSetEntry
 
-  structure ProduceResponse,
-    correlation_id : Int32
+  alias ProduceV1Request = ProduceRequest
+  
+  structure ProduceV1Response,
+    correlation_id : Int32,
+    topics : Array(TopicProducedV1),
+    throttle_time : Int32
 
+    structure TopicProducedV1,
+      topic : String,
+      partitions : Array(PartitionProducedV1)
+
+      structure PartitionProducedV1,
+        partition : Int32,
+        error_code : Int16,
+        offset : Int64
+  
   structure OffsetRequest,
     api_key : Int16,
     api_version : Int16,

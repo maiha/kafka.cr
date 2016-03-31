@@ -91,18 +91,22 @@ module Kafka::Protocol::Structure
 end
 
 module Kafka::Protocol
-  macro api(no, name)
-    class {{name}}Response < Structure::{{name}}Response
+  macro api(no, name, ver = 0)
+    {% klass = (ver == 0) ? name : (name.stringify + "V" + ver.stringify).id %}
+    # (ver==0): FooRequest
+    # (ver==1): FooV1Request
+    
+    class {{klass}}Response < Structure::{{klass}}Response
       include Kafka::Response
       response
     end
 
-    class {{name}}Request < Structure::{{name}}Request
+    class {{klass}}Request < Structure::{{klass}}Request
       include Kafka::Request
-      request {{no}}, 0
+      request {{no}}, {{ver}}
 
-      def {{name}}Request.response
-        Kafka::Protocol::{{name}}Response
+      def {{klass}}Request.response
+        Kafka::Protocol::{{klass}}Response
       end
     end
   end
