@@ -73,6 +73,18 @@ module Kafka::Protocol::Structure
       initialize(entry.topic, [pm])
     end
   end
+
+  class ProduceV0Response
+    def error?
+      topics.any?{|t| t.partitions.any?(&.error?)}
+    end
+  end
+  
+  class ProduceV1Response
+    def error?
+      topics.any?{|t| t.partitions.any?(&.error?)}
+    end
+  end
   
   class FetchResponsePartition
     delegate message_sets, "message_set_entry"
