@@ -10,6 +10,8 @@ class Kafka
 
     include Kafka::Commands::Produce
 
+    alias Payload = String | Binary
+    
     # Produces data into kafka by v1
     #
     # Example:
@@ -17,12 +19,22 @@ class Kafka
     # ```
     # kafka.produce_v1("t1", 0, "test")
     # ```
-    def produce_v0(topic : String, partition : Int32, body : String | Slice(UInt8))
-      produce_v0(Kafka::Entry.new(topic, partition), [Kafka::Data.new(body)], ProduceOption.default)
+    def produce_v0(topic : String, partition : Int32, body : Payload)
+      produce_v0(topic, partition, [body])
     end
 
-    def produce_v1(topic : String, partition : Int32, body : String | Slice(UInt8))
-      produce_v1(Kafka::Entry.new(topic, partition), Kafka::Data.new(body), ProduceOption.default)
+    # bulk insert
+    def produce_v0(topic : String, partition : Int32, bodies : Array(Payload))
+      produce_v0(Kafka::Entry.new(topic, partition), bodies.map{|b|Kafka::Data.new(b)}, ProduceOption.default)
+    end
+
+    def produce_v1(topic : String, partition : Int32, body : Payload)
+      produce_v1(topic, partition, [body])
+    end
+
+    # bulk insert
+    def produce_v1(topic : String, partition : Int32, bodies : Array(Payload))
+      produce_v1(Kafka::Entry.new(topic, partition), bodies.map{|b|Kafka::Data.new(b)}, ProduceOption.default)
     end
     
     ######################################################################

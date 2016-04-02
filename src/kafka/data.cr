@@ -5,6 +5,8 @@ class Kafka
   module Response
   end
 
+  alias Binary = Slice(UInt8)
+  
   # An entry point to produce message, which contains topic and partition
   record Entry,
     topic : String,

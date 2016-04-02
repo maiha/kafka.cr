@@ -33,19 +33,19 @@ class Kafka
       ######################################################################
       ### v1
       
-      def produce_v1(entry : Kafka::Entry, data : Kafka::Data, opt : ProduceOption)
-        res = raw_produce_v1(entry, data, opt)
+      def produce_v1(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+        res = raw_produce_v1(entry, datas, opt)
         return extract_produce_info!(res)
       end
   
-      def raw_produce_v1(entry : Kafka::Entry, data : Kafka::Data, opt : ProduceOption)
-        req = build_produce_request_v1(entry, data, opt)
+      def raw_produce_v1(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+        req = build_produce_request_v1(entry, datas, opt)
         res = fetch_produce_response(req)
         return res
       end
   
-      private def build_produce_request_v1(entry : Kafka::Entry, data : Kafka::Data, opt : ProduceOption)
-        tp = Structure::TopicAndPartitionMessages.new(entry, data)
+      private def build_produce_request_v1(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+        tp = Structure::TopicAndPartitionMessages.new(entry, datas)
         Kafka::Protocol::ProduceV1Request.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
       end
 
