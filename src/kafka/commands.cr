@@ -17,22 +17,36 @@ class Kafka
     # Example:
     #
     # ```
-    # kafka.produce_v1("t1", 0, "test")
+    # kafka.produce_v1("t1", "test")
     # ```
+    def produce_v0(topic : String, body : Payload)
+      produce_v0(topic, 0, [body])
+    end
+
     def produce_v0(topic : String, partition : Int32, body : Payload)
       produce_v0(topic, partition, [body])
     end
 
-    # bulk insert
+    def produce_v0(topic : String, bodies : Array(Payload))
+      produce_v0(topic, 0, bodies)
+    end
+
     def produce_v0(topic : String, partition : Int32, bodies : Array(Payload))
       produce_v0(Kafka::Entry.new(topic, partition), bodies.map{|b|Kafka::Data.new(b)}, ProduceOption.default)
+    end
+
+    def produce_v1(topic : String, body : Payload)
+      produce_v1(topic, 0, [body])
     end
 
     def produce_v1(topic : String, partition : Int32, body : Payload)
       produce_v1(topic, partition, [body])
     end
 
-    # bulk insert
+    def produce_v1(topic : String, bodies : Array(Payload))
+      produce_v1(topic, 0, bodies)
+    end
+    
     def produce_v1(topic : String, partition : Int32, bodies : Array(Payload))
       produce_v1(Kafka::Entry.new(topic, partition), bodies.map{|b|Kafka::Data.new(b)}, ProduceOption.default)
     end
