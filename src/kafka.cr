@@ -24,6 +24,17 @@ class Kafka
   include Kafka::Commands
 
   ######################################################################
+  ### printings
+
+  def inspect(io : IO)
+    if connected?
+      io << "Kafka('#{broker.host}:#{broker.port}'[connected])"
+    else
+      io << "Kafka('#{broker.host}:#{broker.port}'[closed])"
+    end
+  end
+
+  ######################################################################
   ### instance creations
 
   def self.open(broker : String = "localhost")
