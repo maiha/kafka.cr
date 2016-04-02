@@ -35,6 +35,21 @@ module Utils::GuessBinary
     end
   end
 
+  class Text < Guessed
+    def self.match?(bytes : Slice(UInt8))
+      s = String.new(bytes)
+      s.inspect
+      true
+    rescue
+      false
+    end
+
+    def initialize(bytes)
+      text = String.new(bytes)
+      super("(text) #{text.inspect}", bytes)
+    end
+  end
+
   class Msgpack < Guessed
     def self.match?(bytes : Slice(UInt8))
       128 <= bytes.first.not_nil! <= 159

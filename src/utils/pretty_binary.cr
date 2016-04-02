@@ -1,7 +1,6 @@
 module Utils::PrettyBinary
   def pretty_binary(bytes : Slice(UInt8)) : String
     s = String.new(bytes)
-    s.inspect
     return s.inspect
   rescue
     "(binary)#{bytes.inspect}"
