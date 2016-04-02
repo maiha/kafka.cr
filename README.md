@@ -9,7 +9,7 @@ kafka utils for crystal
 ## Installation
 
 - first type `crystal deps` to download related library
-- NOTE: works on only 0.11.1, 0.12.x and 0.13.x
+- NOTE: works on only 0.13.x and 0.14.x
 
 ## components
 
@@ -25,6 +25,9 @@ kafka = Kafka.new("localhost", 9092)
 
 kafka.topics.map(&.name)  # => ["t1", ...]
 kafka.fetch("t1", partition = 0, offset = 0_i64)  # => Kafka::Message("t1[0]#0", "test")
+
+kafka.produce_v0("t1", 0, "test v0")
+kafka.produce_v1("t1", 0, "test v1")
 
 kafka.close
 ```
@@ -72,14 +75,15 @@ t1#1     count=0 [0]
 - `bin/kafka-topics` shows topic names and metadatas
 
 ```
-% ./bin/kafka-topics -a
+% ./bin/kafka-topics
 t1
+tmp
+
+% ./bin/kafka-topics -c | sort -n
+0       t1
+6       tmp
 
 % ./bin/kafka-topics t1 t2
-t1
-ERROR: t2
-
-% ./bin/kafka-topics t1 t2 -v
 t1(0 => {leader=1,replica=[1],isr=[1]})
 ERROR: t2(UnknownTopicOrPartitionCode (3))
 ```
@@ -134,7 +138,8 @@ make
 
 - `make spec-real`
 - this expects kafka broker is running on "localhost:9092"
-- this expects kafka broker has a topic named "t1"
+- this expects kafka broker has a topic named "t1" and "tmp"
+- NOTE: spec-real works only on crystal-0.13.x, because it seems 0.14.x breaks compat about spec path
 
 ## Contributing
 

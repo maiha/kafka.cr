@@ -6,7 +6,11 @@ end
 
 macro var(name, default)
   def {{name.var.id}}
-    @{{name.var.id}} || {{default}}
+    if @{{name.var.id}}.nil?
+      {{default}}
+    else
+      @{{name.var.id}}.not_nil!
+    end
   end
 
   def {{name.var.id}}=(@{{name.var.id}} : {{name.type}})

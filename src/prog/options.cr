@@ -76,8 +76,8 @@ module Options
 
   # #####################################################################
   # ## concrete options
-  macro option_all
-    option all : Bool, "-a", "--all", "Process all data", false
+  macro option_all(default = false)
+    option all : Bool, "-a", "--all", "Process all data", {{default}}
   end
 
   macro option_count

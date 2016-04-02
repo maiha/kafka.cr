@@ -7,8 +7,11 @@ class Topics < App
   # parser.on("-p NUM", "--partitions=NUM", "The number of partitions for the topic") { |p| @partitions = p }
   # parser.on("-r NUM", "--replication-factor=NUM", "The number of replication factor for the topic") { |r| @replication_factor = r }
   option simple : Bool, "-s", "--simple", "Show topic names only", false
+  option count : Bool, "-c", "--count", "Just count simply", false
+  option before : Int64, "--before MSEC", "Used to ask for all messages before a certain time (ms)", -1
     
-  options :all, :broker, :consumer_offsets, :verbose, :version, :help
+  option_all true
+  options :broker, :consumer_offsets, :verbose, :version, :help
   
   usage <<-EOF
 Usage: #{app_name} [options] [topics]
@@ -37,12 +40,23 @@ EOF
     die "Sorry, `create' is not implemented yet"
   end
 
+  def do_count(topics)
+    meta = fetch_topic_metadata(topics, app_name)
+    ress = fetch_offsets(meta, before.to_i64)
+    print_count(ress)
+  end
+  
   def execute
-    if all
-      return do_list
-    end
-
     topics = args.reject(&.empty?)
+    self.all = false if topics.any?
+
+    if all
+      if count
+        return do_count(topics)
+      else
+        return do_list
+      end
+    end
 
 #    if create
 #      case topics.size
@@ -52,11 +66,13 @@ EOF
 #      end
 #    end
 
-    if topics.any?
+    die "no topics" unless topics.any?
+
+    if count
+      return do_count(topics)
+    else
       return do_show(topics)
     end
-
-    die "no topics"
 
   rescue err
     die err

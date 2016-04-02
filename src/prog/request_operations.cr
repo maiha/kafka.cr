@@ -21,6 +21,26 @@ module RequestOperations
     execute build_offset_request(topics, partition, replica)
   end
 
+  protected def fetch_offsets(meta : Kafka::Protocol::MetadataResponse, latest_offset : Int64)
+    maps = meta.broker_maps
+    broker = ->(id : Int32) {maps[id] || raise "[BUG] broker(#{id}) not found: meta=#{meta.brokers.inspect}"}
+
+    builder = Kafka::Protocol::Structure::Builder::LeaderBasedOffsetRequestsBuilder.new(meta)
+    builder.latest_offset = latest_offset
+    reqs = builder.build
+    
+    chan = Channel(Kafka::Protocol::OffsetResponse).new
+    reqs.each do |leader, req|
+      spawn {
+        req = Kafka::Protocol::OffsetRequest.new(0, "kafka-info", -1, req.topic_partitions)
+        res = execute(req, broker.call(leader))
+        chan.send(res)
+      }
+    end
+
+    return (1..reqs.size).map{|_| chan.receive}
+  end
+  
   protected def fetch_topic_names
     names = [] of String
 

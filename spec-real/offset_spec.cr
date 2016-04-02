@@ -10,7 +10,7 @@ describe Kafka::Commands::Offset do
 
   describe "#offset" do
     # TODO: this test expects "t1" topic exists
-    it "returns Kafka::Message when exists" do
+    it "returns Kafka::Message when topic exists (t1,0)" do
       offset = kafka.offset("t1", 0)
       expect(offset).to be_a(Kafka::Offset)
       expect(offset.index.topic).to eq("t1")
@@ -18,7 +18,7 @@ describe Kafka::Commands::Offset do
       expect(offset.count).to_be >= 1
     end
 
-    it "raises not found exception when missing" do
+    it "raises not found exception when topic is missing (_t1,0)" do
       expect{ kafka.offset("_t1", 0) }.to raise_error(Kafka::OffsetNotFound)
     end
   end

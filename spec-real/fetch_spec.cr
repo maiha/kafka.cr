@@ -10,7 +10,7 @@ describe Kafka::Commands::Fetch do
 
   describe "#fetch" do
     # TODO: this test expects "t1" topic exists
-    it "returns Kafka::Message when exists" do
+    it "returns Kafka::Message when topic and message exists (t1,0,0)" do
       #      kafka.handler.request = ->(req: Kafka::Request) { p req }
       #      kafka.handler.respond = ->(res: Kafka::Response) { p res }
       mes = kafka.fetch("t1", 0, 0_i64)
@@ -18,7 +18,7 @@ describe Kafka::Commands::Fetch do
       expect(mes.index).to eq(Kafka::Index.new("t1", 0, 0_i64))
     end
 
-    it "raises not found exception when missing" do
+    it "raises not found exception when missing (_t1,0,0)" do
       expect{ kafka.fetch("_t1", 0, 0_i64) }.to raise_error(Kafka::MessageNotFound)
     end
   end
