@@ -47,6 +47,10 @@ module Kafka::Protocol::Structure
       initialize(0_i64, message)
     end
 
+    def initialize(data : Kafka::Data)
+      initialize(data.body)
+    end
+
     def initialize(body : Bytes)
       initialize(Message.new(body))
     end
@@ -59,6 +63,12 @@ module Kafka::Protocol::Structure
   class TopicAndPartitionMessages
     def initialize(entry : Kafka::Entry, data : Kafka::Data)
       ms = MessageSetEntry.new([MessageSet.new(data.body)])
+      pm = PartitionMessage.new(entry.partition, ms)
+      initialize(entry.topic, [pm])
+    end
+
+    def initialize(entry : Kafka::Entry, datas : Array(Kafka::Data))
+      ms = MessageSetEntry.new(datas.map{|d| MessageSet.new(d)})
       pm = PartitionMessage.new(entry.partition, ms)
       initialize(entry.topic, [pm])
     end
