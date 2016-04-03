@@ -1,15 +1,23 @@
-[![Build Status](https://travis-ci.org/maiha/kafka.cr.svg?branch=master)](https://travis-ci.org/maiha/kafka.cr)
-# kafka.cr
+# kafka.cr [![Build Status](https://travis-ci.org/maiha/kafka.cr.svg?branch=master)](https://travis-ci.org/maiha/kafka.cr)
 
-kafka utils for crystal
+`kafka` library and utils for [Crystal](http://crystal-lang.org/).
+
+## Example
+
+```crystal
+require "kafka"
+
+kafka = Kafka.new
+kafka.produce "t1", "foo"
+
+kafka.close
+```
+
+### notice
 
 - still in the alpha stage
 - master branch will be force pushed without announcement
-
-## Installation
-
-- first type `crystal deps` to download related library
-- NOTE: works on only 0.13.x and 0.14.x
+- works on only 0.13.x, 0.14.x and 0.15.x
 
 ## components
 
@@ -18,22 +26,34 @@ kafka utils for crystal
 
 ## lib
 
+### Installation
+
+Add it to `shard.yml`
+
+```yml
+dependencies:
+  kafka:
+    github: maiha/kafka.cr
+    version: ~> 0.6.1
+```
+
 ```
 require "kafka"
 
 kafka = Kafka.new("localhost", 9092)
 
 kafka.topics.map(&.name)  # => ["t1", ...]
+kafka.produce("t1", "test")
 kafka.fetch("t1", partition = 0, offset = 0_i64)  # => Kafka::Message("t1[0]#0", "test")
-
-kafka.produce_v0("t1", 0, "test v0")
-kafka.produce_v1("t1", 0, "test v1")
 
 kafka.close
 ```
 
 ## bin
 
+### Installation
+
+- first type `crystal deps` to download related library
 - type `make` that generates `bin/kafka-*`
 
 ### created binaries (for utils)
