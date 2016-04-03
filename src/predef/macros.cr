@@ -16,3 +16,7 @@ macro var(name, default)
   def {{name.var.id}}=(@{{name.var.id}} : {{name.type}})
   end
 end
+
+macro var(name)
+  var({{name}}, {{name.type}}.new)
+end

@@ -3,18 +3,21 @@ class Kafka
     module Produce
       include Kafka::Protocol
 
-      record ProduceOption,
-        required_acks : Int16,
-        timeout_ms : Int32
+      class ProduceOption
+        var required_acks : Int16, -1_i16
+        var timeout_ms : Int32, 1000
+        var version : Int32, 0
+        var partition : Int32, 0
+      end
       
-      def ProduceOption.default
-        ProduceOption.new(-1_i16, 1000)
+      def produce(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+        case opt.version
+        when 0 ; produce_v0(entry, datas, opt)
+        when 1 ; produce_v1(entry, datas, opt)
+        else   ; raise NotImplemented.new("produce version=#{opt.version} not implemented yet")
+        end
       end
 
-      struct ProduceOption
-        var version : Int16, 0
-      end
-      
       ######################################################################
       ### v0
 

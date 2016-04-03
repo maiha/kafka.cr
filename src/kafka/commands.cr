@@ -5,50 +5,48 @@ class Kafka
   module Commands
     include Kafka::Protocol::Utils
 
+    var produce_opt : ProduceOption
+    
     ######################################################################
     ### 0: produce
 
     include Kafka::Commands::Produce
 
-    alias Payload = String | Binary
+    alias SingleInsert = String | Binary
+    alias MultiInsert = Array(String) | Array(Binary)
+    alias Payload = SingleInsert | MultiInsert
     
-    # Produces data into kafka by v1
+    # Produces data into kafka
     #
     # Example:
     #
     # ```
-    # kafka.produce_v1("t1", "test")
+    # kafka.produce("t1", "test")
+    #
+    # # insert multiple bodies at once
+    # kafka.produce("t1", ["x", "y", "z"])
+    # 
+    # # available named options are `version`, `partition`
+    # kafka.produce("t1", "test(v1)", version: 1)
+    # kafka.produce("t1", "test(v1)", partition: 2)
+    #
+    # # binary data also can be given for payload
+    # kafka.produce("t1", io.bytes)
     # ```
-    def produce_v0(topic : String, body : Payload)
-      produce_v0(topic, 0, [body])
+    def produce(topic : String, payload : Payload, opt : ProduceOption = produce_opt.dup, version : Int32? = nil, partition : Int32? = nil)
+      opt.version = version.not_nil! if version
+      opt.partition = partition.not_nil! if partition
+      bodies = build_produce_bodies(payload)
+      produce(Kafka::Entry.new(topic, opt.partition), bodies, opt)
     end
 
-    def produce_v0(topic : String, partition : Int32, body : Payload)
-      produce_v0(topic, partition, [body])
-    end
-
-    def produce_v0(topic : String, bodies : Array(Payload))
-      produce_v0(topic, 0, bodies)
-    end
-
-    def produce_v0(topic : String, partition : Int32, bodies : Array(Payload))
-      produce_v0(Kafka::Entry.new(topic, partition), bodies.map{|b|Kafka::Data.new(b)}, ProduceOption.default)
-    end
-
-    def produce_v1(topic : String, body : Payload)
-      produce_v1(topic, 0, [body])
-    end
-
-    def produce_v1(topic : String, partition : Int32, body : Payload)
-      produce_v1(topic, partition, [body])
-    end
-
-    def produce_v1(topic : String, bodies : Array(Payload))
-      produce_v1(topic, 0, bodies)
-    end
-    
-    def produce_v1(topic : String, partition : Int32, bodies : Array(Payload))
-      produce_v1(Kafka::Entry.new(topic, partition), bodies.map{|b|Kafka::Data.new(b)}, ProduceOption.default)
+    private def build_produce_bodies(payload : Payload)
+      case payload
+      when SingleInsert ; [Kafka::Data.new(payload)]
+      when MultiInsert  ; payload.map{|b| Kafka::Data.new(b)}
+      else
+        raise "[BUG] build_produce_bodies can't handle payload #{payload.class}"
+      end
     end
     
     ######################################################################

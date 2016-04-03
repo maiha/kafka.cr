@@ -5,6 +5,9 @@ class Kafka
   module Response
   end
 
+  class NotImplemented < Exception
+  end
+  
   alias Binary = Slice(UInt8)
   
   # An entry point to produce message, which contains topic and partition
