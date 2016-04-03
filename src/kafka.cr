@@ -1,3 +1,5 @@
+require "./predef/*"
+
 class Kafka
 end
 

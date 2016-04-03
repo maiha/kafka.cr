@@ -11,6 +11,10 @@ class Kafka
         ProduceOption.new(-1_i16, 1000)
       end
 
+      struct ProduceOption
+        var version : Int16, 0
+      end
+      
       ######################################################################
       ### v0
 
