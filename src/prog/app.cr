@@ -18,8 +18,10 @@ abstract class App
   def run
     parse_args!
     execute
-  rescue err
+  rescue err : Options::OptionError
     die err
+  rescue err
+    die err, show_usage: false
   ensure
     STDOUT.flush
     STDERR.flush

@@ -1,4 +1,7 @@
 module Options
+  class OptionError < Exception
+  end
+  
   macro option(declare, long_flag, description, default)
     var {{declare}}, {{default}}
 
@@ -71,7 +74,7 @@ module Options
       show_version
     end
   rescue err
-    die(err)
+    raise OptionError.new("#{err}")
   end
 
   # #####################################################################
