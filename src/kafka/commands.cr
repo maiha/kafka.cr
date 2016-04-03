@@ -6,6 +6,7 @@ class Kafka
     include Kafka::Protocol::Utils
 
     var produce_opt : ProduceOption
+    var fetch_opt : FetchOption
     
     ######################################################################
     ### 0: produce
@@ -33,7 +34,10 @@ class Kafka
     # # binary data also can be given for payload
     # kafka.produce("t1", io.bytes)
     # ```
-    def produce(topic : String, payload : Payload, opt : ProduceOption = produce_opt.dup, version : Int32? = nil, partition : Int32? = nil)
+    def produce(topic : String, payload : Payload,
+                version : Int32? = nil,
+                partition : Int32? = nil,
+                opt : ProduceOption = produce_opt.dup)
       opt.version = version.not_nil! if version
       opt.partition = partition.not_nil! if partition
       bodies = build_produce_bodies(payload)
@@ -59,12 +63,24 @@ class Kafka
     # Example:
     #
     # ```
-    # kafka.fetch("t1", 0, 0_i64) # => Kafka::Message("t1[0]#0", "test")
+    # kafka.fetch("t1")       # => Kafka::Message("t1#0:0", "foo")
+    # kafka.fetch("t1", 1)    # => Kafka::Message("t1#1:0", "bar")
+    # kafka.fetch("t1", 0, 1) # => Kafka::Message("t1#0:1", "baz")
     # ```
-    def fetch(topic : String, partition : Int32, offset : Int64, timeout : Time::Span = 1.second, min_bytes : Int32 = 0, max_bytes : Int32 = 1024)
-      idx = Kafka::Index.new(topic, partition, offset)
-      opt = FetchOption.new(timeout, min_bytes, max_bytes)
-      fetch(idx, opt)
+    def fetch(topic : String,
+              partition : Int32? = nil,
+              offset : Int64? = nil,
+              timeout : Time::Span? = nil,
+              min_bytes : Int32? = nil,
+              max_bytes : Int32? = nil,
+              opt : FetchOption = fetch_opt.dup)
+      opt.topic = topic
+      opt.partition = partition.not_nil! if partition
+      opt.offset = offset.not_nil! if offset
+      opt.timeout = timeout.not_nil! if timeout
+      opt.min_bytes = min_bytes.not_nil! if min_bytes
+      opt.max_bytes = max_bytes.not_nil! if max_bytes
+      fetch(opt)
     end
 
     ######################################################################

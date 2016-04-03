@@ -9,7 +9,7 @@ require "kafka"
 
 kafka = Kafka.new
 kafka.produce "t1", "foo"
-
+kafka.fetch "t1"  # => Kafka::Message("t1#0:0", "foo")
 kafka.close
 ```
 
@@ -44,7 +44,7 @@ kafka = Kafka.new("localhost", 9092)
 
 kafka.topics.map(&.name)  # => ["t1", ...]
 kafka.produce("t1", "test")
-kafka.fetch("t1", partition = 0, offset = 0_i64)  # => Kafka::Message("t1[0]#0", "test")
+kafka.fetch("t1", 0, 0_i64)  # => Kafka::Message("t1[0]#0", "test")
 
 kafka.close
 ```

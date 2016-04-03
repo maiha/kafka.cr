@@ -200,11 +200,11 @@ module Kafka::Protocol::Structure
       topic : String,
       partitions : Array(FetchResponsePartition)
 
-    structure FetchResponsePartition,
-      partition : Int32,
-      error_code : Int16,
-      high_water_mark : Int64,
-      message_set_entry : MessageSetEntry
+      structure FetchResponsePartition,
+        partition : Int32,
+        error_code : Int16,
+        high_water_mark : Int64,
+        message_set_entry : MessageSetEntry
 end
 
 require "./structure/*"

@@ -74,18 +74,40 @@ module Kafka::Protocol::Structure
     end
   end
 
-  class ProduceV0Response
-    def error?
-      topics.any?{|t| t.partitions.any?(&.error?)}
+  macro define_produce_response_methods(klass)
+    class {{klass}}
+      def error?
+        topics.any?{|t| t.partitions.any?(&.error?)}
+      end
     end
   end
-  
-  class ProduceV1Response
-    def error?
-      topics.any?{|t| t.partitions.any?(&.error?)}
+
+  define_produce_response_methods ProduceV0Response
+  define_produce_response_methods ProduceV1Response
+
+  macro define_fetch_response_methods(klass)
+    class {{klass}}
+      def messages!
+        array = [] of Kafka::Message
+        topics.each do |t|
+          t.partitions.each do |p|
+            if p.error?
+              raise Kafka::Protocol::Error.new(p.error_code)
+            end
+            p.message_set_entry.message_sets.each do |s|
+              index = Kafka::Index.new(t.topic, p.partition, s.offset)
+              value = Kafka::Value.new(s.message.value)
+              array << Kafka::Message.new(index, value)
+            end
+          end
+        end
+        return array
+      end
     end
   end
-  
+
+  define_fetch_response_methods FetchResponse
+
   class FetchResponsePartition
     delegate message_sets, "message_set_entry"
   end

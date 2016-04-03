@@ -33,9 +33,9 @@ class Kafka
 
     def inspect(io : IO)
       if offset == -1
-        io << %{"%s[%s]"} % [topic, partition]
+        io << %{"%s#%s"} % [topic, partition]
       else
-        io << %{"%s[%s]#%s"} % [topic, partition, offset]
+        io << %{"%s#%s:%s"} % [topic, partition, offset]
       end
     end
   end
@@ -57,6 +57,8 @@ class Kafka
   record Message,
     index : Kafka::Index,
     value : Kafka::Value do
+
+    delegate binary, string, value
 
     def inspect(io : IO)
       io << "Kafka::Message(" << index << ", " << value << ")"

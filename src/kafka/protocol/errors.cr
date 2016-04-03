@@ -43,4 +43,11 @@ module Kafka::Protocol
   def self.errmsg(code : Int16, okmsg : String)
     code == 0 ? okmsg : errmsg(code)
   end
+
+  class Error < Exception
+    getter! code
+    def initialize(@code : Int16)
+      super(Kafka::Protocol.errmsg(@code))
+    end
+  end
 end
