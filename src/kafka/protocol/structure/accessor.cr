@@ -79,6 +79,17 @@ module Kafka::Protocol::Structure
       def error?
         topics.any?{|t| t.partitions.any?(&.error?)}
       end
+
+      def errmsg
+        topics.each do |t|
+          t.partitions.each do |p|
+            if p.error?
+              return p.errmsg
+            end
+          end
+        end
+        return raise "no errors ({{klass}})"
+      end
     end
   end
 
