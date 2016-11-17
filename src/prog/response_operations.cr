@@ -1,7 +1,9 @@
 module ResponseOperations
   include Utils::GuessBinary
 
-  record TopicCount, topic, count
+  record TopicCount,
+    topic : String,
+    count : (Int32 | Int64)
 
   protected def not_leader?(res)
     res.topics.each do |t|

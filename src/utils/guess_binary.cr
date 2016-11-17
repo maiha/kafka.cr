@@ -1,4 +1,3 @@
-require "msgpack"
 require "./pretty_binary"
 
 module Utils::GuessBinary

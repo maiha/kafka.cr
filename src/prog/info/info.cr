@@ -5,7 +5,10 @@ class Info < App
   include Utils::GuessBinary
   include Kafka::Protocol::Structure
 
-  record TopicDayCount, topic, day, count
+  record TopicDayCount,
+    topic : String,
+    day : Int32,
+    count : Int64
   
   option count : Bool, "-c", "--count", "Just count simply", false
   option before : Int64, "--before MSEC", "Used to ask for all messages before a certain time (ms)", -1
@@ -47,7 +50,7 @@ EOF
     }.flatten
 
     grouped = records.group_by{|r| [r.topic, r.day]}.map{|key, ary|
-      t = key[0].not_nil!
+      t = key[0].not_nil!.to_s
       d = key[1].not_nil!.to_i
       TopicDayCount.new(t, d, ary.sum(&.count))
     }

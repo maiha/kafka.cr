@@ -1,5 +1,5 @@
 module Kafka::Protocol::Utils
-  include Utils::GuessBinary
+  include ::Utils::GuessBinary
 
   record TopicCount, topic, count
 

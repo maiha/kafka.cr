@@ -10,6 +10,13 @@ module Kafka::Handlers
     property! completed
     property! failed
 
+    @request   : Proc(Kafka::Request, Nil)
+    @send      : Proc(Bytes, Nil)
+    @recv      : Proc(Bytes, Nil)
+    @respond   : Proc(Kafka::Response, Nil)
+    @completed : Proc(Kafka::Request, Kafka::Response, Nil)
+    @failed    : Proc(Kafka::Request, Exception, Nil)
+
     def initialize
       @verbose   = false
       @request   = ->(req: Kafka::Request) {}

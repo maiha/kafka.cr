@@ -3,7 +3,7 @@ module Ping
     getter :host, :port, :no, :guess_version, :last_result
     getter :req_seq, :msec, :started_at, :code, :state
 
-    def initialize(@host, @port, @no, @guess_version, @last_result)
+    def initialize(@host : String, @port : Int32, @no : Int32, @guess_version : Bool, @last_result : Result?)
       # ## essential variables (used by finalizer)
       @code = Result::Code::ER
       @state = "(not executed yet)"

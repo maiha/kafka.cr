@@ -35,10 +35,12 @@ EOF
     getter :host, :port, :expected_count, :last_result
     getter :msec, :started_at, :code, :state
 
+    @last_result : ClusterWatch::Result?
+
     record Setting,
       colorize : Bool
     
-    def initialize(@host, @port, @expected_count, @last_result, @out, @err, @setting)
+    def initialize(@host : String, @port : Int32, @expected_count : Int32, @last_result : ClusterWatch::Result?, @out : Channel::Unbuffered(String), @err : Channel::Unbuffered(String), @setting : ClusterWatch::Command::Setting )
       # ## essential variables (used by finalizer)
       @code = Result::Code::ER
       @state = "(not executed yet)"
@@ -116,10 +118,11 @@ EOF
   end
 
   class BrokerWatcher
-    delegate :host, @dest
-    delegate :port, @dest
+    delegate host, port, to: @dest
 
     getter :interval, :stats, :no
+
+    @last_result : ClusterWatch::Result?
 
     def initialize(@dest : Kafka::Broker, @broker_count : Int32, @colorize : Bool)
       @stats = Utils::EnumStatistics(Result::Code).new
@@ -164,22 +167,18 @@ EOF
   end
 
   private def main_loop(watchers)
-    channels = watchers.map(&.start(interval.seconds)).flatten
-    receives = channels.map(&.receive_op)
+    channel3s = watchers.map(&.start(interval.seconds))
 
     loop do
-      index, value = Channel.select(receives)
-#      broker_index = (index / 3)
-      case index % 3
-      when 0
-        result = value as Result # typeof(channels[index].receive)
-      when 1
-        STDOUT.puts value
-      when 2
-        STDERR.puts value
-        STDERR.flush
-      else
-        raise "BUG: Channel.select returned invalid index: #{index}"
+      channel3s.each do |(ch1, ch2, ch3)|
+        select
+        when value = ch1.receive
+        when value = ch2.receive
+          STDOUT.puts value
+        when value = ch3.receive
+          STDERR.puts value
+          STDERR.flush
+        end
       end
     end
   end

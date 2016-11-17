@@ -1,14 +1,15 @@
 class Ping::SingleHost
-  delegate :host, @dest
-  delegate :port, @dest
+  delegate host, port, to: @dest
 
-  getter :count, :guess, :interval, :stats, :no, :last_result
+  getter count, guess, interval, stats, no, last_result
+
+  @last_result : Ping::Result?
+  @interval : Time::Span
 
   def initialize(@dest : Kafka::Broker, @count : Int32, @guess : Bool)
     @interval = 1.second
     @stats = Utils::EnumStatistics(Result::Code).new
     @no = 0
-    @last_result = nil
   end
 
   def run
@@ -16,15 +17,19 @@ class Ping::SingleHost
 
     puts "Kafka PING #{host}:#{port} (by HeartbeatRequest)"
     count.times do |i|
-      spawn {
-        @no = i + 1
-        @last_result = Ping::Command.new(host, port, no, guess, last_result).run
-        stats << last_result.not_nil!.code
-      }
+      spawn { ping(i) }
       sleep interval
     end
   end
 
+  private def ping(i)
+    @no = i + 1
+    @last_result = Ping::Command.new(host, port, no, guess, last_result).run
+    stats << last_result.not_nil!.code
+  rescue err
+    STDERR.puts "[internal error] ping(#{i}): #{err}".colorize.red
+  end
+        
   private def register_shutdown_hook
     at_exit { report }
     Signal::INT.trap { exit }

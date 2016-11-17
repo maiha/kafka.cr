@@ -7,7 +7,10 @@ module Kafka::Protocol::Structure
       property! latest_offset : Int64
       property! max_num_offsets : Int32
       
-      record LeaderTopicPartition, leader, topic, partition
+      record LeaderTopicPartition,
+        leader : Int32,
+        topic : String,
+        partition : Int32
       
       def initialize(@req : MetadataResponse)
         @name = "LeaderBasedOffsetRequestsBuilder"

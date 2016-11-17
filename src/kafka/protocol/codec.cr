@@ -38,7 +38,7 @@ def String.from_kafka(io : IO, debug_level = -1, hint = "")
   end
 end
 
-def Slice(UInt8).from_kafka(io : IO, debug_level = -1, hint = "")
+def Slice.from_kafka(io : IO, debug_level = -1, hint = "")
   on_debug_head_address
   len = io_read_int32
 

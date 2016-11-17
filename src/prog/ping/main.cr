@@ -4,6 +4,9 @@ require "socket"
 class Ping::Main
   getter :count, :usage, :guess, :dests, :help
 
+  @dests : Array(Kafka::Broker)
+  @help : Proc(NoReturn)
+
   def initialize(args)
     @count = 86400
     @usage = false

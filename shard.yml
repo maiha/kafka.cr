@@ -7,8 +7,10 @@ authors:
 dependencies:
   msgpack:
     github: benoist/msgpack-crystal
+
+development_dependencies:
   spec2:
     github: waterlink/spec2.cr
-    version: ~> 0.8.0
+    branch: master
 
 license: MIT

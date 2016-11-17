@@ -1,8 +1,8 @@
 class Utils::EnumStatistics(T)
-  delegate :size, :[], @counts
+  delegate :size, :[], to: @counts
 
   def initialize
-    @counts = {} of T => Int32
+    @counts = Hash(T, Int32).new
     clear
   end
 

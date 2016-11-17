@@ -58,7 +58,7 @@ class Kafka
     index : Kafka::Index,
     value : Kafka::Value do
 
-    delegate binary, string, value
+    delegate binary, string, to: value
 
     def inspect(io : IO)
       io << "Kafka::Message(" << index << ", " << value << ")"

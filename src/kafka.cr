@@ -1,11 +1,12 @@
-require "./predef/*"
+require "msgpack"
 
 class Kafka
 end
 
-require "./kafka/data"
-
+require "./predef/*"
 require "./utils/*"
+
+require "./kafka/data"
 require "./kafka/*"
 require "./prog/*"
 
@@ -18,7 +19,7 @@ class Kafka
   private getter :broker
 
   getter :connection
-  delegate socket!, close, connected?, connection
+  delegate socket!, close, connected?, to: connection
 
   property! :client_id
   property! :handler

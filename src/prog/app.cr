@@ -12,7 +12,7 @@ abstract class App
 
   getter :args
 
-  def initialize(@args)
+  def initialize(@args : Array(String))
   end
 
   def run
@@ -27,7 +27,7 @@ abstract class App
     STDERR.flush
   end
 
-    protected def app_name
+  protected def app_name
     "kafka-#{self.class.name.downcase}"
   end
 

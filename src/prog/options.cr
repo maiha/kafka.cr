@@ -64,6 +64,7 @@ module Options
     end
   end
 
+  @parser : OptionParser?
   val parser = new_parser
   protected def parse_args!
     parser.parse(args)
