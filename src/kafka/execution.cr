@@ -16,7 +16,7 @@ class Kafka::Execution
     handler.recv(recv)
 
     # convert
-    response = request.class.response.from_kafka(MemoryIO.new(recv), handler.verbose)
+    response = request.class.response.from_kafka(IO::Memory.new(recv), handler.verbose)
     handler.respond(response)
 
     handler.completed(request, response)

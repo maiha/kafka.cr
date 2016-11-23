@@ -1,7 +1,8 @@
 # kafka.cr [![Build Status](https://travis-ci.org/maiha/kafka.cr.svg?branch=master)](https://travis-ci.org/maiha/kafka.cr)
 
 `kafka` library and utils for [Crystal](http://crystal-lang.org/).
-- Crystal: 0.19.4
+
+- crystal: 0.20.0
 - x86_64 binary: https://github.com/maiha/kafka.cr/releases
 
 ## Example

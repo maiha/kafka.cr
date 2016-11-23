@@ -42,7 +42,7 @@ module Kafka::Protocol::Structure
     end
 
     private def to_kafka_with_calculation(io : IO)
-      fake = MemoryIO.new
+      fake = IO::Memory.new
       message_sets.each do |set|
         set.to_kafka(fake)
       end

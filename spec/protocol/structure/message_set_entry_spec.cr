@@ -16,7 +16,7 @@ describe Kafka::Protocol::Structure::MessageSetEntry do
   # (0000056)                  Binary[4](value) -> (4)[116, 101, 115, 116]
 
   describe "from_kafka" do
-    let(io) { MemoryIO.new(bytes(0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116)) }
+    let(io) { IO::Memory.new(bytes(0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116)) }
     let(entry) { MessageSetEntry.from_kafka(io) }
     let(set) { entry.message_sets[0].not_nil! }
 
@@ -35,7 +35,7 @@ describe Kafka::Protocol::Structure::MessageSetEntry do
 
   describe "to_kafka" do
     let(entry) { MessageSetEntry.new([MessageSet.new("test")]) }
-    let(io) { MemoryIO.new }
+    let(io) { IO::Memory.new }
 
     it "create binary" do
       entry.to_kafka(io)

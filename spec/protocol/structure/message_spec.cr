@@ -13,7 +13,7 @@ describe Kafka::Protocol::Structure::Message do
     )}
 
     it "creates binary and restore from it" do
-      io = MemoryIO.new
+      io = IO::Memory.new
       m1.to_kafka(io)
 
       io.rewind
@@ -46,7 +46,7 @@ describe Kafka::Protocol::Structure::Message do
 
     mes = Message.new(0_i8, 0_i8, Null, "test".to_slice)
 
-    io = MemoryIO.new
+    io = IO::Memory.new
     mes.to_kafka(io)
     expect(io.to_slice).to eq(bytes(89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
   end

@@ -16,7 +16,7 @@ module Kafka::Protocol::Structure
       end
 
       def self.from_kafka(slice : Slice, debug_level = -1, hint = "")
-        from_kafka(MemoryIO.new(slice), debug_level, hint)
+        from_kafka(IO::Memory.new(slice), debug_level, hint)
       end
 
       {{yield}}
@@ -28,7 +28,7 @@ module Kafka::Protocol::Structure
       end
 
       def to_slice
-        buf = MemoryIO.new
+        buf = IO::Memory.new
         to_kafka(buf)
         buf.to_slice
       end
@@ -61,7 +61,7 @@ module Kafka::Protocol::Structure
     end
 
     def to_kafka(io : IO)
-      buf = MemoryIO.new
+      buf = IO::Memory.new
       super(buf)
 
       value = buf.to_slice
@@ -79,7 +79,7 @@ module Kafka::Protocol::Structure
       # copy from socket to memory to avoid "Illegal seek"
       body = Slice(UInt8).new(size)
       io.read_fully(body)
-      io = MemoryIO.new(body)
+      io = IO::Memory.new(body)
 
       super(io, debug_level_succ)
     end

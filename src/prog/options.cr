@@ -156,7 +156,7 @@ module Options
           STDERR.flush
         end
 
-        fake_io = MemoryIO.new(recv)
+        fake_io = IO::Memory.new(recv)
         return request.class.response.from_kafka(fake_io, verbose)
       end
     end

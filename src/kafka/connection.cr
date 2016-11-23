@@ -35,7 +35,7 @@ class Kafka::Connection
     body = Slice(UInt8).new(size)
     socket!.read_fully(body)
 
-    out = MemoryIO.new(4 + size)
+    out = IO::Memory.new(4 + size)
     out.write_bytes(size, format = IO::ByteFormat::BigEndian)
     out.write(body)
     out.to_slice

@@ -17,7 +17,7 @@ module Kafka::Protocol::Structure
     end
     
     def initialize(magic_byte : Int8, attributes : Int8, key : Bytes, value : Bytes)
-      dst = MemoryIO.new(1 + 1 + key.bytesize + value.bytesize)
+      dst = IO::Memory.new(1 + 1 + key.bytesize + value.bytesize)
       magic_byte.to_kafka(dst)
       attributes.to_kafka(dst)
       if key == Null
