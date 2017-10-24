@@ -2,7 +2,7 @@
 
 `kafka` library and utils for [Crystal](http://crystal-lang.org/).
 
-- crystal: 0.20.0
+- crystal: 0.22.0
 - x86_64 binary: https://github.com/maiha/kafka.cr/releases
 
 ## Example
@@ -15,12 +15,6 @@ kafka.produce "t1", "foo"
 kafka.fetch "t1"  # => Kafka::Message("t1#0:0", "foo")
 kafka.close
 ```
-
-### notice
-
-- still in the alpha stage
-- master branch will be force pushed without announcement
-- works on only 0.13.x, 0.14.x and 0.15.x
 
 ## components
 

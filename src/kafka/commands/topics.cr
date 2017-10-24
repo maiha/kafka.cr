@@ -3,7 +3,7 @@ class Kafka
     module Topics
       include Kafka::Protocol
 
-      record TopicsOption, consumer_offsets
+      record TopicsOption, consumer_offsets : Bool
 
       def topics(names : Array(String), opt : TopicsOption)
         req = build_topics_request(names)

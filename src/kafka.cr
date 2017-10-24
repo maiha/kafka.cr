@@ -1,3 +1,4 @@
+require "crc32"
 require "msgpack"
 
 class Kafka

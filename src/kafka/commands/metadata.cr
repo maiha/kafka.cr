@@ -3,7 +3,8 @@ class Kafka
     module Metadata
       include Kafka::Protocol
 
-      record MetadataOption, consumer_offsets
+      record MetadataOption, consumer_offsets : Bool
+
       def MetadataOption.zero
         MetadataOption.new(false)
       end

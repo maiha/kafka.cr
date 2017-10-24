@@ -31,7 +31,7 @@ module Kafka::Protocol::Structure
         value.to_kafka(dst)
       end
       slice = dst.to_slice
-      crc32 = Zlib.crc32(slice).to_i32
+      crc32 = CRC32.checksum(slice).to_i32
       initialize(crc32, magic_byte, attributes, key, value)
     end
   end

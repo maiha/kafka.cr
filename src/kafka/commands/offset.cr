@@ -3,7 +3,7 @@ class Kafka
     module Offset
       include Kafka::Protocol
 
-      record OffsetOption, latest_offset, max_offsets
+      record OffsetOption, latest_offset : Int64 , max_offsets : Int32
 
       def offset(index : Kafka::Index, opt : OffsetOption)
         res = offset_response(index, opt)
