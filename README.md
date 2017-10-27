@@ -31,6 +31,7 @@ Add it to `shard.yml`
 dependencies:
   kafka:
     github: maiha/kafka.cr
+    version: 0.6.4
 ```
 
 ```

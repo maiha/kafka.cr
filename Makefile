@@ -50,7 +50,7 @@ kafka-topics: src/bin/topics.cr
 	crystal build --release $^ -o bin/$@ ${LINK_FLAGS}
 
 
-test: test-compile-bin spec
+test: check_version_mismatch test-compile-bin spec
 
 spec:
 	crystal spec -v
@@ -65,3 +65,8 @@ test-compile-bin:
 
 clean:
 	@rm -rf bin tmp
+
+.PHONY : check_version_mismatch
+check_version_mismatch: shard.yml README.md
+	diff -w -c <(grep version: README.md) <(grep ^version: shard.yml)
+
