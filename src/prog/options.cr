@@ -48,7 +48,7 @@ module Options
     {% end %}
   end
 
-  macro def new_parser : OptionParser
+  def new_parser : OptionParser
     OptionParser.new.tap{|p|
       {% for name in @type.methods.map(&.name.stringify) %}
         {% if name =~ /\Aregister_option_/ %}

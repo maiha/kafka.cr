@@ -37,7 +37,7 @@ module Kafka::Protocol::Structure
         {{name.id}}.new({{ *properties.map { |field| (field = field.var if field.is_a?(TypeDeclaration)); "@#{field.id}.clone".id } }})
       end
 
-      macro def ==(other : self) : Bool
+      def ==(other : self) : Bool
         {% for ivar in properties %}
           return false unless @{{ivar.var}} == other.@{{ivar.var}}
         {% end %}

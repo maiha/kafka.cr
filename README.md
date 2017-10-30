@@ -2,26 +2,35 @@
 
 `kafka` library and utils for [Crystal](http://crystal-lang.org/).
 
-- crystal: 0.22.0
+##### binary (standalone utilities)
 - x86_64 binary: https://github.com/maiha/kafka.cr/releases
+
+##### crystal versions
+- `0.24.0` : :white_check_mark: [master](https://github.com/maiha/kafka.cr) branch
+- `0.23.x` : :white_check_mark: [master](https://github.com/maiha/kafka.cr) branch
+- `0.22.0` : :warning: available in [crystal-0.22.0](https://github.com/maiha/kafka.cr/tree/crystal-0.22.0) tag, but no more maintenance guaranteed
 
 ## Example
 
-```ruby
+```crystal
 require "kafka"
 
 kafka = Kafka.new
+kafka.topics.map(&.name)  # => ["t1", ...]
 kafka.produce "t1", "foo"
-kafka.fetch "t1"  # => Kafka::Message("t1#0:0", "foo")
+kafka.fetch "t1"          # => Kafka::Message("t1#0:0", "foo")
 kafka.close
 ```
 
 ## components
 
 - bin: standalone kafka utility applications (x86 static binary)
-- lib: crystal level library to use kafka
+- lib: as crystal library
 
 ## lib
+
+### supported protocols
+- https://github.com/maiha/kafka.cr/blob/master/src/kafka/protocol.cr
 
 ### Installation
 
@@ -34,7 +43,7 @@ dependencies:
     version: 0.6.4
 ```
 
-```
+```crystal
 require "kafka"
 
 kafka = Kafka.new("localhost", 9092)
@@ -48,10 +57,16 @@ kafka.close
 
 ## bin
 
-### Installation
+### build
 
 - first type `crystal deps` to download related library
 - type `make` that generates `bin/kafka-*`
+- Env `CRYSTAL` is used for the replacement of `crystal` command
+
+```shell
+% make
+% make CRYSTAL=/your/customized-crystal/bin/crystal
+```
 
 ### created binaries (for utils)
 
@@ -168,4 +183,4 @@ make
 
 ## Contributors
 
-- [[maiha]](https://github.com/maiha) maiha - creator, maintainer
+- [maiha](https://github.com/maiha) maiha - creator, maintainer
