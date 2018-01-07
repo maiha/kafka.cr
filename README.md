@@ -162,16 +162,20 @@ crystal deps
 make
 ```
 
-## Test
+## Unit Test
 
 - `make test`
 
-### with real brokers (experimental)
+## CI : test with real brokers
 
-- `make spec-real`
-- expects kafka broker is running on "localhost:9092" and topic "test" exists
-- The simplest way to prepare it is using kafka docker with single broker.
-  - https://github.com/wurstmeister/kafka-docker/blob/master/docker-compose-single-broker.yml
+`ci-setup` prepares zk and kafka brokers by docker-compose.
+- https://github.com/wurstmeister/kafka-docker/blob/master/docker-compose-single-broker.yml
+
+```shell
+make ci-setup    # starts kafka with `ci/docker-compose.yml`
+make ci
+make ci-teardown # stop above kafka brokers
+```
 
 ## Contributing
 

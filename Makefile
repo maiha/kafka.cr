@@ -4,7 +4,7 @@ LINK_FLAGS = --link-flags "-static"
 SRCS = ${wildcard src/bin/*.cr}
 PROGS = $(SRCS:src/bin/%.cr=kafka-%)
 
-.PHONY : all build clean test spec test-compile-bin spec-real bin
+.PHONY : all build clean test spec test-compile-bin ci bin
 .PHONY : ${PROGS}
 
 all: build
@@ -56,8 +56,15 @@ test: check_version_mismatch test-compile-bin spec
 spec:
 	${CRYSTAL} spec -v
 
-spec-real:
-	${CRYSTAL} spec -v spec-real
+ci-setup:
+	docker-compose -f ci/docker-compose.yml up -d
+
+ci-teardown:
+	docker-compose -f ci/docker-compose.yml stop
+	docker-compose -f ci/docker-compose.yml rm -f
+
+ci:
+	${CRYSTAL} spec -v ci
 
 test-compile-bin:
 	@for x in src/bin/*.cr ; do\
