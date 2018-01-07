@@ -57,10 +57,10 @@ module Ping
       msec = (now - started_at).total_milliseconds.to_s
       time = now.to_s
 
-      STDOUT.puts "[#{time}] #{state} from #{host}:#{port} req_seq=#{req_seq} time=#{msec} ms"
+      logger.info "[#{time}] #{state} from #{host}:#{port} req_seq=#{req_seq} time=#{msec} ms"
 
       if state_changed?
-        STDERR.puts "[#{time}] #{host}:#{port} : #{last_state} -> #{state}"
+        logger.error "[#{time}] #{host}:#{port} : #{last_state} -> #{state}"
         STDERR.flush
       end
       socket.try &.close

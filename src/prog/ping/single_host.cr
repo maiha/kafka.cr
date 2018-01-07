@@ -27,7 +27,7 @@ class Ping::SingleHost
     @last_result = Ping::Command.new(host, port, no, guess, last_result).run
     stats << last_result.not_nil!.code
   rescue err
-    STDERR.puts "[internal error] ping(#{i}): #{err}".colorize.red
+    logger.error "[internal error] ping(#{i}): #{err}".colorize.red
   end
         
   private def register_shutdown_hook

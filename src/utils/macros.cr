@@ -22,21 +22,28 @@ end
 
 macro on_debug_head_padding
   if debug_level >= 0
-    STDERR.printf " " * 9
+    Kafka.logger_debug_prefix = " " * 9
+  else
+    Kafka.logger_debug_prefix = ""
   end
 end
 
 macro on_debug_head_address
   if debug_level >= 0
-    STDERR.printf "(%07d)", io.pos
+    Kafka.logger_debug_prefix = "(%07d)" % io.pos
+  else
+    Kafka.logger_debug_prefix = ""
   end
 end
 
 macro on_debug(msg)
   if debug_level >= 0
-    STDERR.print " " * debug_level * 2
-    STDERR.puts {{msg.id}}.to_s.colorize(:yellow)
-    STDERR.flush
+    buf = String.build do |_io_|
+      _io_.print Kafka.logger_debug_prefix
+      _io_.print " " * (debug_level * 2)
+      _io_.print {{msg.id}}.to_s.colorize(:yellow)
+    end
+    Kafka.logger.debug buf
   end
 end
 

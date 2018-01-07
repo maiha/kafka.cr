@@ -28,7 +28,7 @@ EOF
         value = Kafka::Protocol::Errors.from_value(code.to_i)
         puts "#{value.to_i}\t#{value}"
       rescue err
-        STDERR.puts err.to_s
+        logger.error err.to_s
       end
     end
   end

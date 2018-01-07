@@ -152,7 +152,7 @@ module Options
         recv = Kafka::Protocol.read(socket)
 
         if verbose
-          STDERR.puts "recv: #{recv}"
+          logger.error "recv: #{recv}"
           STDERR.flush
         end
 

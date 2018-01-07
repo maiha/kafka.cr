@@ -27,10 +27,10 @@ EOF
   private def print_res(res)
     head = broker.to_s
     if res.error_code == 0
-      STDOUT.puts "#{head}\t#{res.error_code}"
+      logger.info "#{head}\t#{res.error_code}"
     else
       errmsg = Kafka::Protocol.errmsg(res.error_code)
-      STDERR.puts "#{head}\t#{errmsg}".colorize(:red)
+      logger.error "#{head}\t#{errmsg}".colorize(:red)
     end
   end
 end

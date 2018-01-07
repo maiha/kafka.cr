@@ -31,12 +31,12 @@ class Kafka
                   results << Kafka::TopicInfo.new(meta.name, pm.id, pm.leader, pm.replicas, pm.isrs)
                 else
                   err = Kafka::Protocol.errmsg(pm.error_code)
-                  STDOUT.puts "#{meta.name}##{pm.id}\t#{err}"
+                  logger.info "#{meta.name}##{pm.id}\t#{err}"
                 end
               end
             end
           else
-            STDERR.puts "ERROR: #{meta.to_s}"
+            logger.error "ERROR: #{meta.to_s}"
           end
         end
         return results

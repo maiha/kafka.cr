@@ -1,3 +1,5 @@
+require "logger"
+
 require "crc32"
 require "msgpack"
 

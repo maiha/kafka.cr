@@ -84,19 +84,19 @@ EOF
         if !consumer_offsets && meta.name == "__consumer_offsets"
           # skip
         elsif simple
-          STDOUT.puts meta.name
+          logger.info meta.name
         else
           meta.partitions.each do |pm|
             if pm.error_code == 0
-              STDOUT.puts "#{meta.name}##{pm.id}\tleader=#{pm.leader}, replicas=#{pm.replicas.inspect}, isrs=#{pm.isrs.inspect}"
+              logger.info "#{meta.name}##{pm.id}\tleader=#{pm.leader}, replicas=#{pm.replicas.inspect}, isrs=#{pm.isrs.inspect}"
             else
               err = Kafka::Protocol.errmsg(pm.error_code)
-              STDOUT.puts "#{meta.name}##{pm.id}\t#{err}"
+              logger.info "#{meta.name}##{pm.id}\t#{err}"
             end
           end
         end
       else
-        STDERR.puts "ERROR: #{meta.to_s}"
+        logger.error "ERROR: #{meta.to_s}"
       end
     end
   end

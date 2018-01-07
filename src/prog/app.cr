@@ -1,5 +1,9 @@
 require "./deps"
 
+macro logger
+  Kafka.logger
+end
+
 abstract class App
   abstract def execute
 
@@ -13,6 +17,7 @@ abstract class App
   getter :args
 
   def initialize(@args : Array(String))
+    Kafka.logger = CompositeLogger.stdio
   end
 
   def run
@@ -32,15 +37,15 @@ abstract class App
   end
 
   protected def show_version
-    STDERR.puts "#{PROGRAM_NAME} #{Kafka::Info::VERSION}"
-    STDERR.puts "License #{Kafka::Info::LICENSES}"
-    STDERR.puts "Written by #{Kafka::Info::AUTHORS} (#{Kafka::Info::HOMEPAGE})"
+    logger.error "#{PROGRAM_NAME} #{Kafka::Info::VERSION}"
+    logger.error "License #{Kafka::Info::LICENSES}"
+    logger.error "Written by #{Kafka::Info::AUTHORS} (#{Kafka::Info::HOMEPAGE})"
     exit 0
   end
   
   protected def die(msg, show_usage = true)
-    STDERR.puts "ERROR: #{msg}\n".colorize(:red) unless msg.to_s.empty?
-    STDERR.puts usage if show_usage
+    logger.error "ERROR: #{msg}\n".colorize(:red) unless msg.to_s.empty?
+    logger.error usage if show_usage
     STDERR.flush
     exit
   end

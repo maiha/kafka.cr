@@ -72,7 +72,7 @@ module Kafka::Protocol::Structure
 
   macro response
     def self.from_kafka(io : IO, debug_level = -1, hint = "")
-#      on_debug_head_padding
+      on_debug_head_padding
 #      size = io_read_bytes_with_debug(:cyan, Int32)  # drop message_size
       size = io_read_int32  # drop message_size
 

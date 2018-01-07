@@ -49,7 +49,7 @@ module RequestOperations
     res.topics.map do |meta|
       unless meta.error_code == 0
         errmsg = Kafka::Protocol.errmsg(meta.error_code)
-        STDERR.puts "#{meta.name}#\t#{errmsg}"
+        logger.error "#{meta.name}#\t#{errmsg}"
         next
       end
 

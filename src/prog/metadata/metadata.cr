@@ -67,7 +67,7 @@ EOF
         t.partitions.each do |p|
           if p.error_code == -1
             errmsg = Kafka::Protocol.errmsg(p.error_code)
-            STDERR.puts "#{t.name}##{p.id}\t#{errmsg}".colorize(:red)
+            logger.error "#{t.name}##{p.id}\t#{errmsg}".colorize(:red)
             STDERR.flush
           else
             puts "#{t.name}##{p.id}\tleader=#{p.leader},replica=#{p.replicas.inspect},isr=#{p.isrs.inspect}"

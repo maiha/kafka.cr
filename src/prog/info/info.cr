@@ -96,7 +96,7 @@ EOF
       meta.partition_offsets.map{|po|
         unless po.error_code == 0
           errmsg = Kafka::Protocol.errmsg(po.error_code)
-          STDERR.puts "#{meta.topic}##{po.partition}\t#{errmsg}"
+          logger.error "#{meta.topic}##{po.partition}\t#{errmsg}"
         end
         TopicDayCount.new(meta.topic, day, po.count)
       }

@@ -35,14 +35,14 @@ module ResponseOperations
             when :GUESS
               value = guess_binary(bytes)
               value = pretty_binary(value.to_s)
-              STDOUT.puts "#{head}\t#{m.offset}: #{value.to_s}"
+              logger.info "#{head}\t#{m.offset}: #{value.to_s}"
             else
-              STDOUT.puts "#{head}\t#{m.offset}: #{bytes.to_s}"
+              logger.info "#{head}\t#{m.offset}: #{bytes.to_s}"
             end
           end
         else
           errmsg = Kafka::Protocol.errmsg(p.error_code)
-          STDERR.puts "#{head}\t#{errmsg}".colorize(:red)
+          logger.error "#{head}\t#{errmsg}".colorize(:red)
         end
       end
     end
@@ -82,7 +82,7 @@ module ResponseOperations
       meta.partition_offsets.map { |po|
         unless po.error_code == 0
           errmsg = Kafka::Protocol.errmsg(po.error_code)
-          STDERR.puts "#{meta.topic}##{po.partition}\t#{errmsg}"
+          logger.error "#{meta.topic}##{po.partition}\t#{errmsg}"
         end
         TopicCount.new(meta.topic, po.count)
       }
