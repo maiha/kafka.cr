@@ -15,9 +15,9 @@ Usage: #{app_name} [options] [topic]
 Options:
 
 Example:
-  #{$0} topic1
-  #{$0} topic1 -g  # to guess binary for like MessagePack
-  #{$0} topic1 -g --last
+  #{PROGRAM_NAME} topic1
+  #{PROGRAM_NAME} topic1 -g  # to guess binary for like MessagePack
+  #{PROGRAM_NAME} topic1 -g --last
 EOF
 
   private def fetch(topic, offset : Int64)

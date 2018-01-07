@@ -30,12 +30,12 @@ class Ping::Main
       puts <<-EXAMPLE
         Example:
           (single-host monitoring mode)
-            #{$0} localhost
-            #{$0} localhost:9092
-            #{$0} -g localhost > ping.log 2> changed.log &
+            #{PROGRAM_NAME} localhost
+            #{PROGRAM_NAME} localhost:9092
+            #{PROGRAM_NAME} -g localhost > ping.log 2> changed.log &
 
           (multi-hosts monitoring mode)
-            #{$0} localhost localhost:9093 localhost:9094
+            #{PROGRAM_NAME} localhost localhost:9093 localhost:9094
         EXAMPLE
       exit
     }

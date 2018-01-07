@@ -13,9 +13,9 @@ Usage: #{app_name} [options]  broker(s)
 Options:
 
 Example:
-  #{$0} localhost:9092
-  #{$0} localhost:9092 -i 10
-  #{$0} localhost:9092 localhost:9093 > cluster.log 2> changed.log
+  #{PROGRAM_NAME} localhost:9092
+  #{PROGRAM_NAME} localhost:9092 -i 10
+  #{PROGRAM_NAME} localhost:9092 localhost:9093 > cluster.log 2> changed.log
 EOF
 
   class Result

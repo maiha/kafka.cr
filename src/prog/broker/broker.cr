@@ -12,8 +12,8 @@ Usage: #{app_name} [options]
 Options:
 
 Example:
-  #{$0} -b localhost:9092
-  #{$0} -j
+  #{PROGRAM_NAME} -b localhost:9092
+  #{PROGRAM_NAME} -j
 EOF
 
   def execute

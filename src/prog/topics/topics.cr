@@ -19,12 +19,12 @@ Usage: #{app_name} [options] [topics]
 Options:
 
 Example:
-  #{$0} -b :9092 --all
-  #{$0} topic1
-  #{$0} topic1 topic2
-  #{$0} -v topic1 
+  #{PROGRAM_NAME} -b :9092 --all
+  #{PROGRAM_NAME} topic1
+  #{PROGRAM_NAME} topic1 topic2
+  #{PROGRAM_NAME} -v topic1 
 EOF
-#  [not implemented] #{$0} --create --partitions=1 --replication-factor=1 --topic=topic1
+#  [not implemented] #{PROGRAM_NAME} --create --partitions=1 --replication-factor=1 --topic=topic1
 
   def do_list
     do_show([] of String)

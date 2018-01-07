@@ -16,7 +16,7 @@ Usage: #{app_name} [options] [topic]
 Options:
 
 Example:
-  #{$0} topic1
+  #{PROGRAM_NAME} topic1
 EOF
 
   def execute

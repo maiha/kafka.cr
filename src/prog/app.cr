@@ -32,7 +32,7 @@ abstract class App
   end
 
   protected def show_version
-    STDERR.puts "#{$0} #{Kafka::Info::VERSION}"
+    STDERR.puts "#{PROGRAM_NAME} #{Kafka::Info::VERSION}"
     STDERR.puts "License #{Kafka::Info::LICENSES}"
     STDERR.puts "Written by #{Kafka::Info::AUTHORS} (#{Kafka::Info::HOMEPAGE})"
     exit 0

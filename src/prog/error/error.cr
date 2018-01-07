@@ -12,8 +12,8 @@ Usage: #{app_name} [options] [codes]
 Options:
 
 Example:
-  #{$0} 6
-  #{$0} -l
+  #{PROGRAM_NAME} 6
+  #{PROGRAM_NAME} -l
 EOF
 
   def do_list

@@ -21,7 +21,7 @@ Usage: #{app_name} [options] [topics]
 Options:
 
 Example:
-  #{$0} topic1
+  #{PROGRAM_NAME} topic1
 EOF
 
   def do_show(topics, time)

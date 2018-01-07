@@ -11,10 +11,10 @@ Usage: #{app_name} [options] [topics]
 Options:
 
 Example:
-  #{$0} topic1
-  #{$0} topic1 topic2
-  #{$0} topic1 --broker=localhost:9092
-  #{$0} topic1 -v
+  #{PROGRAM_NAME} topic1
+  #{PROGRAM_NAME} topic1 topic2
+  #{PROGRAM_NAME} topic1 --broker=localhost:9092
+  #{PROGRAM_NAME} topic1 -v
 EOF
 
   def do_list

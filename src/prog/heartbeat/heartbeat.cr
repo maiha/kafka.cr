@@ -11,7 +11,7 @@ Usage: #{app_name} [options]
 Options:
 
 Example:
-  #{$0} -b localhost
+  #{PROGRAM_NAME} -b localhost
 EOF
 
   def do_show(broker)

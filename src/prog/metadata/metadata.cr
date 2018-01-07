@@ -11,10 +11,10 @@ Usage: #{app_name} [options] [topics]
 Options:
 
 Example:
-  #{$0} topic1 topic2
-  #{$0} -a
-  #{$0} -b localhost:9092 -a
-  #{$0} -v topic1
+  #{PROGRAM_NAME} topic1 topic2
+  #{PROGRAM_NAME} -a
+  #{PROGRAM_NAME} -b localhost:9092 -a
+  #{PROGRAM_NAME} -v topic1
 EOF
 
   def do_show(req)
