@@ -169,9 +169,9 @@ make
 ### with real brokers (experimental)
 
 - `make spec-real`
-- this expects kafka broker is running on "localhost:9092"
-- this expects kafka broker has a topic named "t1" and "tmp"
-- NOTE: spec-real works only on crystal-0.13.x, because it seems 0.14.x breaks compat about spec path
+- expects kafka broker is running on "localhost:9092" and topic "test" exists
+- The simplest way to prepare it is using kafka docker with single broker.
+  - https://github.com/wurstmeister/kafka-docker/blob/master/docker-compose-single-broker.yml
 
 ## Contributing
 
