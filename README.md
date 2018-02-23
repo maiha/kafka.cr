@@ -6,8 +6,8 @@
 - x86_64 binary: https://github.com/maiha/kafka.cr/releases
 
 ##### crystal versions
-- `0.24.0` : :white_check_mark: [master](https://github.com/maiha/kafka.cr) branch
-- `0.23.x` : :white_check_mark: [master](https://github.com/maiha/kafka.cr) branch
+- `0.24.1` : :white_check_mark: use 0.6.5 or higher
+- `0.23.x` : :white_check_mark: use 0.6.5 or higher
 - `0.22.0` : :warning: available in [crystal-0.22.0](https://github.com/maiha/kafka.cr/tree/crystal-0.22.0) tag, but no more maintenance guaranteed
 
 ## Example
@@ -40,7 +40,7 @@ Add it to `shard.yml`
 dependencies:
   kafka:
     github: maiha/kafka.cr
-    version: 0.6.4
+    version: 0.6.5
 ```
 
 ```crystal
