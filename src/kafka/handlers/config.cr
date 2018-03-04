@@ -50,5 +50,17 @@ module Kafka::Handlers
     def failed(req : Kafka::Request, err : Exception)
       @failed.call(req, err)
     end
+
+    # TODO: move Kafka.logger to each instances
+    def verbose=(v : Bool)
+      if v
+        logger = Logger.new(STDOUT).tap(&.level = Logger::DEBUG)
+        logger.formatter = Logger::Formatter.new do |level, time, progname, message, io|
+          io << message
+        end
+        Kafka.logger = logger
+      end
+      @verbose = v
+    end
   end
 end
