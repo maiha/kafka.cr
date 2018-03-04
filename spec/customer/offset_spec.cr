@@ -1,7 +1,7 @@
 require "./spec_helper"
 
-describe Kafka::Commands::Offset do
-  subject!(kafka) { Kafka.new }
+describe "(customer: offset)" do
+  subject!(kafka) { Kafka.new("kafka") }
   after { kafka.close }
 
   describe "#offset" do

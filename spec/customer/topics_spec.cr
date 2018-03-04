@@ -1,7 +1,7 @@
 require "./spec_helper"
 
-describe Kafka::Commands::Topics do
-  subject!(kafka) { Kafka.new }
+describe "(customer: topics)" do
+  subject!(kafka) { Kafka.new("kafka") }
   after { kafka.close }
 
   describe "#topics" do

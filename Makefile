@@ -1,83 +1,50 @@
 SHELL = /bin/bash
 CRYSTAL ?= crystal
-LINK_FLAGS = --link-flags "-static"
+RELEASE=
+STATIC ?= ""
+LINK_FLAGS = --link-flags ${STATIC}
+SRCDIR = ./src/bin
+BINDIR = ./bin
 SRCS = ${wildcard src/bin/*.cr}
-PROGS = $(SRCS:src/bin/%.cr=kafka-%)
+BINS = $(addprefix $(BINDIR)/, $(SRCS:src/bin/%.cr=%))
 
 VERSION=
 CURRENT_VERSION=$(shell git tag -l | sort -V | tail -1)
 GUESSED_VERSION=$(shell git tag -l | sort -V | tail -1 | awk 'BEGIN { FS="." } { $$3++; } { printf "%d.%d.%d", $$1, $$2, $$3 }')
 GIT_REV_ID=`(git describe --tags 2>|/dev/null) || (LC_ALL=C date +"%F-%X")`
 
-.PHONY : all build clean test spec test-compile-bin ci bin
-.PHONY : ${PROGS}
+.PHONY : all build clean test spec ci bin
 
-all: build
+all: compile
 
-build: bin ${PROGS}
+deps:
+	@if [ ! -d lib  ]; then \
+	  docker-compose run crystal shards update; \
+	fi
 
-bin:
-	@mkdir -p bin
+compile: deps
+	docker-compose run crystal make build
 
-#kafka-%: src/bin/%.cr
-#	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-httpd: src/bin/httpd.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-cluster-watch: src/bin/cluster-watch.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-info: src/bin/info.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-broker: src/bin/broker.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-error: src/bin/error.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-fetch: src/bin/fetch.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-heartbeat: src/bin/heartbeat.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-metadata: src/bin/metadata.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-offset: src/bin/offset.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-ping: src/bin/ping.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-kafka-topics: src/bin/topics.cr
-	${CRYSTAL} build --release $^ -o bin/$@ ${LINK_FLAGS}
-
-
-test: check_version_mismatch test-compile-bin spec
-
-spec:
-	${CRYSTAL} spec -v
-
-ci-setup:
-	docker-compose -f ci/docker-compose.yml up -d
-
-ci-teardown:
-	docker-compose -f ci/docker-compose.yml stop
-	docker-compose -f ci/docker-compose.yml rm -f
-
-ci:
-	${CRYSTAL} spec -v ci
-
-test-compile-bin:
-	@for x in src/bin/*.cr ; do\
-	  ${CRYSTAL} build "$$x" -o /dev/null ;\
-	done
+release: deps
+	docker-compose run crystal make build RELEASE=--release STATIC=-static
 
 clean:
-	@rm -rf bin tmp
+	rm -rf bin tmp
+
+build: clean $(BINS)
+
+$(BINDIR)/%: $(SRCDIR)/%.cr
+	@mkdir -p bin
+	${CRYSTAL} build ${RELEASE} $^ -o $@ ${LINK_FLAGS}
+
+test: check_version_mismatch compile spec
+
+spec:
+	docker-compose run spec
+
+spec-clean:
+	docker-compose stop
+	docker-compose rm -f
 
 .PHONY : check_version_mismatch
 check_version_mismatch: shard.yml README.md

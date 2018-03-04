@@ -1,11 +1,7 @@
-sudo: required
-service:
+language: generic
+
+services:
   - docker
 
-language: crystal
-crystal:
-  - latest
-
 script:
-  - make ci-setup
-  - make test ci
+  - make test

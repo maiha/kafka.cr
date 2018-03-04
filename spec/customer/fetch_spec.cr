@@ -1,7 +1,7 @@
 require "./spec_helper"
 
-describe Kafka::Commands::Fetch do
-  subject!(kafka) { Kafka.new }
+describe "(customer: fetch)" do
+  subject!(kafka) { Kafka.new("kafka") }
   after { kafka.close }
 
   describe "#fetch" do

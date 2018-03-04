@@ -7,8 +7,6 @@
 
 ##### crystal versions
 - `0.24.1` : :white_check_mark: use 0.6.5 or higher
-- `0.23.x` : :white_check_mark: use 0.6.5 or higher
-- `0.22.0` : :warning: available in [crystal-0.22.0](https://github.com/maiha/kafka.cr/tree/crystal-0.22.0) tag, but no more maintenance guaranteed
 
 ## Example
 
@@ -59,13 +57,12 @@ kafka.close
 
 ### build
 
-- first type `crystal deps` to download related library
-- type `make` that generates `bin/kafka-*`
-- Env `CRYSTAL` is used for the replacement of `crystal` command
+- type `make compile` that generates `bin/kafka-*`
+- type `make release` if you wish static and optimized binaries
 
 ```shell
-% make
-% make CRYSTAL=/your/customized-crystal/bin/crystal
+% make compile
+% make release
 ```
 
 ### created binaries (for utils)
@@ -86,7 +83,7 @@ kafka.close
 
 ### kafka-info
 
-```
+```shell
 % ./bin/kafka-info t1 t2
 t2#0     count=18 [37, 36, 19]
 t1#2     count=1 [1, 0]
@@ -96,7 +93,7 @@ t1#1     count=0 [0]
 
 - count messages in all topics
 
-```
+```shell
 % ./bin/kafka-info -c -a
 2       a
 0       b
@@ -106,7 +103,7 @@ t1#1     count=0 [0]
 
 - `bin/kafka-topics` shows topic names and metadatas
 
-```
+```shell
 % ./bin/kafka-topics
 t1
 tmp
@@ -124,7 +121,7 @@ ERROR: t2(UnknownTopicOrPartitionCode (3))
 
 - `bin/kafka-ping` works like unix `ping` command
 
-```
+```shell
 % ./bin/kafka-ping localhost
 Kafka PING localhost:9092 (by HeartbeatRequest)
 [2016-01-28 00:27:30 +0000] errno=16 from localhost:9092 req_seq=1 time=7.354 ms
@@ -136,7 +133,7 @@ Kafka PING localhost:9092 (by HeartbeatRequest)
 
 - `-g` option can be used for checking version
 
-```
+```shell
 % ./bin/kafka-ping localhost -g
 Kafka PING localhost:9092 (by HeartbeatRequest)
 [2016-01-28 00:29:16 +0000] (0.8.x) from localhost:9092 req_seq=1 time=8.459 ms
@@ -145,7 +142,7 @@ Kafka PING localhost:9092 (by HeartbeatRequest)
 
 - write reports about changing state into stderr
 
-```
+```shell
 % ./bin/kafka-ping localhost -g
 (stdout)
 [2016-01-28 00:30:32 +0000] (0.8.x) from localhost:9092 req_seq=76 time=3.194 ms
@@ -157,25 +154,20 @@ Kafka PING localhost:9092 (by HeartbeatRequest)
 
 ## Development
 
+```shell
+make compile
 ```
-crystal deps
-make
-```
 
-## Unit Test
+## Run test : test with real brokers
 
-- `make test`
-
-## CI : test with real brokers
-
-`ci-setup` prepares zk and kafka brokers by docker-compose.
-- https://github.com/wurstmeister/kafka-docker/blob/master/docker-compose-single-broker.yml
+Run `docker-compose run spec`, or simply `make spec`.
 
 ```shell
-make ci-setup    # starts kafka with `ci/docker-compose.yml`
-make ci
-make ci-teardown # stop above kafka brokers
+make spec
 ```
+
+Docker containers `zk` and `kafka brokers` are automatically created by docker-compose.
+- https://github.com/wurstmeister/kafka-docker/blob/master/docker-compose-single-broker.yml
 
 ## Contributing
 

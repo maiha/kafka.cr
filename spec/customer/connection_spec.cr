@@ -1,7 +1,7 @@
 require "./spec_helper"
 
-describe Kafka::Connection do
-  subject!(kafka) { Kafka.new }
+describe "(customer: connection)" do
+  subject!(kafka) { Kafka.new("kafka") }
   after { kafka.close }
 
   it "open and close" do

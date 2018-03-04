@@ -1,7 +1,7 @@
 require "./spec_helper"
 
-describe Kafka::Execution do
-  subject!(kafka) { Kafka.new }
+describe "(customer: execution)" do
+  subject!(kafka) { Kafka.new("kafka") }
   after { kafka.close }
 
   let(request) { Kafka::Protocol::HeartbeatRequest.new(0, "x", "y", -1, "cr") }

@@ -1,0 +1,41 @@
+# original
+# - https://github.com/wurstmeister/kafka-docker/blob/master/docker-compose-single-broker.yml
+version: '2.1'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka:1.0.0
+    ports:
+      - "9092:9092"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: ["nc", "-z", "localhost", "9092"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      HOSTNAME_COMMAND: "hostname -i"
+      KAFKA_CREATE_TOPICS: "test:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  crystal:
+    image: crystallang/crystal:0.24.1
+    command: 'crystal --version'
+    volumes:
+      - $PWD:/mnt
+    working_dir: /mnt
+  spec:
+    image: crystallang/crystal:0.24.1
+    # TODO: wait neatly until service is up
+    command: 'bash -c "sleep 10; crystal spec -v"'
+    volumes:
+      - $PWD:/mnt
+    working_dir: /mnt
+    depends_on:
+      - zookeeper
+      - kafka

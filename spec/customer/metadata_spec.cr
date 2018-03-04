@@ -1,7 +1,7 @@
 require "./spec_helper"
 
-describe Kafka::Commands::Metadata do
-  subject!(kafka) { Kafka.new }
+describe "(customer: metadata)" do
+  subject!(kafka) { Kafka.new("kafka") }
   after { kafka.close }
 
   describe "#metadata" do

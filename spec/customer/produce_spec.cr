@@ -1,7 +1,7 @@
 require "./spec_helper"
 
-describe Kafka::Commands::Produce do
-  subject!(kafka) { Kafka.new }
+describe "(customer: produce)" do
+  subject!(kafka) { Kafka.new("kafka") }
   after { kafka.close }
 
   describe "#produce(v0)" do

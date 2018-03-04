@@ -53,7 +53,7 @@ class Kafka
   end
 
   def initialize(broker : String)
-    initialize(Kafka::Cluster::Broker.parse(broker))
+    initialize(Kafka::Broker.parse(broker))
   end
 
   def initialize(host : String, port : Int32)
