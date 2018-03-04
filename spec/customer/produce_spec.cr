@@ -71,8 +71,16 @@ describe "(customer: produce)" do
   describe "#produce(v2)" do
     it "not implemented yet" do
       expect {
-        kafka.produce("test", "v1", version: 2)
+        kafka.produce("test", "v2", version: 2)
       }.to raise_error Kafka::NotImplemented
+    end
+  end
+
+  describe "#produce(v3)" do
+    pending "accepts string" do
+      msg = kafka.produce("test", "v3", version: 3)
+      expect(msg).to be_a(Kafka::Protocol::ProduceV3Response)
+      expect(msg.error?).to eq(false)
     end
   end
 end

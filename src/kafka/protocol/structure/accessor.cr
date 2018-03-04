@@ -95,6 +95,7 @@ module Kafka::Protocol::Structure
 
   define_produce_response_methods ProduceV0Response
   define_produce_response_methods ProduceV1Response
+  define_produce_response_methods ProduceV3Response
 
   macro define_fetch_response_methods(klass)
     class {{klass}}
