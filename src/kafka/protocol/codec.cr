@@ -70,6 +70,13 @@ end
 
 ######################################################################
 ### to kafka
+
+struct Nil
+  def to_kafka(io : IO)
+    Kafka::Protocol::Structure::Null.to_kafka(io)
+  end
+end
+
 struct Int8
   def to_kafka(io : IO)
     io.write_bytes(to_u8, IO::ByteFormat::BigEndian)

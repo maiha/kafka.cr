@@ -28,7 +28,7 @@ module Kafka::Protocol
 #  api 19, CreateTopics
 #  api 20, DeleteTopics
 #  api 21, DeleteRecords
-#  api 22, InitProducerId
+  api 22, InitProducerId
 #  api 23, OffsetForLeaderEpoch
 #  api 24, AddPartitionsToTxn
 #  api 25, AddOffsetsToTxn

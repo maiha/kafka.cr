@@ -159,6 +159,15 @@ class Kafka
       offset(idx, opt)
     end
 
+    # Initialize producer id
+    #
+    # Example:
+    #
+    # ```
+    # kafka.init_producer_id
+    # ```
+    include Kafka::Commands::InitProducerId
+
     ######################################################################
     ### general
 
