@@ -55,12 +55,11 @@ module Ping
     ensure
       now = Time.now
       msec = (now - started_at).total_milliseconds.to_s
-      time = now.to_s
 
-      logger.info "[#{time}] #{state} from #{host}:#{port} req_seq=#{req_seq} time=#{msec} ms"
+      logger.info "#{state} from #{host}:#{port} req_seq=#{req_seq} time=#{msec} ms"
 
       if state_changed?
-        logger.error "[#{time}] #{host}:#{port} : #{last_state} -> #{state}"
+        logger.error "#{host}:#{port} : #{last_state} -> #{state}"
         STDERR.flush
       end
       socket.try &.close
