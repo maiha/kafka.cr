@@ -13,7 +13,7 @@ class Ping::Main
     @guess = false
 
     opts = OptionParser.parse(args) do |parser|
-      parser.on("-c NUM", "--count=NUM", "Stop after sending count requests") { |num| count = num.to_i }
+      parser.on("-c NUM", "--count=NUM", "Stop after sending count requests") { |num| @count = num.to_i }
       parser.on("-g", "--guess", "Guess kafka version rather than errno") { @guess = true }
       parser.on("-h", "--help", "Show this help") { @usage = true }
     end
