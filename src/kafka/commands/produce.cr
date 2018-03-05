@@ -5,7 +5,7 @@ class Kafka
 
       class ProduceOption
         var required_acks : Int16, -1_i16
-        var transactional_id : String, ""
+        var transactional_id : String = ""
         var timeout_ms : Int32, 1000
         var version : Int32, 0
         var partition : Int32, 0

@@ -1,4 +1,9 @@
 module Kafka::Protocol::Structure
+  # NOTE: Kafka has two nullable types for `String` and `Bytes`.
+  # 1. But, Crystal can't differ nils whether it is `String?` or `Bytes?`.
+  # 2. Fortunately, both `NullableString` and emtpy string builds `short int(-1)`.
+  # So, we use `String` rather than `String?` for `transactional_id`.
+
   ######################################################################
   ### Parts
 
@@ -144,7 +149,7 @@ module Kafka::Protocol::Structure
     api_version : Int16,
     correlation_id : Int32,
     client_id : String,
-    transactional_id : String?,
+    transactional_id : String,
     required_acks : Int16,
     timeout : Int32,
     topic_partitions : Array(TopicAndPartitionMessages)
@@ -229,7 +234,7 @@ module Kafka::Protocol::Structure
     api_version : Int16,
     correlation_id : Int32,
     client_id : String,
-    transactional_id : String?,
+    transactional_id : String,
     transaction_timeout_ms : Int32
 
   structure InitProducerIdResponse,

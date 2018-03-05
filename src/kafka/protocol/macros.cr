@@ -23,7 +23,7 @@ module Kafka::Protocol::Structure
 
       def to_kafka(io : IO)
         {% for field in properties %}
-           {{field.var}}.to_kafka(io)
+          {{field.var}}.to_kafka(io)
         {% end %}
       end
 
@@ -55,9 +55,9 @@ module Kafka::Protocol::Structure
     end
   end
 
-  macro request(api, version)
+  macro request(api_key, version)
     def initialize(*args)
-      super(Int16.new({{api}}), Int16.new({{version}}), *args)
+      super(Int16.new({{api_key}}), Int16.new({{version}}), *args)
     end
 
     def to_kafka(io : IO)
@@ -91,7 +91,7 @@ module Kafka::Protocol::Structure
 end
 
 module Kafka::Protocol
-  macro api(no, name, ver = nil)
+  macro api(key, name, ver = nil)
     {% klass = (ver == nil) ? name : (name.stringify + "V" + ver.stringify).id %}
     # (ver== ): FooRequest
     # (ver==0): FooV0Request
@@ -104,7 +104,7 @@ module Kafka::Protocol
 
     class {{klass}}Request < Structure::{{klass}}Request
       include Kafka::Request
-      request {{no}}, {{ver || 0}}
+      request {{key}}, {{ver || 0}}
 
       def {{klass}}Request.response
         Kafka::Protocol::{{klass}}Response

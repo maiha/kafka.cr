@@ -6,8 +6,9 @@ describe "(customer: init_producer_id)" do
 
   describe "#init_producer_id" do
     it "works with nil" do
-      res = kafka.init_producer_id(nil, 3000)
+      res = kafka.init_producer_id("", 3000)
       expect(res.error?).to eq(false)
+      expect(res.producer_id).to eq 0
       expect(res.producer_epoch).to eq 0
     end
 
