@@ -10,6 +10,7 @@ require "./predef/*"
 require "./utils/*"
 
 require "./kafka/data"
+require "./kafka/execution"
 require "./kafka/*"
 require "./prog/*"
 

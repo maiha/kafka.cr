@@ -34,7 +34,7 @@ describe Kafka::Protocol::FetchResponse do
 
   describe "(3: UnknownTopicOrPartitionCode)" do
     let(res) {
-      Kafka::Protocol::FetchResponse.from_kafka(bytes(0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 1, 0, 13, 115, 101, 118, 101, 110, 46, 99, 105, 46, 104, 116, 116, 112, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0))
+      Kafka::Protocol::FetchResponse.from_kafka(bytes(0, 0, 0, 0, 0, 0, 0, 1, 0, 13, 115, 101, 118, 101, 110, 46, 99, 105, 46, 104, 116, 116, 112, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0))
     }
 
     it "creates object" do
@@ -51,7 +51,7 @@ describe Kafka::Protocol::FetchResponse do
 
   describe "(1 data)" do
     let(res) {
-      Kafka::Protocol::FetchResponse.from_kafka(bytes(0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
+      Kafka::Protocol::FetchResponse.from_kafka(bytes(0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 89, 42, 71, 135, 0, 0, 255, 255, 255, 255, 0, 0, 0, 4, 116, 101, 115, 116))
     }
 
     it "creates object" do

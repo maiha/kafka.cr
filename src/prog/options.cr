@@ -141,24 +141,8 @@ module Options
     end
 
     protected def execute(request, broker = build_broker)
-      connect(broker) do |socket|
-        bytes = request.to_slice
-        spawn do
-          socket.write bytes
-          socket.flush
-          sleep 0
-        end
-
-        recv = Kafka::Protocol.read(socket)
-
-        if verbose
-          logger.error "recv: #{recv}"
-          STDERR.flush
-        end
-
-        fake_io = IO::Memory.new(recv)
-        return request.class.response.from_kafka(fake_io, verbose)
-      end
+      kafka = Kafka.new(broker)
+      kafka.execute(request)
     end
 
     protected def fetch_topic_metadata(topics, app_name)

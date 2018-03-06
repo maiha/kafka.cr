@@ -1,16 +1,4 @@
 module RequestOperations
-  protected def execute(request)
-    bytes = request.to_slice
-    connect do |socket|
-      spawn do
-        socket.write bytes
-        socket.flush
-        sleep 0
-      end
-      return request.class.response.from_kafka(socket)
-    end
-  end
-
   protected def build_offset_request(topics, partition, replica = -1)
     po = Kafka::Protocol::Structure::Partition.new(partition, latest_offset = -1_i64, max_offsets = 999999999)
     taps = topics.map { |t| Kafka::Protocol::Structure::TopicAndPartitions.new(t, [po]) }
@@ -33,7 +21,7 @@ module RequestOperations
     reqs.each do |leader, req|
       spawn {
         req = Kafka::Protocol::OffsetRequest.new(0, "kafka-info", -1, req.topic_partitions)
-        res = execute(req, broker.call(leader))
+        res = execute(req.as(Kafka::Request), broker.call(leader))
         chan.send(res)
       }
     end

@@ -9,7 +9,7 @@ end
 
 describe Kafka::Protocol::HeartbeatResponse do
   it "from_kafka" do
-    res = Kafka::Protocol::HeartbeatResponse.from_kafka(bytes(0, 0, 0, 6, 0, 0, 0, 0, 0, 16))
+    res = Kafka::Protocol::HeartbeatResponse.from_kafka(bytes(0, 0, 0, 0, 0, 16))
     expect(res.correlation_id).to eq(0)
     expect(res.error_code).to eq(16)
   end

@@ -13,10 +13,10 @@ class Kafka::Execution
 
     # recv
     recv = connection.read
-    handler.recv(recv)
+    handler.recv(recv.to_slice)
 
     # convert
-    response = request.class.response.from_kafka(IO::Memory.new(recv), handler.verbose)
+    response = request.class.response.from_kafka(recv, handler.verbose)
     handler.respond(response)
 
     handler.completed(request, response)
@@ -25,5 +25,15 @@ class Kafka::Execution
   rescue err
     handler.failed(request, err)
     raise err
+  end
+end
+
+class Kafka
+  def execute(request : Kafka::Request, handler : Kafka::Handler)
+    Kafka::Execution.execute(connection, request, handler)
+  end
+
+  def execute(request : Kafka::Request)
+    execute(request, handler)
   end
 end

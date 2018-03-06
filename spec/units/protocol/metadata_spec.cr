@@ -12,7 +12,7 @@ end
 describe Kafka::Protocol::MetadataResponse do
   describe "(no topics)" do
     it "from_kafka" do
-      res = Kafka::Protocol::MetadataResponse.from_kafka(bytes(0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 117, 98, 117, 110, 116, 117, 0, 0, 35, 132, 0, 0, 0, 0))
+      res = Kafka::Protocol::MetadataResponse.from_kafka(bytes(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 117, 98, 117, 110, 116, 117, 0, 0, 35, 132, 0, 0, 0, 0))
       expect(res.correlation_id).to eq(0)
       expect(res.brokers).to eq([Kafka::Protocol::Structure::Broker.new(1, "ubuntu", 9092)])
       expect(res.topics).to eq([] of Kafka::Protocol::Structure::TopicMetadata)
@@ -25,7 +25,7 @@ describe Kafka::Protocol::MetadataResponse do
     let(broker) { res.brokers.first.not_nil! }
     
     let(res) {
-      Kafka::Protocol::MetadataResponse.from_kafka(bytes(0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 117, 98, 117, 110, 116, 117, 0, 0, 35, 132, 0, 0, 0, 1, 0, 0, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+      Kafka::Protocol::MetadataResponse.from_kafka(bytes(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 117, 98, 117, 110, 116, 117, 0, 0, 35, 132, 0, 0, 0, 1, 0, 0, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1))
     }
     
     it "from_kafka" do

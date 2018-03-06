@@ -167,17 +167,6 @@ class Kafka
     # kafka.init_producer_id
     # ```
     include Kafka::Commands::InitProducerId
-
-    ######################################################################
-    ### general
-
-    def execute(request : Kafka::Request, handler : Kafka::Handler)
-      Kafka::Execution.execute(connection, request, handler)
-    end
-
-    def execute(request : Kafka::Request)
-      execute(request, handler)
-    end
   end
 end
 

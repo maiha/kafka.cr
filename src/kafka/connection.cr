@@ -30,15 +30,8 @@ class Kafka::Connection
     raise err
   end
 
-  def read : Slice
-    size = socket!.read_bytes(Int32, IO::ByteFormat::BigEndian)
-    body = Slice(UInt8).new(size)
-    socket!.read_fully(body)
-
-    out = IO::Memory.new(4 + size)
-    out.write_bytes(size, format = IO::ByteFormat::BigEndian)
-    out.write(body)
-    out.to_slice
+  def read : IO
+    Kafka::Protocol.from_kafka(socket!)
   rescue err
     close
     raise err

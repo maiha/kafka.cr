@@ -23,7 +23,7 @@ end
 describe Kafka::Protocol::OffsetResponse do
   describe "(1 topic)" do
     let(res) {
-      Kafka::Protocol::OffsetResponse.from_kafka(bytes(0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0))
+      Kafka::Protocol::OffsetResponse.from_kafka(bytes(0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0))
     }
 
     let(tpo) { res.topic_partition_offsets.first.not_nil! }
