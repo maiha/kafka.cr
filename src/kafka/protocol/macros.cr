@@ -75,15 +75,8 @@ module Kafka::Protocol::Structure
   macro define_from_kafka
     def self.from_kafka(io : IO, debug_level = -1, hint = "")
       on_debug_head_padding
-#      size = io_read_bytes_with_debug(:cyan, Int32)  # drop message_size
-      size = io_read_int32  # drop message_size
-
-      # copy from socket to memory to avoid "Illegal seek"
-      body = Slice(UInt8).new(size)
-      io.read_fully(body)
-      io = IO::Memory.new(body)
-
-      super(io, debug_level_succ)
+      body = Kafka::Protocol.from_kafka(io)
+      super(body, debug_level_succ)
     end
 
     def self.from_kafka(io : IO, verbose : Bool)

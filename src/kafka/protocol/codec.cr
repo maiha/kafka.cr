@@ -131,3 +131,18 @@ class Array
     each(&.to_kafka(io))
   end
 end
+
+module Kafka::Protocol
+  # https://kafka.apache.org/protocol
+  def self.from_kafka(io : IO) : IO
+    # RequestOrResponse => Size (RequestMessage | ResponseMessage)
+    # Size => int32
+    size = io.read_bytes(Int32, IO::ByteFormat::BigEndian)
+    body = Slice(UInt8).new(size)
+
+    # first read full data to avoid runtime "Illegal seek"
+    io.read_fully(body)
+
+    return IO::Memory.new(body)
+  end
+end
