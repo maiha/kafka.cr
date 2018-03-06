@@ -64,8 +64,12 @@ module Kafka::Protocol
     @@requests
   end
 
+  def self.request?(api : Int, ver : Int) # Kafka::Request.class?
+    requests[{api, ver}]?
+  end
+
   def self.request(api : Int, ver : Int) : Kafka::Request.class
-    requests[{api, ver}]? || raise "No request class defined for (api:#{api}, ver:#{ver})"
+    request?(api, ver) || raise "No request class defined for (api:#{api}, ver:#{ver})"
   end
 
   module FromKafka
@@ -82,21 +86,21 @@ module Kafka::Protocol
   end
 
   macro protocol(name, ver = nil)
-    {% klass = (ver == nil) ? name : (name.stringify + "V" + ver.stringify).id %}
+    {% v = (ver == nil) ? "".id : ("V" + ver.stringify).id %}
     # (ver== ): FooRequest
-    # (ver==0): FooV0Request
-    # (ver==1): FooV1Request
+    # (ver==0): FooRequestV0
+    # (ver==1): FooRequestV1
 
-    class {{klass}}Request < Kafka::Request
+    class {{name}}Request{{v}} < Kafka::Request
       API = Kafka::Api::{{name}}
       VER = Int16.new({{ver}} || 0)
 
-      Kafka::Protocol.requests[{API.value.to_i16, VER}] = {{klass}}Request.as(Kafka::Request.class)
+      Kafka::Protocol.requests[{API.value.to_i16, VER}] = {{name}}Request{{v}}.as(Kafka::Request.class)
 
       forward_missing_to @request
       
       def initialize(*args)
-        @request = Structure::{{klass}}Request.new(API.value.to_i16, VER, *args)
+        @request = Structure::{{name}}Request{{v}}.new(API.value.to_i16, VER, *args)
       end
 
       def bytes
@@ -107,14 +111,14 @@ module Kafka::Protocol
         @request.to_kafka(io)
       end
 
-      def {{klass}}Request.response
-        Kafka::Protocol::{{klass}}Response
+      def {{name}}Request{{v}}.response
+        Kafka::Protocol::{{name}}Response{{v}}
       end
 
       include Kafka::Protocol::FromKafka
     end
 
-    class {{klass}}Response < Structure::{{klass}}Response
+    class {{name}}Response{{v}} < Structure::{{name}}Response{{v}}
       include Kafka::Response
       include Kafka::Protocol::FromKafka
     end

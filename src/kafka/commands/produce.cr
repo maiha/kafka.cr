@@ -36,7 +36,7 @@ class Kafka
 
       private def build_produce_request_v0(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
         tp = Structure::TopicAndPartitionMessages.new(entry, datas)
-        Kafka::Protocol::ProduceV0Request.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
+        Kafka::Protocol::ProduceRequestV0.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
       end
       
       ######################################################################
@@ -55,7 +55,7 @@ class Kafka
   
       private def build_produce_request_v1(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
         tp = Structure::TopicAndPartitionMessages.new(entry, datas)
-        Kafka::Protocol::ProduceV1Request.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
+        Kafka::Protocol::ProduceRequestV1.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
       end
 
       ######################################################################
@@ -74,7 +74,7 @@ class Kafka
   
       private def build_produce_request_v3(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
         tp = Structure::TopicAndPartitionMessages.new(entry, datas)
-        Kafka::Protocol::ProduceV3Request.new(0, client_id, opt.transactional_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
+        Kafka::Protocol::ProduceRequestV3.new(0, client_id, opt.transactional_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
       end
 
       private def fetch_produce_response(req)

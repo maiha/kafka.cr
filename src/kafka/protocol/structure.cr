@@ -105,7 +105,7 @@ module Kafka::Protocol::Structure
       name : String,
       partitions : Array(PartitionMetadata)
 
-  structure ProduceV0Request,
+  structure ProduceRequestV0,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
@@ -122,7 +122,7 @@ module Kafka::Protocol::Structure
         partition : Int32,
         message_set_entry : MessageSetEntry
 
-  structure ProduceV0Response,
+  structure ProduceResponseV0,
     correlation_id : Int32,
     topics : Array(TopicProducedV0)
 
@@ -135,8 +135,8 @@ module Kafka::Protocol::Structure
         error_code : Int16,
         offset : Int64
 
-  # same as ProduceV0Request
-  structure ProduceV1Request,
+  # same as ProduceRequestV0
+  structure ProduceRequestV1,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
@@ -145,12 +145,12 @@ module Kafka::Protocol::Structure
     timeout : Int32,
     topic_partitions : Array(TopicAndPartitionMessages)
 
-  structure ProduceV1Response,
+  structure ProduceResponseV1,
     correlation_id : Int32,
     topics : Array(TopicProducedV0),
     throttle_time : Int32
   
-  structure ProduceV3Request,
+  structure ProduceRequestV3,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
@@ -160,7 +160,7 @@ module Kafka::Protocol::Structure
     timeout : Int32,
     topic_partitions : Array(TopicAndPartitionMessages)
 
-  structure ProduceV3Response,
+  structure ProduceResponseV3,
     correlation_id : Int32,
     topics : Array(TopicProducedV0),
     throttle_time : Int32

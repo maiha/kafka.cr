@@ -40,7 +40,11 @@ EOF
   end
 
   private def do_show_request(api, ver, io)
-    puts Kafka::Protocol.request(api.value, ver).to_s
+    if req = Kafka::Protocol.request?(api.value, ver)
+      puts req.name
+    else
+      puts "%s v%s" % [api, ver]
+    end
   end
 
   private def do_show_response(io)
