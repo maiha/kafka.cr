@@ -20,10 +20,10 @@ class Kafka
         replica = -1
         po = Structure::Partition.new(index.partition, opt.latest_offset, opt.max_offsets)
         taps = [Structure::TopicAndPartitions.new(index.topic, [po])]
-        return OffsetRequest.new(0, client_id, replica, taps)
+        return ListOffsetsRequest.new(0, client_id, replica, taps)
       end
 
-      private def extract_offset!(index : Kafka::Index, res : OffsetResponse) : Kafka::Offset
+      private def extract_offset!(index : Kafka::Index, res : ListOffsetsResponse) : Kafka::Offset
         res.topic_partition_offsets.each do |ts|
           pos = ts.partition_offsets
           break if pos.empty?

@@ -57,9 +57,9 @@ module Kafka::Protocol::Structure
     end
   end
 
-  macro request(api_key, version)
+  macro request(api, version)
     def initialize(*args)
-      super(Int16.new({{api_key}}), Int16.new({{version}}), *args)
+      super(Int16.new({{api}}.value), Int16.new({{version}}), *args)
     end
 
     def to_kafka(io : IO)
@@ -85,7 +85,7 @@ module Kafka::Protocol::Structure
 end
 
 module Kafka::Protocol
-  macro api(key, name, ver = nil)
+  macro protocol(name, ver = nil)
     {% klass = (ver == nil) ? name : (name.stringify + "V" + ver.stringify).id %}
     # (ver== ): FooRequest
     # (ver==0): FooV0Request
@@ -98,7 +98,7 @@ module Kafka::Protocol
 
     class {{klass}}Request < Structure::{{klass}}Request
       include Kafka::Request
-      request {{key}}, {{ver || 0}}
+      request Kafka::Api::{{name}}, {{ver || 0}}
 
       def {{klass}}Request.response
         Kafka::Protocol::{{klass}}Response

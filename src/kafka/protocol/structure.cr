@@ -165,7 +165,7 @@ module Kafka::Protocol::Structure
     topics : Array(TopicProducedV0),
     throttle_time : Int32
   
-  structure OffsetRequest,
+  structure ListOffsetsRequest,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
@@ -173,7 +173,7 @@ module Kafka::Protocol::Structure
     replica_id : Int32,
     topic_partitions : Array(TopicAndPartitions)
 
-  structure OffsetResponse,
+  structure ListOffsetsResponse,
     correlation_id : Int32,
     topic_partition_offsets : Array(TopicPartitionOffset)
 

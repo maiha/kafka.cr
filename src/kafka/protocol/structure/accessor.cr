@@ -128,7 +128,7 @@ module Kafka::Protocol::Structure
     Partition.new(p, latest_offset = -1_i64, max_offsets = 999999999)
   end
 
-  class OffsetRequest
+  class ListOffsetsRequest
     def pretty_topic_partitions
       topic_partitions.reduce({} of String => Array(Int32)) { |hash, tap| hash[tap.topic] = tap.partitions.map(&.partition); hash }
     end

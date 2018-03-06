@@ -2,7 +2,7 @@ module RequestOperations
   protected def build_offset_request(topics, partition, replica = -1)
     po = Kafka::Protocol::Structure::Partition.new(partition, latest_offset = -1_i64, max_offsets = 999999999)
     taps = topics.map { |t| Kafka::Protocol::Structure::TopicAndPartitions.new(t, [po]) }
-    return Kafka::Protocol::OffsetRequest.new(0, app_name, replica, taps)
+    return Kafka::Protocol::ListOffsetsRequest.new(0, app_name, replica, taps)
   end
 
   protected def fetch_offset(topics, partition, replica = -1)
@@ -17,10 +17,10 @@ module RequestOperations
     builder.latest_offset = latest_offset
     reqs = builder.build
     
-    chan = Channel(Kafka::Protocol::OffsetResponse).new
+    chan = Channel(Kafka::Protocol::ListOffsetsResponse).new
     reqs.each do |leader, req|
       spawn {
-        req = Kafka::Protocol::OffsetRequest.new(0, "kafka-info", -1, req.topic_partitions)
+        req = Kafka::Protocol::ListOffsetsRequest.new(0, "kafka-info", -1, req.topic_partitions)
         res = execute(req.as(Kafka::Request), broker.call(leader))
         chan.send(res)
       }

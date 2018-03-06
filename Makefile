@@ -37,6 +37,9 @@ $(BINDIR)/%: $(SRCDIR)/%.cr
 	@mkdir -p bin
 	${CRYSTAL} build ${RELEASE} $^ -o $@ ${LINK_FLAGS}
 
+umount:
+	docker run --rm -t -v $$(pwd)/bin:/mnt alpine chown -R $$(id -u):$$(id -g) /mnt
+
 test: check_version_mismatch compile spec
 
 spec:
