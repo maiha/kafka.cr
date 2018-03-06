@@ -92,7 +92,13 @@ module Kafka::Protocol::Structure
   structure MetadataResponse,
     correlation_id : Int32,
     brokers : Array(Broker),
-    topics : Array(TopicMetadata)
+    topics : Array(TopicMetadata) do
+
+    def to_s(io : IO)
+      io << "brokers: %s\n" % brokers.map(&.to_s).join(", ")
+      io << "topics: %s\n" % topics.map(&.to_s).join(", ")
+    end
+  end
 
     structure TopicMetadata,
       error_code : Int16,

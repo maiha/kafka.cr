@@ -44,18 +44,4 @@ module Kafka::Protocol
 #  api 35, DescribeLogDirs
 #  api 36, SaslAuthenticate
 #  api 37, CreatePartitions
-
-  ######################################################################
-  ### Printing
-
-  class MetadataResponse
-    def to_s
-      b = brokers.map(&.to_s).join(", ")
-      t = topics.map(&.to_s).join(", ")
-      <<-EOF
-        brokers: #{b}
-        topics: #{t}
-        EOF
-    end
-  end
 end
