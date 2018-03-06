@@ -8,14 +8,16 @@ module Kafka::Protocol::Structure
       def initialize({{ *properties.map { |field| "@#{field.id}".id } }})
       end
 
-      def self.from_kafka(io : IO, debug_level = -1, hint = "")
+      def self.from_kafka(io : IO, debug_level = nil, hint = "")
+        debug_level ||= Kafka.logger_debug_level_default
         on_debug_head_padding
         label = self.to_s.sub(/Kafka::Protocol::Structure::/, "")
         on_debug "(#{label}.from_kafka)"
         new({{ *properties.map { |field| "#{field.type}.from_kafka(io, debug_level_succ, :#{field.var})".id } }})
       end
 
-      def self.from_kafka(slice : Slice, debug_level = -1, hint = "")
+      def self.from_kafka(slice : Slice, debug_level = nil, hint = "")
+        debug_level ||= Kafka.logger_debug_level_default
         from_kafka(IO::Memory.new(slice), debug_level, hint)
       end
 

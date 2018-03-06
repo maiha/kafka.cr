@@ -34,4 +34,13 @@ class Kafka
   def self.logger_debug_level=(v)
     @@logger_debug_level = v
   end
+
+  @@logger_debug_level_default : Int32 = -1
+  def self.logger_debug_level_default
+    @@logger_debug_level_default
+  end
+
+  def self.logger_debug_level_default=(v)
+    @@logger_debug_level_default = v
+  end
 end
