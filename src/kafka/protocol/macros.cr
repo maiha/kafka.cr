@@ -72,7 +72,7 @@ module Kafka::Protocol::Structure
     end
   end
 
-  macro response
+  macro define_from_kafka
     def self.from_kafka(io : IO, debug_level = -1, hint = "")
       on_debug_head_padding
 #      size = io_read_bytes_with_debug(:cyan, Int32)  # drop message_size
@@ -101,7 +101,7 @@ module Kafka::Protocol
     
     class {{klass}}Response < Structure::{{klass}}Response
       include Kafka::Response
-      response
+      define_from_kafka
     end
 
     class {{klass}}Request < Structure::{{klass}}Request
@@ -111,6 +111,8 @@ module Kafka::Protocol
       def {{klass}}Request.response
         Kafka::Protocol::{{klass}}Response
       end
+
+      define_from_kafka
     end
   end
 end
