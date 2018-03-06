@@ -5,7 +5,7 @@ include Kafka::Protocol
 describe Kafka::Protocol::MetadataRequest do
   it "to_kafka" do
     req = Kafka::Protocol::MetadataRequest.new(0, "x", ["t1"])
-    expect(req.to_slice).to eq(bytes(0, 0, 0, 19, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 120, 0, 0, 0, 1, 0, 2, 116, 49))
+    expect(req.to_slice).to eq(bytes(0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 120, 0, 0, 0, 1, 0, 2, 116, 49))
   end
 end
 

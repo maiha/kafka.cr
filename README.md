@@ -5,8 +5,9 @@
 ##### binary (standalone utilities)
 - x86_64 binary: https://github.com/maiha/kafka.cr/releases
 
-##### crystal versions
-- `0.24.1` : :white_check_mark: use 0.6.5 or higher
+##### versions
+- **kafka**: `1.0`
+- **crystal**: `0.24.1`
 
 ## Example
 

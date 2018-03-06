@@ -1,5 +1,6 @@
 class Kafka
-  module Request
+  abstract class Request
+    abstract def bytes : Bytes
   end
 
   module Response

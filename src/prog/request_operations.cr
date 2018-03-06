@@ -22,7 +22,7 @@ module RequestOperations
       spawn {
         req = Kafka::Protocol::ListOffsetsRequest.new(0, "kafka-info", -1, req.topic_partitions)
         res = execute(req.as(Kafka::Request), broker.call(leader))
-        chan.send(res)
+        chan.send(res.as(Kafka::Protocol::ListOffsetsResponse))
       }
     end
 

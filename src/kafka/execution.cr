@@ -1,15 +1,21 @@
 class Kafka::Execution
-  def self.execute(connection : Kafka::Connection, request, handler)
+  def self.execute(connection : Kafka::Connection, request : Kafka::Request, handler)
     handler.request(request)
-    bytes = request.to_slice
+    bytes = request.bytes
 
+    # add kafka protocol header
+    buf = IO::Memory.new
+    buf.write_bytes(bytes.bytesize.to_u32, IO::ByteFormat::BigEndian)
+    buf.write(bytes)
+    send_data = buf.to_slice
+    
     # send
     connection.socket! # to make sure that socket has been opened before spawn
     spawn do
-      connection.write bytes
+      connection.write send_data
       sleep 0
     end
-    handler.send(bytes)
+    handler.send(send_data)
 
     # recv
     recv = connection.read

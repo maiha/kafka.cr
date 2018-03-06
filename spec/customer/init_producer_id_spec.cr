@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 describe "(customer: init_producer_id)" do
-  subject!(kafka) { Kafka.new("kafka") }
+  subject!(kafka) { Kafka.new(kafka_broker) }
   after { kafka.close }
 
   describe "#init_producer_id" do
