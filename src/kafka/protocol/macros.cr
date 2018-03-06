@@ -11,8 +11,7 @@ module Kafka::Protocol::Structure
       def self.from_kafka(io : IO, debug_level = nil, hint = "")
         debug_level ||= Kafka.logger_debug_level_default
         on_debug_head_padding
-        label = self.to_s.sub(/Kafka::Protocol::Structure::/, "")
-        on_debug "(#{label}.from_kafka)"
+        on_debug_label
         new({{ *properties.map { |field| "#{field.type}.from_kafka(io, debug_level_succ, :#{field.var})".id } }})
       end
 
@@ -72,19 +71,6 @@ module Kafka::Protocol
     request?(api, ver) || raise "No request class defined for (api:#{api}, ver:#{ver})"
   end
 
-  module FromKafka
-    macro included
-      def self.from_kafka(io : IO, debug_level = -1, hint = "")
-        on_debug_head_padding
-        super(io, debug_level_succ)
-      end
-
-      def self.from_kafka(io : IO, verbose : Bool)
-        from_kafka(io, (verbose ? 0 : -1))
-      end
-    end
-  end
-
   macro protocol(name, ver = nil)
     {% v = (ver == nil) ? "".id : ("V" + ver.stringify).id %}
     # (ver== ): FooRequest
@@ -99,8 +85,18 @@ module Kafka::Protocol
 
       forward_missing_to @request
       
-      def initialize(*args)
-        @request = Structure::{{name}}Request{{v}}.new(API.value.to_i16, VER, *args)
+      def self.from_kafka(io : IO, debug_level = nil, hint = "")
+        debug_level ||= Kafka.logger_debug_level_default
+        request = Structure::{{name}}Request{{v}}.from_kafka(io, debug_level_succ)
+        new(request)
+      end
+
+      def self.new(*args)
+        request = Structure::{{name}}Request{{v}}.new(API.value.to_i16, VER, *args)
+        new(request)
+      end
+
+      def initialize(@request : Structure::{{name}}Request{{v}})
       end
 
       def bytes
@@ -114,13 +110,10 @@ module Kafka::Protocol
       def {{name}}Request{{v}}.response
         Kafka::Protocol::{{name}}Response{{v}}
       end
-
-      include Kafka::Protocol::FromKafka
     end
 
     class {{name}}Response{{v}} < Structure::{{name}}Response{{v}}
       include Kafka::Response
-      include Kafka::Protocol::FromKafka
     end
   end
 end

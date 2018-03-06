@@ -36,6 +36,14 @@ macro on_debug_head_address
   end
 end
 
+macro on_debug_label
+  _label = self.to_s.sub(/^.*::/, "")
+  _label = _label.sub(/(Request|Response)(V(\d+))?$/){
+    "#{$1} (Version: #{$~[3]? || 0})"
+  }
+  on_debug _label
+end
+
 macro on_debug(msg)
   if debug_level >= 0
     buf = String.build do |_io_|

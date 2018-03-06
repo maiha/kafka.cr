@@ -141,6 +141,7 @@ module Options
     end
 
     protected def execute(request, broker = build_broker)
+      Kafka.debug = true if verbose
       kafka = Kafka.new(broker)
       kafka.execute(request)
     end

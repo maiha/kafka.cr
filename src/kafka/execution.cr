@@ -22,10 +22,10 @@ class Kafka::Execution
     handler.recv(recv.to_slice)
 
     # convert
-    response = request.class.response.from_kafka(recv, handler.verbose)
-    handler.respond(response)
+    response = request.class.response.from_kafka(recv)
+    handler.respond(response.as(Kafka::Response))
 
-    handler.completed(request, response)
+    handler.completed(request, response.as(Kafka::Response))
 
     return response
   rescue err

@@ -17,7 +17,7 @@ abstract class App
   getter :args
 
   def initialize(@args : Array(String))
-    Kafka.logger = CompositeLogger.stdio
+    Kafka.logger = Logger.new(STDERR)
   end
 
   def run
