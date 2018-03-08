@@ -5,6 +5,7 @@ module Kafka::Protocol
   protocol Produce, 0
   protocol Produce, 1
   protocol Produce, 3
+  protocol Produce, 5
   protocol Fetch
   protocol ListOffsets
   protocol Metadata

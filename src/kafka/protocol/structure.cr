@@ -58,6 +58,30 @@ module Kafka::Protocol::Structure
     end    
   end
   
+  structure MessageV1,
+    crc : Int32,
+    magic_byte : Int8,
+    attributes : Int8,
+    timestamp : Int64,
+    key : Bytes,
+    value : Bytes
+
+  # clients/src/main/java/org/apache/kafka/common/record/DefaultRecordBatch.java
+  structure RecordBatchV2,
+    base_offset : Int64,
+    length : Int32,
+    partition_leader_epoch : Int32,
+    magic : Int8,
+    crc : Int32,
+    attributes : Int16,
+    last_offset_delta : Int32,
+    first_timestamp : Int64,
+    max_timestamp : Int64,
+    producer_id : Int64,
+    producer_epoch : Int16,
+    base_sequence : Int32
+#    records : [Record]
+      
   structure Broker,
     node_id : Int32,
     host : String,
@@ -79,66 +103,6 @@ module Kafka::Protocol::Structure
     replicas : Array(Int32),
     isrs : Array(Int32)
 
-  structure ProduceRequestV0,
-    api_key : Int16,
-    api_version : Int16,
-    correlation_id : Int32,
-    client_id : String,
-    required_acks : Int16,
-    timeout : Int32,
-    topic_partitions : Array(TopicAndPartitionMessages)
-
-    structure TopicAndPartitionMessages,
-      topic : String,
-      partition_messages : Array(PartitionMessage)
-
-      structure PartitionMessage,
-        partition : Int32,
-        message_set_entry : MessageSetEntry
-
-  structure ProduceResponseV0,
-    correlation_id : Int32,
-    topics : Array(TopicProducedV0)
-
-    structure TopicProducedV0,
-      topic : String,
-      partitions : Array(PartitionProducedV0)
-
-      structure PartitionProducedV0,
-        partition : Int32,
-        error_code : Int16,
-        offset : Int64
-
-  # same as ProduceRequestV0
-  structure ProduceRequestV1,
-    api_key : Int16,
-    api_version : Int16,
-    correlation_id : Int32,
-    client_id : String,
-    required_acks : Int16,
-    timeout : Int32,
-    topic_partitions : Array(TopicAndPartitionMessages)
-
-  structure ProduceResponseV1,
-    correlation_id : Int32,
-    topics : Array(TopicProducedV0),
-    throttle_time : Int32
-  
-  structure ProduceRequestV3,
-    api_key : Int16,
-    api_version : Int16,
-    correlation_id : Int32,
-    client_id : String,
-    transactional_id : String,
-    required_acks : Int16,
-    timeout : Int32,
-    topic_partitions : Array(TopicAndPartitionMessages)
-
-  structure ProduceResponseV3,
-    correlation_id : Int32,
-    topics : Array(TopicProducedV0),
-    throttle_time : Int32
-  
   structure ListOffsetsRequest,
     api_key : Int16,
     api_version : Int16,
