@@ -5,7 +5,7 @@ class Kafka
 
       record InitProducerIdOption, consumer_offsets : Bool
 
-      def init_producer_id(transactional_id : String, transaction_timeout_ms : Int32)
+      def init_producer_id(transactional_id : String = "", transaction_timeout_ms : Int32 = Int32::MAX)
         req = build_init_producer_id_request(transactional_id, transaction_timeout_ms)
         res = fetch_init_producer_id_response(req)
         return res
