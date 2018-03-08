@@ -71,12 +71,7 @@ EOF
 
     if verbose
       if klass = bin.klass?
-        if bin.valid?
-          show_verbose(klass, bin.bytes)
-        else
-          # invalid data
-          puts "FAILED: #{klass}.from_kafka(#{bin.bytes})".colorize(:red)
-        end
+        show_verbose(klass, bin.bytes)
       else
         puts bin.bytes
       end
@@ -88,6 +83,11 @@ EOF
     Kafka.debug = true
     klass.from_kafka(io)
     Kafka.debug = false
+
+    extra_bytes = Bytes.new(1024)
+    if n = io.read_fully?(extra_bytes)
+      puts "FAILED: extra data found: %s bytes" % [n == 1024 ? "1K+" : n]
+    end
   end
 
   private def request_found(req : Request)

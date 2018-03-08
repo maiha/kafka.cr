@@ -14,8 +14,8 @@
         io = IO::Memory.new(bytes)
         klass.from_kafka(io)
 
-        extra_bytes = Bytes.new(1)
-        if io.read_fully?(extra_bytes)
+        extra_bytes = Bytes.new(1024)
+        if n = io.read_fully?(extra_bytes)
           return false
         else
           return true

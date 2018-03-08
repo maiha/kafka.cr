@@ -10,4 +10,6 @@ module Kafka::Protocol
   protocol Metadata
   protocol Heartbeat
   protocol InitProducerId
+  protocol ApiVersions, 0
+  protocol ApiVersions, 1
 end
