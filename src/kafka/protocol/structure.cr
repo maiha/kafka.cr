@@ -79,32 +79,6 @@ module Kafka::Protocol::Structure
     replicas : Array(Int32),
     isrs : Array(Int32)
 
-  ######################################################################
-  ### Request and Response
-
-  structure MetadataRequest,
-    api_key : Int16,
-    api_version : Int16,
-    correlation_id : Int32,
-    client_id : String,
-    topics : Array(String)
-
-  structure MetadataResponse,
-    correlation_id : Int32,
-    brokers : Array(Broker),
-    topics : Array(TopicMetadata) do
-
-    def to_s(io : IO)
-      io << "brokers: %s\n" % brokers.map(&.to_s).join(", ")
-      io << "topics: %s\n" % topics.map(&.to_s).join(", ")
-    end
-  end
-
-    structure TopicMetadata,
-      error_code : Int16,
-      name : String,
-      partitions : Array(PartitionMetadata)
-
   structure ProduceRequestV0,
     api_key : Int16,
     api_version : Int16,
@@ -244,6 +218,7 @@ module Kafka::Protocol::Structure
     transaction_timeout_ms : Int32
 
   structure InitProducerIdResponse,
+    correlation_id : Int32,
     throttle_time_ms : Int32,
     error_code : Int16,
     producer_id : Int64,

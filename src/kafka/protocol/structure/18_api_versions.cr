@@ -16,6 +16,7 @@ module Kafka::Protocol::Structure
     client_id : String
 
   structure ApiVersionsResponseV0,
+    correlation_id : Int32,
     error_code : Int16,
     api_versions : Array(ApiVersion)
 
@@ -28,8 +29,8 @@ module Kafka::Protocol::Structure
     client_id : String
 
   structure ApiVersionsResponseV1,
+    correlation_id : Int32,
     error_code : Int16,
-    unknown : Int32,
     api_versions : Array(ApiVersion),
     throttle_time_ms : Int32
 end

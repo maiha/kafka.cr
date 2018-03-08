@@ -12,7 +12,11 @@
     def valid? : Bool
       if klass = klass?
         io = IO::Memory.new(bytes)
-        klass.from_kafka(io)
+        begin
+          klass.from_kafka(io)
+        rescue IO::EOFError
+          return false
+        end
 
         extra_bytes = Bytes.new(1024)
         if n = io.read_fully?(extra_bytes)

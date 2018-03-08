@@ -8,6 +8,7 @@ module Kafka::Protocol
   protocol Fetch
   protocol ListOffsets
   protocol Metadata
+  protocol Metadata, 5
   protocol Heartbeat
   protocol InitProducerId
   protocol ApiVersions, 0

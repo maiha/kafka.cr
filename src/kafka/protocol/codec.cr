@@ -1,6 +1,15 @@
 # #####################################################################
 # ## from kafka
 
+def Kafka::NullableString.from_kafka(io : IO, debug_level = -1, hint = "")
+  String.from_kafka(io, debug_level, hint)
+end
+
+def Bool.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  io_read_bytes_with_debug(:cyan, Bool)
+end
+
 def Int8.from_kafka(io : IO, debug_level = -1, hint = "")
   on_debug_head_address
   io_read_bytes_with_debug(:cyan)
@@ -59,9 +68,9 @@ end
 def Array.from_kafka(io : IO, debug_level = -1, hint = "")
   on_debug_head_address
   label = self.to_s.sub(/Kafka::Protocol::Structure::/, "").sub(/^Array/, "Array[4]")
-  on_debug "#{label}".colorize(:cyan)
   ary = new
   len = io_read_int32
+  on_debug "#{label} -> #{len}".colorize(:cyan)
   (1..len).each do
     ary << T.from_kafka(io, debug_level_succ)
   end
@@ -74,6 +83,12 @@ end
 struct Nil
   def to_kafka(io : IO)
     Kafka::Protocol::Structure::Null.to_kafka(io)
+  end
+end
+
+struct Kafka::NullableString
+  def to_kafka(io : IO)
+    "".to_kafka(io)
   end
 end
 
@@ -98,6 +113,12 @@ end
 struct Int64
   def to_kafka(io : IO)
     io.write_bytes(to_u64, IO::ByteFormat::BigEndian)
+  end
+end
+
+struct Bool
+  def to_kafka(io : IO)
+    io.write_bytes(self ? 1_u8 : 0_u8, IO::ByteFormat::BigEndian)
   end
 end
 

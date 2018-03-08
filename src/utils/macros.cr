@@ -62,17 +62,27 @@ macro io_read_bytes_with_debug(color, type)
     "Int32" => 4,
     "Int16" => 2,
     "Int8"  => 1,
+    "Bool"  => 1,
   }[{{type.id}}.to_s] || "?"
   label = "#{self}[#{bytes}]#{name}"
   begin
-    value = io.read_bytes({{type.id}}, IO::ByteFormat::BigEndian)
+    {% if type.id.stringify == "Bool" %}
+      value = io.read_bytes(Int8, IO::ByteFormat::BigEndian)
+    {% else %}
+      value = io.read_bytes({{type.id}}, IO::ByteFormat::BigEndian) # {{type.id}}
+    {% end %}
     if hint.to_s == "error_code" && value != 0
       errmsg = Kafka::Protocol.errmsg(value.to_i16)
       on_debug "#{label} -> #{errmsg}".colorize(:red)
     else
       on_debug "#{label} -> #{value}".colorize({{color}})
     end
-    return value
+
+    {% if type.stringify == "Bool" %}
+      return (value == 1)
+    {% else %}
+      return value
+    {% end %}
   rescue err
     on_debug "#{label} (#{err})".colorize(:red)
     raise err

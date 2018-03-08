@@ -10,7 +10,10 @@ class Kafka
   end
   
   alias Binary = Slice(UInt8)
-  
+
+  record NullableString, value : String? do
+  end
+
   # An entry point to produce message, which contains topic and partition
   record Entry,
     topic : String,
