@@ -36,11 +36,12 @@ module Utils::GuessBinary
 
   class Text < Guessed
     def self.match?(bytes : Slice(UInt8))
-      s = String.new(bytes)
-      s.inspect
-      true
+      s = String.new(bytes, "UTF-8")
+      return false if !s.valid_encoding?
+      return false if s.inspect =~ /\\u(\d){4}/
+      return true
     rescue
-      false
+      return false
     end
 
     def initialize(bytes)
@@ -62,7 +63,7 @@ module Utils::GuessBinary
   end
 
   def guess_binary(bytes : Slice(UInt8)) : Guessed
-    [Null, Msgpack].each do |decoder|
+    [Null, Msgpack, Text].each do |decoder|
       return decoder.new(bytes) if decoder.match?(bytes)
     end
     raise "not match"
