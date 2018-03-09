@@ -36,9 +36,9 @@ module ResponseOperations
             when :GUESS
               value = guess_binary(bytes)
               value = pretty_binary(value.to_s)
-              logger.info "#{head}\t#{m.offset}: #{value.to_s}"
+              puts "#{head}\t#{m.offset}: #{value.to_s}"
             else
-              logger.info "#{head}\t#{m.offset}: #{bytes.to_s}"
+              puts "#{head}\t#{m.offset}: #{bytes.to_s}"
             end
           end
         else

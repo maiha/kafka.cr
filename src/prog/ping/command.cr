@@ -56,7 +56,7 @@ module Ping
       now = Time.now
       msec = (now - started_at).total_milliseconds.to_s
 
-      logger.info "#{state} from #{host}:#{port} req_seq=#{req_seq} time=#{msec} ms"
+      puts "#{state} from #{host}:#{port} req_seq=#{req_seq} time=#{msec} ms"
 
       if state_changed?
         logger.error "#{host}:#{port} : #{last_state} -> #{state}"

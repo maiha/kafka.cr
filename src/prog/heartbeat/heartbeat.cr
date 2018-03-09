@@ -27,7 +27,7 @@ EOF
   private def print_res(res)
     head = broker.to_s
     if res.error_code == 0
-      logger.info "#{head}\t#{res.error_code}"
+      puts "#{head}\t#{res.error_code}"
     else
       errmsg = Kafka::Protocol.errmsg(res.error_code)
       logger.error "#{head}\t#{errmsg}".colorize(:red)

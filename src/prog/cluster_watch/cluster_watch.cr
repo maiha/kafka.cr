@@ -174,7 +174,7 @@ EOF
         select
         when value = ch1.receive
         when value = ch2.receive
-          logger.info value
+          puts value
         when value = ch3.receive
           logger.error value
           STDERR.flush
