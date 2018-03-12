@@ -170,6 +170,10 @@ make spec
 Docker containers `zk` and `kafka brokers` are automatically created by docker-compose.
 - https://github.com/wurstmeister/kafka-docker/blob/master/docker-compose-single-broker.yml
 
+## Licence
+- MIT : This repository
+- Apache 2.0 : `src/utils/zig_zag.cr` derives algorithm about `varint` from https://github.com/apache/kafka/blob/1.0/clients/src/main/java/org/apache/kafka/common/utils/ByteUtils.java
+
 ## Contributing
 
 1. Fork it ( https://github.com/maiha/kafka.cr/fork )

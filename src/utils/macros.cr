@@ -12,6 +12,10 @@ macro io_read_int32
   io.read_bytes(Int32, IO::ByteFormat::BigEndian)
 end
 
+macro io_read_uint32
+  io.read_bytes(UInt32, IO::ByteFormat::BigEndian)
+end
+
 macro io_read_int64
   io.read_bytes(Int64, IO::ByteFormat::BigEndian)
 end
@@ -58,11 +62,12 @@ end
 macro io_read_bytes_with_debug(color, type)
   name = hint.to_s.empty? ? "" : "(#{hint})"
   bytes = {
-    "Int64" => 8,
-    "Int32" => 4,
-    "Int16" => 2,
-    "Int8"  => 1,
-    "Bool"  => 1,
+    "Int64"  => 8,
+    "Int32"  => 4,
+    "UInt32" => 4,
+    "Int16"  => 2,
+    "Int8"   => 1,
+    "Bool"   => 1,
   }[{{type.id}}.to_s] || "?"
   label = "#{self}[#{bytes}]#{name}"
   begin

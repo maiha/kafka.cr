@@ -1,4 +1,6 @@
 module Kafka::Protocol::Structure
+  include ZigZag
+
   # NOTE: Kafka has two nullable types for `String` and `Bytes`.
   # 1. But, Crystal can't differ nils whether it is `String?` or `Bytes?`.
   # 2. Fortunately, both `NullableString` and emtpy string builds `short int(-1)`.
@@ -8,6 +10,19 @@ module Kafka::Protocol::Structure
   ### Parts
 
   alias Bytes = Slice(UInt8)
+
+  Null = Slice(UInt8).new(0)
+
+  def null
+    Null
+  end
+
+  class VarArray(T) < Array(T)
+  end
+
+  structure Header,
+    key : String,
+    value : Bytes
 
   structure Message,
     crc : Int32,
@@ -20,6 +35,8 @@ module Kafka::Protocol::Structure
     offset : Int64,
     bytesize : Int32,
     message : Message
+
+  record Varbytes, size : Int32, bytes : Bytes
 
   class MessageSetEntry
     SIZE_NOT_CALCULATED = -1
@@ -72,16 +89,26 @@ module Kafka::Protocol::Structure
     length : Int32,
     partition_leader_epoch : Int32,
     magic : Int8,
-    crc : Int32,
+    crc : UInt32,
     attributes : Int16,
     last_offset_delta : Int32,
     first_timestamp : Int64,
     max_timestamp : Int64,
     producer_id : Int64,
     producer_epoch : Int16,
-    base_sequence : Int32
-#    records : [Record]
-      
+    base_sequence : Int32,
+    records : Array(Record)
+
+  # https://github.com/apache/kafka/blob/1.0/clients/src/main/java/org/apache/kafka/common/record/DefaultRecord.java
+  structure Record,
+    length : Varint,
+    attributes : Int8,
+    timestamp_delta : Varlong,
+    offset_delta : Varint,
+    key : Varbytes,
+    val : Varbytes,
+    headers : VarArray(Header)
+  
   structure Broker,
     node_id : Int32,
     host : String,
@@ -136,39 +163,6 @@ module Kafka::Protocol::Structure
   structure HeartbeatResponse,
     correlation_id : Int32,
     error_code : Int16
-
-  structure FetchRequest,
-    api_key : Int16,
-    api_version : Int16,
-    correlation_id : Int32,
-    client_id : String,
-    replica_id : Int32,
-    max_wait_time : Int32,
-    min_bytes : Int32,
-    topics : Array(FetchRequestTopics)
-
-    structure FetchRequestTopics,
-      topic : String,
-      partitions : Array(FetchRequestPartitions)
-
-      structure FetchRequestPartitions,
-        partition : Int32,
-        offset : Int64,
-        max_bytes : Int32
-  
-  structure FetchResponse,
-    correlation_id : Int32,
-    topics : Array(FetchResponseTopic)
-
-    structure FetchResponseTopic,
-      topic : String,
-      partitions : Array(FetchResponsePartition)
-
-      structure FetchResponsePartition,
-        partition : Int32,
-        error_code : Int16,
-        high_water_mark : Int64,
-        message_set_entry : MessageSetEntry
 end
 
 require "./structure/*"

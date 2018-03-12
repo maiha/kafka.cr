@@ -20,7 +20,7 @@ module Utils::GuessBinary
 
   class Unknown < Guessed
     def initialize(bytes)
-      super("(unknown) #{bytes.inspect}", bytes)
+      super(bytes.inspect, bytes)
     end
   end
 

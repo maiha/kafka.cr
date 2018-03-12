@@ -18,7 +18,9 @@ class Packet < App
   property request_queue : Array(Request) = Array(Request).new
   property binary_history : Array(Binary) = Array(Binary).new
 
-  options :raw, :verbose, :version, :help
+  options :api_key, :api_ver, :raw, :verbose, :version, :help
+
+  option max_bytes : Int32, "--max-bytes SIZE", "Read maximum bytes from the file", 4096
 
   usage <<-EOF
 Usage: #{app_name} [options] packet_file
@@ -86,7 +88,7 @@ EOF
 
     extra_bytes = Bytes.new(1024)
     if n = io.read_fully?(extra_bytes)
-      puts "FAILED: extra data found: %s bytes" % [n == 1024 ? "1K+" : n]
+      logger.error "FAIL: extra data found: %s bytes" % [n == 1024 ? "1K+" : n]
     end
   end
 
@@ -132,27 +134,51 @@ EOF
     return Type::Unknown
   end
 
-  private def build_binary(path : String) : Binary
-    type = guess_type(path)
-    
-    io = IO::Memory.new(File.read(path))
-    io = Kafka::Protocol.from_kafka(io)
-    bytes = io.to_slice
+  private def guess_api_key_and_ver(path : String) : {Kafka::Api?, Int16?}
+    if api_key >= 0 && api_ver >=0
+      return {Kafka::Api.from_value(api_key), api_ver.to_i16}
+    else
+      File.open(path) do |io|
+        io.read_bytes(Int32, IO::ByteFormat::BigEndian) # strip first
+        # check first Int16
+        # a) request  header # api_key => INT16
+        # b) response header # correlation_id => INT32
+        got_key = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
+        got_ver = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
+        key = Kafka::Api.from_value?((api_key >= 0) ? api_key : got_key)
+        ver = ((api_ver >= 0) ? api_ver : got_ver).to_i16
+        return {key, ver}
+      end
+    end
+  end
 
-    # check first Int16
-    # a) request  header # api_key => INT16
-    # b) response header # correlation_id => INT32
-    api = Kafka::Api.from_value?(io.read_bytes(Int16, IO::ByteFormat::BigEndian))
-    ver = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
-    io.rewind
+  private def read_payload(path)
+    File.open(path) do |io|
+      length = io.read_bytes(Int32, IO::ByteFormat::BigEndian)
+      length = max_bytes if length > max_bytes
+
+      bytes = Bytes.new(length)
+      io.read_fully(bytes)
+      return bytes
+    end
+  rescue IO::Error
+    logger.error "broken data: #{path}"
+    bytes = IO::Memory.new(File.read(path)).to_slice
+    if bytes.size > 4
+      return bytes[4, bytes.size - 4]
+    else
+      return Bytes.empty
+    end
+  end
+
+  private def build_binary(path : String) : Binary
+    type     = guess_type(path)
+    api, ver = guess_api_key_and_ver(path)
+    bytes    = read_payload(path)
 
     case type
     when .unknown?
-      # do best effort by checking bytes
-      if api && (ver <= 5)
-        # When request parser can parse this, confirm it is a request.
-        return Request.new(bytes, api: api, ver: ver)
-      end
+      return Request.new(bytes, api: api, ver: ver)
     when .request?
       return Request.new(bytes, api: api, ver: ver)
     end

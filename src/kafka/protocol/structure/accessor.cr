@@ -1,12 +1,6 @@
 require "zlib"
 
 module Kafka::Protocol::Structure
-  Null = Slice(UInt8).new(0)
-
-  def null
-    Null
-  end
-  
   class Message
     def initialize(value : Bytes)
       initialize(Null, value)

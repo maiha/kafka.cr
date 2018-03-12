@@ -64,26 +64,7 @@ module Kafka::Protocol::Structure
     throttle_time : Int32
 
   ######################################################################
-  ### V5
-  structure TopicDataV5,
-    topic : String,
-    data : Array(PartitionRecordSetV5)
-
-  structure PartitionRecordSetV5,
-    partition : Int32,
-    record_set : RecordBatchV2
-
-  structure TopicPartitionResponseV5,
-    topic : String,
-    partition_responses : Array(PartitionResponseV5)
-  
-  structure PartitionResponseV5,
-    partition : Int32,
-    error_code : Int16,
-    base_offset : Int64,
-    log_append_time : Int64,
-    log_start_offset : Int64
-  
+  ### V5 : Request
   structure ProduceRequestV5,
     api_key : Int16,
     api_version : Int16,
@@ -92,10 +73,34 @@ module Kafka::Protocol::Structure
     transactional_id : String,
     acks : Int16,
     timeout : Int32,
-    topic_data : Array(TopicDataV5)
+    topic_data : Array(TopicData) do
 
+    structure TopicData,
+      topic : String,
+      data : Array(PartitionRecordSet)
+
+    structure PartitionRecordSet,
+      partition : Int32,
+      start_offset : Int32, # length_field?
+      record_set : RecordBatchV2
+  end
+  
+  ######################################################################
+  ### V5 : Response
   structure ProduceResponseV5,
     correlation_id : Int32,
-    responses : Array(TopicPartitionResponseV5),
-    throttle_time_ms : Int32
+    responses : Array(TopicPartitionResponse),
+    throttle_time_ms : Int32 do
+
+    structure TopicPartitionResponse,
+      topic : String,
+      partition_responses : Array(PartitionResponse)
+
+    structure PartitionResponse,
+      partition : Int32,
+      error_code : Int16,
+      base_offset : Int64,
+      log_append_time : Int64,
+      log_start_offset : Int64
+  end  
 end

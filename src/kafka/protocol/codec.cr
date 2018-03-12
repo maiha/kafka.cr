@@ -5,30 +5,12 @@ def Kafka::NullableString.from_kafka(io : IO, debug_level = -1, hint = "")
   String.from_kafka(io, debug_level, hint)
 end
 
-def Bool.from_kafka(io : IO, debug_level = -1, hint = "")
-  on_debug_head_address
-  io_read_bytes_with_debug(:cyan, Bool)
-end
-
-def Int8.from_kafka(io : IO, debug_level = -1, hint = "")
-  on_debug_head_address
-  io_read_bytes_with_debug(:cyan)
-end
-
-def Int16.from_kafka(io : IO, debug_level = -1, hint = "")
-  on_debug_head_address
-  io_read_bytes_with_debug(:cyan)
-end
-
-def Int32.from_kafka(io : IO, debug_level = -1, hint = "")
-  on_debug_head_address
-  io_read_bytes_with_debug(:cyan)
-end
-
-def Int64.from_kafka(io : IO, debug_level = -1, hint = "")
-  on_debug_head_address
-  io_read_bytes_with_debug(:cyan)
-end
+{% for klass in %w( Bool Int8 Int16 Int32 UInt32 Int64 UInt64 ) %}
+  def {{klass.id}}.from_kafka(io : IO, debug_level = -1, hint = "")
+    on_debug_head_address
+    io_read_bytes_with_debug(:cyan, {{klass.id}})
+  end
+{% end %}
 
 def String.from_kafka(io : IO, debug_level = -1, hint = "")
   on_debug_head_address
@@ -92,29 +74,14 @@ struct Kafka::NullableString
   end
 end
 
-struct Int8
-  def to_kafka(io : IO)
-    io.write_bytes(to_u8, IO::ByteFormat::BigEndian)
+{% for klass in %w( Int8 Int16 Int32 UInt32 Int64 UInt64 ) %}
+  {% size = klass.gsub(/[a-z]/i, "") %}
+  struct {{klass.id}}
+    def to_kafka(io : IO)
+      io.write_bytes(to_u{{size.id}}, IO::ByteFormat::BigEndian)
+    end
   end
-end
-
-struct Int16
-  def to_kafka(io : IO)
-    io.write_bytes(to_u16, IO::ByteFormat::BigEndian)
-  end
-end
-
-struct Int32
-  def to_kafka(io : IO)
-    io.write_bytes(to_u32, IO::ByteFormat::BigEndian)
-  end
-end
-
-struct Int64
-  def to_kafka(io : IO)
-    io.write_bytes(to_u64, IO::ByteFormat::BigEndian)
-  end
-end
+{% end %}
 
 struct Bool
   def to_kafka(io : IO)

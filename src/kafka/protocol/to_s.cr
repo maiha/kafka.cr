@@ -1,21 +1,35 @@
 module Kafka::Protocol::Structure
   class Broker
-    def to_s
-      "(#{node_id} => #{host}:#{port})"
+    def to_s(io : IO)
+      io << "(#{node_id} => #{host}:#{port})"
     end
   end
 
   class PartitionMetadata
-    def to_s
+    def to_s(io : IO)
       msg = Kafka::Protocol.errmsg(error_code, "{leader=#{leader},replica=#{replicas.inspect},isr=#{isrs.inspect}}")
-      %(#{id} => #{msg})
+      io << "#{id} => #{msg}"
     end
   end
 
   class TopicMetadata
-    def to_s
+    def to_s(io : IO)
       msg = Kafka::Protocol.errmsg(error_code, partitions.map(&.to_s).join(", "))
-      %(#{name}(#{msg}))
+      io << "#{name}(#{msg})"
+    end
+  end
+
+  class Record
+    def to_s(io : IO)
+      io << val.to_s
+    end
+  end
+
+  class RecordBatchV2
+    def to_s(io : IO)
+#      io << base_offset.to_s
+      io << "(%d)" % records.size
+      io << records.map(&.to_s).inspect
     end
   end
 end

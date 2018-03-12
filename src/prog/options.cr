@@ -84,6 +84,14 @@ module Options
     option all : Bool, "-a", "--all", "Process all data", {{default}}
   end
 
+  macro option_api_key
+    option api_key : Int32, "--api-key API_KEY", "Specify the number of api key", -1
+  end
+
+  macro option_api_ver
+    option api_ver : Int32, "--api-ver API_VERSION", "Specify api version of the request", -1
+  end
+
   macro option_count
     option count : Bool, "-c", "--count", "Print a count of entries", false
   end
@@ -122,6 +130,10 @@ module Options
 
   macro option_partition
     option partition : Int32, "-p NUM", "--partition NUM", "Specify partition number", 0
+  end
+
+  macro option_correlation_id
+    option correlation_id : Int32, "--correlation_id VALUE", "A user-supplied integer value that will be passed back with the response", 0
   end
 
   macro option_broker

@@ -26,4 +26,61 @@ module Kafka::Protocol::Structure
     end
     return new(size, sets)
   end
+
+  def Varbytes.from_kafka(io : IO, debug_level = -1, hint = "")
+    on_debug_head_address
+    name = hint.to_s.empty? ? "" : "(#{hint})"
+
+    v = Varint.decode(io)
+    size = v.value
+
+    if size < 0
+      on_debug "Varbytes[#{v.read_bytes}+0]#{name} -> (null)".colorize(:cyan)
+      return new(size, Null)
+    else
+      bytes = Slice(UInt8).new(size).tap { |s| io.read_fully(s) }
+      value_hint = String.new(bytes) rescue bytes
+      on_debug "Varbytes[#{v.read_bytes}+#{size}]#{name} -> (#{size})#{value_hint.inspect}".colorize(:cyan)
+      return new(size, bytes)
+    end
+  end
+
+  struct Varbytes
+    def to_kafka(io : IO)
+      raise "NotImplementedYet"
+    end
+  end
+  
+  def VarArray.from_kafka(io : IO, debug_level = -1, hint = "")
+    on_debug_head_address
+    label = self.to_s.gsub(/[A-Za-z]+::/, "") # VarArray(Kafka::Protocol::Structure::Header) -> VarArray(Header)
+    var = ZigZag::Varint.decode(io)
+    len = var.value
+    on_debug "#{label} -> #{len}".colorize(:cyan)
+
+    ary = new
+    (1..len).each do
+      ary << T.from_kafka(io, debug_level_succ)
+    end
+    return ary
+  end
+end
+
+def ZigZag::Var.from_kafka(io : IO, debug_level = -1, hint = "")
+  on_debug_head_address
+  name = hint.to_s.empty? ? "" : "(#{hint})"
+  var = decode(io)
+
+  type_hint = {{T.name.stringify}}
+  type_hint = "Varint"  if type_hint =~ /32/
+  type_hint = "Varlong" if type_hint =~ /64/
+  
+  on_debug ("#{type_hint}[#{var.read_bytes}]#{name} -> #{var.value}").colorize(:cyan)
+  return var
+end
+
+class ZigZag::Var(T)
+  def to_kafka(io : IO)
+    raise "NotImplementedYet"
+  end
 end
