@@ -72,16 +72,15 @@ module Kafka::Protocol::Structure
   structure FetchResponseV6,
     correlation_id : Int32,
     throttle_time_ms : Int32,
-    responses : Array(TopicData) do
+    topics : Array(FetchResponseV6::Topic) do
 
-    structure TopicData,
+    structure Topic,
       topic : String,
-      partition_responses : Array(PartitionResponse)
+      partitions : Array(FetchResponseV6::Partition)
 
-    structure PartitionResponse,
+    structure Partition,
       partition_header : PartitionHeader,
-      start_offset : Int32, # length_field?
-      record_set : RecordBatchV2
+      record_set : MemoryRecords
 
     structure PartitionHeader,
       partition : Int32,

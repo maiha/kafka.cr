@@ -2,6 +2,7 @@ class Kafka
   module Commands
     module Produce
       include Kafka::Protocol
+      include ZigZag
 
       class ProduceOption
         var required_acks : Int16, -1_i16
@@ -62,19 +63,33 @@ class Kafka
       ### v5
       
       def produce_v5(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+#        res = raw_produce_v5(entry, datas, opt)
         raise "not implemented"
-       #        res = raw_produce_v5(entry, datas, opt)
 #        return extract_produce_info!(res)
       end
   
       def raw_produce_v5(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
-#        req = build_produce_request_v5(entry, datas, opt)
+        req = build_produce_request_v5(entry, datas, opt)
 #        res = fetch_produce_response(req)
 #        return res
       end
 
       private def build_produce_request_v5(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
-        tp = Structure::Record.new(entry, datas)
+
+#        records = datas.map{|data|
+#          record = Structure::Record.new(
+#            length: Varint.new(-1),
+#            attributes: Int8.new(0),
+#            timestamp_delta: Varlong.new(0_i64),
+#            offset_delta: Varint.new(0),
+#            key: Varbytes.new,
+#            val: Varbytes.new,
+#            headers: VarArray(Header).new
+#          )
+#        }
+
+        #        tp = Structure::ProduceRequestV5
+#        tp = Structure::Record.new(entry, datas)
 #        Kafka::Protocol::ProduceRequestV1.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
       end
 

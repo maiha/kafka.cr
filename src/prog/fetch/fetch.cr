@@ -86,35 +86,37 @@ EOF
   end
   
   private def not_leader?(res : FetchResponseV6)
-    res.responses.any?{|r|
-      r.partition_responses.any?{|p|
+    res.topics.any?{|t|
+      t.partitions.any?{|p|
         p.partition_header.error_code == Errors::NotLeaderForPartitionCode.value
       }
     }
   end
   
   protected def print_res(res : FetchResponseV6, format)
-    res.responses.each do |r|
-      r.partition_responses.each do |pr|
-        p = pr.partition_header
-        head = "#{r.topic}##{p.partition}"
-        if p.error_code == 0
-          pr.record_set.records.each do |record|
-            offset = pr.record_set.base_offset + record.offset_delta.value
-            bytes = record.val.bytes
-            case format
-            when :RAW
-              STDOUT.write bytes
-            when :GUESS
-              value = guess_binary(bytes)
-              value = pretty_binary(value.to_s)
-              puts "#{head}\t#{offset}: #{value.to_s}"
-            else
-              puts "#{head}\t#{offset}: #{bytes.to_s}"
+    res.topics.each do |t|
+      t.partitions.each do |p|
+        header = p.partition_header
+        head = "#{t.topic}##{header.partition}"
+        if header.error_code == 0
+          p.record_set.each do |batch|
+            batch.each do |record|
+              offset = record.offset
+              bytes  = record.value
+              case format
+              when :RAW
+                STDOUT.write bytes
+              when :GUESS
+                value = guess_binary(bytes)
+                value = pretty_binary(value.to_s)
+                puts "#{head}\t#{offset}: #{value.to_s}"
+              else
+                puts "#{head}\t#{offset}: #{bytes.to_s}"
+              end
             end
           end
         else
-          errmsg = Kafka::Protocol.errmsg(p.error_code)
+          errmsg = Kafka::Protocol.errmsg(header.error_code)
           logger.error "#{head}\t#{errmsg}".colorize(:red)
         end
       end

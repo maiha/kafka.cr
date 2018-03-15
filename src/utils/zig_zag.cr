@@ -6,7 +6,7 @@ module ZigZag
     def initialize(@value : T, @read_bytes : Int32 = 0)
     end
 
-    def self.decode(io : IO)
+    def self.decode(io : IO) : Var(T)
       value = T.new(0)
       i = 0
       read_bytes = 0

@@ -1,5 +1,8 @@
+require "./records/*"
+
 module Kafka::Protocol::Structure
   include ZigZag
+  include Records
 
   # NOTE: Kafka has two nullable types for `String` and `Bytes`.
   # 1. But, Crystal can't differ nils whether it is `String?` or `Bytes?`.
@@ -99,16 +102,6 @@ module Kafka::Protocol::Structure
     base_sequence : Int32,
     records : Array(Record)
 
-  # https://github.com/apache/kafka/blob/1.0/clients/src/main/java/org/apache/kafka/common/record/DefaultRecord.java
-  structure Record,
-    length : Varint,
-    attributes : Int8,
-    timestamp_delta : Varlong,
-    offset_delta : Varint,
-    key : Varbytes,
-    val : Varbytes,
-    headers : VarArray(Header)
-  
   structure Broker,
     node_id : Int32,
     host : String,

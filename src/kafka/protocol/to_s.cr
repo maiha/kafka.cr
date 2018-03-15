@@ -19,12 +19,6 @@ module Kafka::Protocol::Structure
     end
   end
 
-  class Record
-    def to_s(io : IO)
-      io << val.to_s
-    end
-  end
-
   class RecordBatchV2
     def to_s(io : IO)
 #      io << base_offset.to_s
