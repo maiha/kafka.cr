@@ -76,7 +76,7 @@ EOF
     kafka.execute(request, handler)
   end
 
-  private def not_leader?(res : FetchResponse)
+  private def not_leader?(res : FetchResponseV0)
     res.topics.each do |t|
       t.partitions.each do |p|
         return true if p.error_code == 6
@@ -143,10 +143,10 @@ EOF
   
   private def build_fetch_request_v0(topic, offset : Int64)
     replica = -1
-    ps = [Kafka::Protocol::Structure::FetchRequestPartitions.new(partition, offset, max_bytes)]
-    ts = [Kafka::Protocol::Structure::FetchRequestTopics.new(topic, ps)]
+    ps = [Kafka::Protocol::Structure::FetchRequestV0::Partition.new(partition, offset, max_bytes)]
+    ts = [Kafka::Protocol::Structure::FetchRequestV0::Topic.new(topic, ps)]
 
-    return Kafka::Protocol::FetchRequest.new(0, app_name, replica, max_wait_time, min_bytes, ts)
+    return Kafka::Protocol::FetchRequestV0.new(0, app_name, replica, max_wait_time, min_bytes, ts)
   end
 
   private def build_fetch_request_v6(topic, fetch_offset, log_start_offset)

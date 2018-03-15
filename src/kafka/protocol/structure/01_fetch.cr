@@ -4,7 +4,7 @@
 module Kafka::Protocol::Structure
   ######################################################################
   ### V0
-  structure FetchRequest,
+  structure FetchRequestV0,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
@@ -12,30 +12,35 @@ module Kafka::Protocol::Structure
     replica_id : Int32,
     max_wait_time : Int32,
     min_bytes : Int32,
-    topics : Array(FetchRequestTopics)
+    topics : Array(Topic) do
 
-    structure FetchRequestTopics,
+    structure Partition,
+      partition : Int32,
+      offset : Int64,
+      max_bytes : Int32
+
+    structure Topic,
       topic : String,
-      partitions : Array(FetchRequestPartitions)
+      partitions : Array(FetchRequestV0::Partition)
+  end
 
-      structure FetchRequestPartitions,
-        partition : Int32,
-        offset : Int64,
-        max_bytes : Int32
-  
-  structure FetchResponse,
+  structure FetchResponseV0,
     correlation_id : Int32,
-    topics : Array(FetchResponseTopic)
+    topics : Array(Topic) do
 
-    structure FetchResponseTopic,
+    structure Topic,
       topic : String,
-      partitions : Array(FetchResponsePartition)
+      partitions : Array(FetchResponseV0::Partition)
 
-      structure FetchResponsePartition,
-        partition : Int32,
-        error_code : Int16,
-        high_water_mark : Int64,
-        message_set_entry : MessageSetEntry
+    structure Partition,
+      partition : Int32,
+      error_code : Int16,
+      high_water_mark : Int64,
+      message_set_entry : MessageSetEntry do
+
+      delegate message_sets, to: message_set_entry
+    end
+  end
 
   ######################################################################
   ### V6 : Request

@@ -35,9 +35,9 @@ class Kafka
 
       private def build_fetch_request(opt : FetchOption)
         replica = -1
-        ps = Structure::FetchRequestPartitions.new(opt.partition, opt.offset, opt.max_bytes)
-        ts = [Structure::FetchRequestTopics.new(opt.topic, [ps])]
-        return FetchRequest.new(0, client_id, replica, opt.timeout.milliseconds, opt.min_bytes, ts)
+        ps = [Structure::FetchRequestV0::Partition.new(opt.partition, opt.offset, opt.max_bytes)]
+        ts = [Structure::FetchRequestV0::Topic.new(opt.topic, ps)]
+        return FetchRequestV0.new(0, client_id, replica, opt.timeout.milliseconds, opt.min_bytes, ts)
       end
     end
   end

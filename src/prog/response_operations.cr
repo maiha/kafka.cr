@@ -23,7 +23,7 @@ module ResponseOperations
     return false
   end
 
-  protected def print_res(res : Kafka::Protocol::FetchResponse, format)
+  protected def print_res(res : Kafka::Protocol::FetchResponseV0, format)
     res.topics.each do |t|
       t.partitions.each do |p|
         head = "#{t.topic}##{p.partition}"

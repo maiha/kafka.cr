@@ -112,11 +112,7 @@ module Kafka::Protocol::Structure
     end
   end
 
-  define_fetch_response_methods FetchResponse
-
-  class FetchResponsePartition
-    delegate message_sets, to: message_set_entry
-  end
+  define_fetch_response_methods FetchResponseV0
 
   def Partition.build(p : Int32)
     Partition.new(p, latest_offset = -1_i64, max_offsets = 999999999)
