@@ -1,13 +1,13 @@
 require "./spec_helper"
 
-describe Kafka::Protocol::ListOffsetsRequest do
+describe Kafka::Protocol::ListOffsetsRequestV0 do
   include Kafka::Protocol
 
   let(partition) { Structure::Partition.new(p = 0, latest_offset = -1_i64, max_offsets = 999999999) }
   let(taps) { [Structure::TopicAndPartitions.new("t1", [partition])] }
 
   let(req) {
-    Kafka::Protocol::ListOffsetsRequest.new(
+    Kafka::Protocol::ListOffsetsRequestV0.new(
       correlation_id = 0,
       client_id = "kafka-offset",
       replica = -1,
@@ -20,10 +20,10 @@ describe Kafka::Protocol::ListOffsetsRequest do
   end
 end
 
-describe Kafka::Protocol::ListOffsetsResponse do
+describe Kafka::Protocol::ListOffsetsResponseV0 do
   describe "(1 topic)" do
     let(res) {
-      Kafka::Protocol::ListOffsetsResponse.from_kafka(bytes(0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0))
+      Kafka::Protocol::ListOffsetsResponseV0.from_kafka(bytes(0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 116, 49, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0))
     }
 
     let(tpo) { res.topic_partition_offsets.first.not_nil! }

@@ -2,8 +2,8 @@ require "./spec_helper"
 
 include Kafka::Protocol::Structure
 
-describe Kafka::Protocol::Structure::PartitionOffset do
-  subject { PartitionOffset.new(0, 0_i16, offsets.map(&.to_i64)) }
+describe Kafka::Protocol::Structure::ListOffsetsResponseV0::PartitionOffset do
+  subject { ListOffsetsResponseV0::PartitionOffset.new(0, 0_i16, offsets.map(&.to_i64)) }
 
   describe "[]" do
     let(offsets) { [] of Int32 }

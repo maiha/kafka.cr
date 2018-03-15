@@ -35,8 +35,8 @@ class Kafka
     # kafka.produce("t1", io.bytes)
     # ```
     def produce(topic : String, payload : Payload,
-                version : Int32? = nil,
                 partition : Int32? = nil,
+                version : Int32? = nil,
                 opt : ProduceOption = produce_opt.dup)
       opt.version = version.not_nil! if version
       opt.partition = partition.not_nil! if partition

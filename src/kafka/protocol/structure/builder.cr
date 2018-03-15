@@ -19,10 +19,10 @@ module Kafka::Protocol::Structure
         @max_num_offsets = 999999999
       end
 
-      def build # : Hash(Int32, Kafka::Protocol::ListOffsetsRequest)
-        ({} of Int32 => Kafka::Protocol::ListOffsetsRequest).tap{ |hash|
+      def build # : Hash(Int32, Kafka::Protocol::ListOffsetsRequestV0)
+        ({} of Int32 => Kafka::Protocol::ListOffsetsRequestV0).tap{ |hash|
           grouped_leader_topic_partitions.each do |leader, taps|
-            hash[leader] = Kafka::Protocol::ListOffsetsRequest.new(0, name, replica, taps)
+            hash[leader] = Kafka::Protocol::ListOffsetsRequestV0.new(0, name, replica, taps)
           end
         }
       end

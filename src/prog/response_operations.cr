@@ -14,7 +14,7 @@ module ResponseOperations
     return false
   end
 
-  protected def not_leader?(res : Kafka::Protocol::ListOffsetsResponse)
+  protected def not_leader?(res : Kafka::Protocol::ListOffsetsResponseV0)
     res.topic_partition_offsets.each do |meta|
       meta.partition_offsets.each do |po|
         return true if po.error_code == 6
@@ -49,7 +49,7 @@ module ResponseOperations
     end
   end
 
-  protected def print_res(res : Kafka::Protocol::ListOffsetsResponse)
+  protected def print_res(res : Kafka::Protocol::ListOffsetsResponseV0)
     res.topic_partition_offsets.each do |meta|
       meta.partition_offsets.each do |po|
         if po.error_code == 0
@@ -62,7 +62,7 @@ module ResponseOperations
     end
   end
 
-  protected def print_count(ress : Array(Kafka::Protocol::ListOffsetsResponse))
+  protected def print_count(ress : Array(Kafka::Protocol::ListOffsetsResponseV0))
     records = ress.map { |res| extract_topic_counts(res) }.flatten
     counts = records.group_by(&.topic).map { |topic, ary| TopicCount.new(topic, ary.sum(&.count)) }
     # [Info::TopicCount(@topic="a", @count=2), Info::TopicCount(@topic="b", @count=0)]
@@ -71,7 +71,7 @@ module ResponseOperations
     end
   end
 
-  protected def print_json(ress : Array(Kafka::Protocol::ListOffsetsResponse))
+  protected def print_json(ress : Array(Kafka::Protocol::ListOffsetsResponseV0))
     records = ress.map { |res| extract_topic_counts(res) }.flatten
     counts = records.group_by(&.topic).map { |topic, ary| [topic, ary.sum(&.count)] }
     # [["a", 2], ["b", 0]]

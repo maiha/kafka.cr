@@ -130,27 +130,6 @@ module Kafka::Protocol::Structure
     replicas : Array(Int32),
     isrs : Array(Int32)
 
-  structure ListOffsetsRequest,
-    api_key : Int16,
-    api_version : Int16,
-    correlation_id : Int32,
-    client_id : String,
-    replica_id : Int32,
-    topic_partitions : Array(TopicAndPartitions)
-
-  structure ListOffsetsResponse,
-    correlation_id : Int32,
-    topic_partition_offsets : Array(TopicPartitionOffset)
-
-    structure TopicPartitionOffset,
-      topic : String,
-      partition_offsets : Array(PartitionOffset)
-
-      structure PartitionOffset,
-        partition : Int32,
-        error_code : Int16,
-        offsets : Array(Int64)
-
   structure HeartbeatRequest,
     api_key : Int16,
     api_version : Int16,

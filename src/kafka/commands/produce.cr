@@ -15,7 +15,7 @@ class Kafka
         case opt.version
         when 0 ; produce_v0(entry, datas, opt)
         when 1 ; produce_v1(entry, datas, opt)
-        when 3 ; produce_v3(entry, datas, opt)
+        when 5 ; produce_v5(entry, datas, opt)
         else   ; raise NotImplemented.new("produce version=#{opt.version} not implemented yet")
         end
       end
@@ -59,22 +59,23 @@ class Kafka
       end
 
       ######################################################################
-      ### v3
+      ### v5
       
-      def produce_v3(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
-        res = raw_produce_v3(entry, datas, opt)
-        return extract_produce_info!(res)
+      def produce_v5(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+        raise "not implemented"
+       #        res = raw_produce_v5(entry, datas, opt)
+#        return extract_produce_info!(res)
       end
   
-      def raw_produce_v3(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
-        req = build_produce_request_v3(entry, datas, opt)
-        res = fetch_produce_response(req)
-        return res
+      def raw_produce_v5(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+#        req = build_produce_request_v5(entry, datas, opt)
+#        res = fetch_produce_response(req)
+#        return res
       end
-  
-      private def build_produce_request_v3(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
-        tp = Structure::TopicAndPartitionMessages.new(entry, datas)
-        Kafka::Protocol::ProduceRequestV3.new(0, client_id, opt.transactional_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
+
+      private def build_produce_request_v5(entry : Kafka::Entry, datas : Array(Kafka::Data), opt : ProduceOption)
+        tp = Structure::Record.new(entry, datas)
+#        Kafka::Protocol::ProduceRequestV1.new(0, client_id, opt.required_acks, opt.timeout_ms.to_i32, [tp])
       end
 
       private def fetch_produce_response(req)
