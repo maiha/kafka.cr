@@ -12,7 +12,7 @@ module Kafka::Protocol
   protocol Metadata, 0
   protocol Metadata, 5
   protocol Heartbeat, 0
-  protocol InitProducerId
+  protocol InitProducerId, 0
   protocol ApiVersions, 0
   protocol ApiVersions, 1
 end

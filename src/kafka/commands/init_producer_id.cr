@@ -12,7 +12,7 @@ class Kafka
       end
   
       private def build_init_producer_id_request(transactional_id : String, transaction_timeout_ms : Int32)
-        Kafka::Protocol::InitProducerIdRequest.new(0, client_id, transactional_id, transaction_timeout_ms)
+        Kafka::Protocol::InitProducerIdRequestV0.new(0, client_id, transactional_id, transaction_timeout_ms)
       end
 
       private def fetch_init_producer_id_response(req)

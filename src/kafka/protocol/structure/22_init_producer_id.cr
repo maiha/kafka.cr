@@ -2,7 +2,7 @@
 ### InitProducerId API (Key: 22):
 ### https://kafka.apache.org/protocol#The_Messages_InitProducerId
 module Kafka::Protocol::Structure
-  structure InitProducerIdRequest,
+  structure InitProducerIdRequestV0,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
@@ -10,7 +10,7 @@ module Kafka::Protocol::Structure
     transactional_id : String,
     transaction_timeout_ms : Int32
 
-  structure InitProducerIdResponse,
+  structure InitProducerIdResponseV0,
     correlation_id : Int32,
     throttle_time_ms : Int32,
     error_code : Int16,
