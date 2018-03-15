@@ -4,7 +4,7 @@ describe "(customer: execution)" do
   subject!(kafka) { Kafka.new(kafka_broker) }
   after { kafka.close }
 
-  let(request) { Kafka::Protocol::HeartbeatRequest.new(0, "x", "y", -1, "cr") }
+  let(request) { Kafka::Protocol::HeartbeatRequestV0.new(0, "x", "y", -1, "cr") }
 
   describe "(with good handler)" do
     let(handler) { Kafka::Handlers::Tracing.new }

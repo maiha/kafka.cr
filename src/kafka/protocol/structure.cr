@@ -122,19 +122,6 @@ module Kafka::Protocol::Structure
   structure TopicAndPartitions,
     topic : String,
     partitions : Array(Partition)
-
-  structure HeartbeatRequest,
-    api_key : Int16,
-    api_version : Int16,
-    correlation_id : Int32,
-    client_id : String,
-    group_id : String,
-    generation_id : Int32,
-    member_id : String
-
-  structure HeartbeatResponse,
-    correlation_id : Int32,
-    error_code : Int16
 end
 
 require "./structure/*"

@@ -15,7 +15,7 @@ Example:
 EOF
 
   def do_show(broker)
-    req = Kafka::Protocol::HeartbeatRequest.new(0, "kafka-heartbeart", "x", -1, "cr")
+    req = Kafka::Protocol::HeartbeatRequestV0.new(0, "kafka-heartbeart", "x", -1, "cr")
     res = execute req
     print_res(res)
   end

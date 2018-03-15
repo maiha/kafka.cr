@@ -11,7 +11,7 @@ module Kafka::Protocol
   protocol ListOffsets, 0
   protocol Metadata, 0
   protocol Metadata, 5
-  protocol Heartbeat
+  protocol Heartbeat, 0
   protocol InitProducerId
   protocol ApiVersions, 0
   protocol ApiVersions, 1

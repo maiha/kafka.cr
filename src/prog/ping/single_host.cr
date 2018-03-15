@@ -15,7 +15,7 @@ class Ping::SingleHost
   def run
     register_shutdown_hook
 
-    puts "Kafka PING #{host}:#{port} (by HeartbeatRequest)"
+    puts "Kafka PING #{host}:#{port} (by HeartbeatRequestV0)"
     count.times do |i|
       spawn { ping(i) }
       sleep interval
