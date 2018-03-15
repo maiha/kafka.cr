@@ -107,7 +107,7 @@ class Kafka
     # Example:
     #
     # ```
-    # kafka.raw_metadata # => #<Kafka::Protocol::MetadataResponse:0x1651180 @brokers=... @topics...>
+    # kafka.raw_metadata # => #<Kafka::Protocol::MetadataResponseV0:0x1651180 @brokers=... @topics...>
     # ```
     def raw_metadata(topics : Array(String))
       raw_metadata(topics, MetadataOption.zero)

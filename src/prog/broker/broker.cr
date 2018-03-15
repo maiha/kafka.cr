@@ -22,7 +22,7 @@ EOF
     end
 
     topics = ["_"]              # dummy to avoid all topics
-    req = Kafka::Protocol::MetadataRequest.new(0, "kafka-broker", topics)
+    req = Kafka::Protocol::MetadataRequestV0.new(0, "kafka-broker", topics)
     res = execute(req)
 
     if count && !json

@@ -124,7 +124,7 @@ module Kafka::Protocol::Structure
     end
   end
 
-  class MetadataResponse
+  class MetadataResponseV0
     def broker_maps
       brokers.reduce({} of Int32 => Kafka::Broker) { |hash, b| hash[b.node_id] = Kafka::Broker.new(b.host, b.port); hash }
     end

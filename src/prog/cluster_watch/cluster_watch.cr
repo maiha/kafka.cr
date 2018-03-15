@@ -56,14 +56,14 @@ EOF
       last_result.try(&.state)
     end
 
-    private def build_state(res : Kafka::Protocol::MetadataResponse)
+    private def build_state(res : Kafka::Protocol::MetadataResponseV0)
       hosts = res.brokers.sort(&.node_id).map{|b| "#{b.host}:#{b.port}"}
       "(#{hosts.size})#{hosts.inspect}"
     end
     
     def execute
       topics = ["_"]              # dummy to avoid all topics
-      req = Kafka::Protocol::MetadataRequest.new(0, "kafka-cluster-watcher", topics)
+      req = Kafka::Protocol::MetadataRequestV0.new(0, "kafka-cluster-watcher", topics)
       
       socket = TCPSocket.new host, port
       socket.write(req.to_slice)

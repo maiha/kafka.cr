@@ -2,25 +2,32 @@
 ### Metadata API (Key: 3):
 ### https://kafka.apache.org/protocol#
 module Kafka::Protocol::Structure
-  structure TopicMetadata,
-    error_code : Int16,
-    name : String,
-    partitions : Array(PartitionMetadata)
-
   ######################################################################
   ### Request and Response
 
-  structure MetadataRequest,
+  structure MetadataRequestV0,
     api_key : Int16,
     api_version : Int16,
     correlation_id : Int32,
     client_id : String,
     topics : Array(String)
 
-  structure MetadataResponse,
+  structure MetadataResponseV0,
     correlation_id : Int32,
     brokers : Array(Broker),
-    topics : Array(TopicMetadata) do
+    topics : Array(MetadataResponseV0::TopicMetadata) do
+
+    structure TopicMetadata,
+      error_code : Int16,
+      name : String,
+      partitions : Array(MetadataResponseV0::PartitionMetadata)
+
+    structure PartitionMetadata,
+      error_code : Int16,
+      id : Int32,
+      leader : Int32,
+      replicas : Array(Int32),
+      isrs : Array(Int32)
 
     def to_s(io : IO)
       io << "brokers: %s\n" % brokers.map(&.to_s).join(", ")

@@ -9,7 +9,7 @@ module RequestOperations
     execute build_offset_request(topics, partition, replica)
   end
 
-  protected def fetch_offsets(meta : Kafka::Protocol::MetadataResponse, latest_offset : Int64)
+  protected def fetch_offsets(meta : Kafka::Protocol::MetadataResponseV0, latest_offset : Int64)
     maps = meta.broker_maps
     broker = ->(id : Int32) {maps[id] || raise "[BUG] broker(#{id}) not found: meta=#{meta.brokers.inspect}"}
 
@@ -32,7 +32,7 @@ module RequestOperations
   protected def fetch_topic_names
     names = [] of String
 
-    req = Kafka::Protocol::MetadataRequest.new(0, app_name, [] of String)
+    req = Kafka::Protocol::MetadataRequestV0.new(0, app_name, [] of String)
     res = execute req
     res.topics.map do |meta|
       unless meta.error_code == 0

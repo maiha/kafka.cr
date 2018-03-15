@@ -9,7 +9,7 @@ module Kafka::Protocol
   protocol Fetch, 0
   protocol Fetch, 6
   protocol ListOffsets, 0
-  protocol Metadata
+  protocol Metadata, 0
   protocol Metadata, 5
   protocol Heartbeat
   protocol InitProducerId

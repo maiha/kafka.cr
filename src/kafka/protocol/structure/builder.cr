@@ -12,7 +12,7 @@ module Kafka::Protocol::Structure
         topic : String,
         partition : Int32
       
-      def initialize(@req : MetadataResponse)
+      def initialize(@req : MetadataResponseV0)
         @name = "LeaderBasedOffsetRequestsBuilder"
         @replica = -1
         @latest_offset = -1.to_i64

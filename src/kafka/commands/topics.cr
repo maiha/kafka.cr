@@ -12,7 +12,7 @@ class Kafka
       end
   
       private def build_topics_request(topics : Array(String))
-        Kafka::Protocol::MetadataRequest.new(0, client_id, topics)
+        Kafka::Protocol::MetadataRequestV0.new(0, client_id, topics)
       end
 
       private def fetch_topics_response(req)

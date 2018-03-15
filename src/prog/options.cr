@@ -159,7 +159,7 @@ module Options
     end
 
     protected def fetch_topic_metadata(topics, app_name)
-      req = Kafka::Protocol::MetadataRequest.new(0, app_name, topics)
+      req = Kafka::Protocol::MetadataRequestV0.new(0, app_name, topics)
       return execute(req)
     end
   end

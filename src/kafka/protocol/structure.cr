@@ -123,13 +123,6 @@ module Kafka::Protocol::Structure
     topic : String,
     partitions : Array(Partition)
 
-  structure PartitionMetadata,
-    error_code : Int16,
-    id : Int32,
-    leader : Int32,
-    replicas : Array(Int32),
-    isrs : Array(Int32)
-
   structure HeartbeatRequest,
     api_key : Int16,
     api_version : Int16,

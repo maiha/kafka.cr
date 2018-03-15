@@ -24,7 +24,7 @@ describe "(customer: metadata)" do
   describe "#raw_metadata" do
     it "returns metadata response object" do
       res = kafka.raw_metadata(["t1"])
-      expect(res).to be_a(Kafka::Protocol::MetadataResponse)
+      expect(res).to be_a(Kafka::Protocol::MetadataResponseV0)
     end
 
     it "contains brokers" do
@@ -34,7 +34,7 @@ describe "(customer: metadata)" do
 
     it "contains topics" do
       res = kafka.raw_metadata(["t1"])
-      expect(res.topics).to be_a(Array(Kafka::Protocol::Structure::TopicMetadata))
+      expect(res.topics).to be_a(Array(Kafka::Protocol::Structure::MetadataResponseV0::TopicMetadata))
     end
   end
 end

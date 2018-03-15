@@ -14,21 +14,21 @@ class Kafka
         return extract_metadata_info!(res)
       end
   
-      def raw_metadata(topics : Array(String), opt : MetadataOption) : MetadataResponse
+      def raw_metadata(topics : Array(String), opt : MetadataOption) : MetadataResponseV0
         req = build_metadata_request(topics)
         res = fetch_metadata_response(req)
         return res
       end
   
       private def build_metadata_request(topics : Array(String))
-        Kafka::Protocol::MetadataRequest.new(0, client_id, topics)
+        Kafka::Protocol::MetadataRequestV0.new(0, client_id, topics)
       end
 
       private def fetch_metadata_response(req)
         execute(req)
       end
 
-      private def extract_metadata_info!(res : MetadataResponse)
+      private def extract_metadata_info!(res : MetadataResponseV0)
         brokers = res.brokers.map{|b| Kafka::Broker.new(b.host, b.port)}
         topics  = res.topics.map{|t|
           if t.error?
