@@ -12,4 +12,8 @@ class Kafka
       Kafka.logger_debug_level_default = -1
     end
   end
+
+  def self.debug?
+    Kafka.logger_debug_level_default >= 0
+  end
 end

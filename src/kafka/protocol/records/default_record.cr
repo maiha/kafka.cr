@@ -2,6 +2,8 @@ require "./record"
 
 module Kafka::Protocol::Structure
   class DefaultRecord
+    include Utils::GuessBinary
+
     property attributes : Int8
     property timestamp_delta : Varlong
     property offset_delta : Varint
@@ -9,26 +11,23 @@ module Kafka::Protocol::Structure
     property val : Varbytes
     property headers : VarArray(Header)
     
-    def initialize(@bytes : Bytes, @base_offset : Int64)
-      @buffer = IO::Memory.new(@bytes)
-      @max_message_size = Int32.new(@bytes.size)
-      
+    def initialize(@buffer : IO::Memory, @max_message_size : Int32, @base_offset : Int64, @debug_level : Int32, @orig_pos : Int32)
       @record_start    = 0
-      @attributes      = Int8.from_kafka(@buffer)
-      @timestamp_delta = Varlong.decode(@buffer)
+      @attributes      = Int8.from_kafka(@buffer, debug_level, :attributes, cur_pos)
+      @timestamp_delta = Varlong.from_kafka(@buffer, debug_level, :timestamp_delta, cur_pos)
       #long timestamp = baseTimestamp + timestampDelta;
 
       # if (logAppendTime != null)
       #   timestamp = logAppendTime;
 
-      @offset_delta = Varint.decode(@buffer)
+      @offset_delta = Varint.from_kafka(@buffer, debug_level, :offset_delta, cur_pos)
       @offset = Int64.new(@base_offset + @offset_delta.value)
       # int sequence = baseSequence >= 0 ?
       #   DefaultRecordBatch.incrementSequence(baseSequence, offsetDelta) :
       #   RecordBatch.NO_SEQUENCE;
 
-      @key = Varbytes.from_kafka(@buffer)
-      @val = Varbytes.from_kafka(@buffer)
+      @key = Varbytes.from_kafka(@buffer, debug_level, :key, cur_pos)
+      @val = Varbytes.from_kafka(@buffer, debug_level, :val, cur_pos)
 
       num_headers = Varint.decode(@buffer).value
       if num_headers < 0
@@ -47,6 +46,14 @@ module Kafka::Protocol::Structure
       end
     end
 
+    private def debug_level
+      @debug_level
+    end
+    
+    private def cur_pos
+      @orig_pos + @buffer.pos
+    end
+
     include Record
 
     def offset : Int64
@@ -60,5 +67,20 @@ module Kafka::Protocol::Structure
     def value : Bytes
       @val.bytes
     end
+
+    def to_s(io : IO)
+      value = guess_binary(self.value)
+      value = pretty_binary(value.to_s)
+      io << value
+    end
+  end
+
+  def DefaultRecord.from_kafka(bytes, base_offset, record_offset, debug_level, orig_pos)
+    io = IO::Memory.new(bytes)
+    title = "DefaultRecord(%dbytes[%s..%s])" %
+            [bytes.size, debug_addr(orig_pos), debug_addr(orig_pos + bytes.size)]
+    on_debug_head_address(orig_pos)
+    on_debug title.colorize(:yellow)
+    new(io, bytes.size, base_offset: base_offset, debug_level: debug_level+1, orig_pos: orig_pos)
   end
 end

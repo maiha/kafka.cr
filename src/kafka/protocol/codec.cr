@@ -6,8 +6,8 @@ def Kafka::NullableString.from_kafka(io : IO, debug_level = -1, hint = "")
 end
 
 {% for klass in %w( Bool Int8 Int16 Int32 UInt32 Int64 UInt64 ) %}
-  def {{klass.id}}.from_kafka(io : IO, debug_level = -1, hint = "")
-    on_debug_head_address
+  def {{klass.id}}.from_kafka(io : IO, debug_level = -1, hint = "", pos_offset : Int32 = 0)
+    on_debug_head_address(abs: pos_offset + io.pos)
     io_read_bytes_with_debug(:cyan, {{klass.id}})
   end
 {% end %}

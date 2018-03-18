@@ -92,6 +92,14 @@ module Options
     option api_ver : Int32, "--api-ver API_VERSION", "Specify api version of the request", -1
   end
 
+  macro option_hexdump
+    def register_option_hexdump(parser)
+      parser.on("-X", "--hexdump", "Use hexdump for address (w/ full packet)") {
+        Kafka.logger_hexdump = true
+      }
+    end
+  end
+  
   macro option_count
     option count : Bool, "-c", "--count", "Print a count of entries", false
   end

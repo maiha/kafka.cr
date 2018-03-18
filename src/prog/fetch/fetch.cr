@@ -11,7 +11,7 @@ class Fetch < App
   option log_start_offset : Int64, "--log_start_offset VALUE", "Earliest available offset of the follower replica.", 0_i64
   option last : Bool, "-l", "--last", "Show last message", false
   option strict : Bool, "--strict", "Do not discover leader broker automatically", false
-  options :api_ver, :correlation_id, :broker, :partition, :topic, :offset, :max_bytes, :raw, :guess, :verbose, :version, :help
+  options :api_ver, :correlation_id, :broker, :partition, :topic, :offset, :max_bytes, :raw, :guess, :hexdump, :verbose, :version, :help
 
   usage <<-EOF
 Usage: #{app_name} [options] [topic]
@@ -101,17 +101,13 @@ EOF
         if header.error_code == 0
           p.record_set.each do |batch|
             batch.each do |record|
-              offset = record.offset
-              bytes  = record.value
               case format
               when :RAW
-                STDOUT.write bytes
+                STDOUT.write record.value
               when :GUESS
-                value = guess_binary(bytes)
-                value = pretty_binary(value.to_s)
-                puts "#{head}\t#{offset}: #{value.to_s}"
+                puts "#{head}\t#{record.offset}: #{record.to_s}"
               else
-                puts "#{head}\t#{offset}: #{bytes.to_s}"
+                puts "#{head}\t#{record.offset}: #{record.value}"
               end
             end
           end

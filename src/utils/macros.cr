@@ -32,9 +32,30 @@ macro on_debug_head_padding
   end
 end
 
-macro on_debug_head_address
+macro debug_addr(v)
+  if Kafka.logger_hexdump
+    offset = 4          # kafka packet margin for request | response
+    "%x" % ({{v}} + offset)
+  else
+    {{v}}
+  end
+end
+
+macro on_debug_head_address(base = nil, abs = nil)
   if debug_level >= 0
-    Kafka.logger_debug_prefix = "(%07d)" % io.pos
+    {% if abs %}
+      _addr_ = {{abs}}
+    {% elsif base %}
+      _addr_ = {{base}} + io.pos
+    {% else %}
+      _addr_ = io.pos
+    {% end %}
+    if Kafka.logger_hexdump
+      offset = 4          # kafka packet margin for request | response
+      Kafka.logger_debug_prefix = "(%07x)" % (_addr_ + offset)
+    else
+      Kafka.logger_debug_prefix = "(%07d)" % (_addr_)
+    end
   else
     Kafka.logger_debug_prefix = ""
   end
@@ -69,7 +90,7 @@ macro io_read_bytes_with_debug(color, type)
     "Int8"   => 1,
     "Bool"   => 1,
   }[{{type.id}}.to_s] || "?"
-  label = "#{self}[#{bytes}]#{name}"
+  label = {{type.id}}.to_s + "[#{bytes}]#{name}"
   begin
     {% if type.id.stringify == "Bool" %}
       value = io.read_bytes(Int8, IO::ByteFormat::BigEndian)

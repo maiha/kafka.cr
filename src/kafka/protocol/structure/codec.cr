@@ -27,8 +27,8 @@ module Kafka::Protocol::Structure
     return new(size, sets)
   end
 
-  def Varbytes.from_kafka(io : IO, debug_level = -1, hint = "")
-    on_debug_head_address
+  def Varbytes.from_kafka(io : IO, debug_level = -1, hint = "", abs_pos = 0)
+    on_debug_head_address(abs: abs_pos)
     name = hint.to_s.empty? ? "" : "(#{hint})"
 
     v = Varint.decode(io)
@@ -51,8 +51,8 @@ module Kafka::Protocol::Structure
     end
   end
   
-  def VarArray.from_kafka(io : IO, debug_level = -1, hint = "")
-    on_debug_head_address
+  def VarArray.from_kafka(io : IO, debug_level = -1, hint = "", base_pos = 0)
+    on_debug_head_address(base_pos)
     label = self.to_s.gsub(/[A-Za-z]+::/, "") # VarArray(Kafka::Protocol::Structure::Header) -> VarArray(Header)
     var = ZigZag::Varint.decode(io)
     len = var.value
@@ -66,8 +66,8 @@ module Kafka::Protocol::Structure
   end
 end
 
-def ZigZag::Var.from_kafka(io : IO, debug_level = -1, hint = "")
-  on_debug_head_address
+def ZigZag::Var.from_kafka(io : IO, debug_level = -1, hint = "", abs_pos = 0) : Var(T)
+  on_debug_head_address(abs: abs_pos)
   name = hint.to_s.empty? ? "" : "(#{hint})"
   var = decode(io)
 

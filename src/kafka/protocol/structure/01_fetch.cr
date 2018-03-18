@@ -93,5 +93,18 @@ module Kafka::Protocol::Structure
     structure AbortedTransaction,
       producer_id : Int64,
       first_offset : Int64
+
+    # eagar loading
+    def load!
+      topics.each do |topic|
+        topic.partitions.each do |partition|
+          partition.record_set.each do |record_batch|
+            record_batch.each do |record|
+              # record.to_s
+            end
+          end
+        end
+      end
+    end
   end
 end

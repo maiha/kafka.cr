@@ -18,7 +18,7 @@ class Packet < App
   property request_queue : Array(Request) = Array(Request).new
   property binary_history : Array(Binary) = Array(Binary).new
 
-  options :api_key, :api_ver, :raw, :verbose, :version, :help
+  options :api_key, :api_ver, :raw, :hexdump, :verbose, :version, :help
 
   option max_bytes : Int32, "--max-bytes SIZE", "Read maximum bytes from the file", 4096
 
@@ -83,7 +83,12 @@ EOF
   private def show_verbose(klass, bytes)
     io = IO::Memory.new(bytes)
     Kafka.debug = true
-    klass.from_kafka(io)
+    res = klass.from_kafka(io)
+    # For FetchResponse, access the records to avoid lazy loading
+    case res
+    when Kafka::Protocol::FetchResponseV6
+      res.load!
+    end
     Kafka.debug = false
 
     extra_bytes = Bytes.new(1024)

@@ -47,10 +47,7 @@ module Kafka::Protocol::Structure
     property producer_epoch : Int8
     property base_sequence : Int32
 
-    def initialize(@bytes : Bytes)
-      @buffer = IO::Memory.new(@bytes)
-      @max_message_size = Int32.new(@bytes.size)
-
+    def initialize(@buffer : IO::Memory, @max_message_size : Int32, @debug_level : Int32, @orig_pos : Int32)
       @magic             = get(MAGIC_OFFSET)
       @count             = getInt(RECORDS_COUNT_OFFSET)
       @attributes        = getShort(ATTRIBUTES_OFFSET)
@@ -59,20 +56,29 @@ module Kafka::Protocol::Structure
       @producer_id       = getLong(PRODUCER_ID_OFFSET)
       @producer_epoch    = getShort(PRODUCER_EPOCH_OFFSET)
       @base_sequence     = getInt(BASE_SEQUENCE_OFFSET)
+
+      # eagar loading
+      each(&.to_s) if Kafka.debug?
     end
 
     def last_offset : Int64
       base_offset + last_offset_delta
     end
 
+    private def cur_pos
+      @orig_pos + @buffer.pos
+    end
+
     def each(&block : Record -> _)
       @buffer.seek(RECORD_BATCH_OVERHEAD)
+      record_idx = 0
       return nil if count == 0
 
+      record_idx += 1
       if compressed?
         raise "not implemented yet"
       else
-        if remaining > 0
+        while remaining > 0
           begin
             position = @buffer.pos
             varint = Varint.from_kafka(@buffer)
@@ -81,7 +87,7 @@ module Kafka::Protocol::Structure
             bytes = @buffer.read_at(record_offset, record_length){|io| io.to_slice}
             @buffer.seek(record_offset + record_length)
             
-            record = DefaultRecord.new(bytes, base_offset)
+            record = DefaultRecord.from_kafka(bytes, base_offset: base_offset, record_offset: record_offset, debug_level: @debug_level+1, orig_pos: @orig_pos + record_offset)
             block.call(record.as(Record))
           rescue err
             logger.error err.to_s
@@ -120,5 +126,14 @@ module Kafka::Protocol::Structure
       @buffer.seek(offset)
       Int64.from_kafka(@buffer)
     end
+  end
+
+  def DefaultRecordBatch.from_kafka(bytes, debug_level, orig_pos)
+    io = IO::Memory.new(bytes)
+    title = "DefaultRecordBatch(%dbytes[%s..%s])" %
+            [bytes.size, debug_addr(orig_pos), debug_addr(orig_pos + bytes.size)]
+    on_debug_head_padding
+    on_debug title.colorize(:yellow)
+    new(io, bytes.size, debug_level, orig_pos)
   end
 end

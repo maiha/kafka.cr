@@ -43,4 +43,13 @@ class Kafka
   def self.logger_debug_level_default=(v)
     @@logger_debug_level_default = v
   end
+
+  @@logger_hexdump : Bool = false
+  def self.logger_hexdump
+    @@logger_hexdump
+  end
+
+  def self.logger_hexdump=(v)
+    @@logger_hexdump = v
+  end
 end
