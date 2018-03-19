@@ -78,20 +78,19 @@ module Kafka::Protocol::Structure
       if compressed?
         raise "not implemented yet"
       else
-        while remaining > 0
-          begin
+        begin
+          while remaining > 0
             position = @buffer.pos
             varint = Varint.from_kafka(@buffer)
             record_offset = position + varint.read_bytes
             record_length = varint.value
             bytes = @buffer.read_at(record_offset, record_length){|io| io.to_slice}
             @buffer.seek(record_offset + record_length)
-            
             record = DefaultRecord.from_kafka(bytes, base_offset: base_offset, record_offset: record_offset, debug_level: @debug_level+1, orig_pos: @orig_pos + record_offset)
             block.call(record.as(Record))
-          rescue err
-            logger.error err.to_s
           end
+        rescue err
+          logger.error err.to_s
         end
       end
     end
@@ -132,8 +131,8 @@ module Kafka::Protocol::Structure
     io = IO::Memory.new(bytes)
     title = "DefaultRecordBatch(%dbytes[%s..%s])" %
             [bytes.size, debug_addr(orig_pos), debug_addr(orig_pos + bytes.size)]
-    on_debug_head_padding
-    on_debug title.colorize(:yellow)
+    debug_head_padding
+    debug title.colorize(:yellow)
     new(io, bytes.size, debug_level, orig_pos)
   end
 end

@@ -124,6 +124,10 @@ module Options
     option verbose : Bool, "-v", "--verbose", "Verbose output", false
   end
 
+  macro option_verbose2
+    option verbose2 : Bool, "-vv", "Increase the verbosity", false
+  end
+
   macro option_version
     option version : Bool, "-V", "--version", "Show version information", false
   end

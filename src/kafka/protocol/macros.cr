@@ -10,8 +10,8 @@ module Kafka::Protocol::Structure
 
       def self.from_kafka(io : IO, debug_level = nil, hint = "")
         debug_level ||= Kafka.logger_debug_level_default
-        on_debug_head_padding
-        on_debug_label
+        debug_head_padding
+        debug_label
         new({{ *properties.map { |field| "#{field.type}.from_kafka(io, debug_level_succ, :#{field.var})".id } }})
       end
 

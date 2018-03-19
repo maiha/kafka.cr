@@ -16,4 +16,12 @@ class Kafka
   def self.debug?
     Kafka.logger_debug_level_default >= 0
   end
+
+  def self.debug2=(v : Bool)
+    @@debug2 = v
+  end
+
+  def self.debug2?
+    !!@@debug2
+  end
 end

@@ -29,19 +29,22 @@ module Kafka::Protocol::Structure
       @key = Varbytes.from_kafka(@buffer, debug_level, :key, cur_pos)
       @val = Varbytes.from_kafka(@buffer, debug_level, :val, cur_pos)
 
-      num_headers = Varint.decode(@buffer).value
+      num_headers = Varint.from_kafka(@buffer, debug_level, :num_headers, cur_pos).value
       if num_headers < 0
         raise "InvalidRecordException: Found invalid number of record headers %s" % num_headers
       end
-      
+
       @headers = VarArray(Header).new
       num_headers.times do
-        header_key_size = Varint.decode(@buffer).value
+        header_key_size = Varint.from_kafka(@buffer, debug_level, :header_key_size, cur_pos).value
         if header_key_size < 0
           raise "InvalidRecordException: Invalid negative header key size %s" % header_key_size
         end
-        
+
         header_key = String.new(@buffer.read_at(@buffer.pos, header_key_size, &.to_slice))
+        debu_set_head_address(abs: cur_pos)
+        title = "Bytes[#{header_key_size}](header_key) -> #{header_key}"
+        debug title.colorize(:cyan)
         @buffer.seek(@buffer.pos + header_key_size)
       end
     end
@@ -79,8 +82,8 @@ module Kafka::Protocol::Structure
     io = IO::Memory.new(bytes)
     title = "DefaultRecord(%dbytes[%s..%s])" %
             [bytes.size, debug_addr(orig_pos), debug_addr(orig_pos + bytes.size)]
-    on_debug_head_address(orig_pos)
-    on_debug title.colorize(:yellow)
+    debu_set_head_address(orig_pos)
+    debug title.colorize(:yellow)
     new(io, bytes.size, base_offset: base_offset, debug_level: debug_level+1, orig_pos: orig_pos)
   end
 end

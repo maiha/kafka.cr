@@ -11,7 +11,7 @@ class Fetch < App
   option log_start_offset : Int64, "--log_start_offset VALUE", "Earliest available offset of the follower replica.", 0_i64
   option last : Bool, "-l", "--last", "Show last message", false
   option strict : Bool, "--strict", "Do not discover leader broker automatically", false
-  options :api_ver, :correlation_id, :broker, :partition, :topic, :offset, :max_bytes, :raw, :guess, :hexdump, :verbose, :version, :help
+  options :api_ver, :correlation_id, :broker, :partition, :topic, :offset, :max_bytes, :raw, :guess, :hexdump, :verbose, :verbose2, :version, :help
 
   usage <<-EOF
 Usage: #{app_name} [options] [topic]
@@ -65,13 +65,16 @@ EOF
   end
 
   protected def execute(request, broker = build_broker)
-    Kafka.debug = true if verbose
+    Kafka.debug  = true if verbose
+    Kafka.debug2 = true if verbose2
+
     kafka = Kafka.new(broker)
 
     handler = Kafka::Handlers::Config.new
     handler.recv = ->(bytes: Slice(UInt8)) {
-      puts "DEBUG: got #{bytes.size} bytes"; nil
-    } if verbose
+      debug2 "got #{bytes.size} bytes"
+      nil
+    }
 
     kafka.execute(request, handler)
   end
