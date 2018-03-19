@@ -11,6 +11,8 @@
 
 ## Example
 
+#### basic usage
+
 ```crystal
 require "kafka"
 

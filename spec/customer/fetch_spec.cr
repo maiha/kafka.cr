@@ -4,7 +4,7 @@ describe "(customer: fetch)" do
   subject!(kafka) { Kafka.new(kafka_broker) }
   after { kafka.close }
 
-  describe "#fetch" do
+  describe "#fetch(v0)" do
     it "raises protocol error for the missing topics" do
       expect {
         kafka.fetch("_tmp")

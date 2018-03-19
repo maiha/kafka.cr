@@ -83,4 +83,12 @@ describe "(customer: produce)" do
       expect(msg.error?).to eq(false)
     end
   end
+
+  describe "#produce(v5)" do
+    pending "accepts string" do
+      msg = kafka.produce("test", "v5", version: 5)
+      expect(msg).to be_a(Kafka::Protocol::ProduceResponseV5)
+      expect(msg.error?).to eq(false)
+    end
+  end
 end

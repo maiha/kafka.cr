@@ -81,7 +81,6 @@ module Kafka::Protocol::Structure
 
     structure PartitionRecordSet,
       partition : Int32,
-      start_offset : Int32, # length_field?
       record_set : MemoryRecords
   end
   
