@@ -3,8 +3,7 @@ module Kafka::Protocol::Structure
   # ## Codec
 
   def MessageSetEntry.from_kafka(io : IO, debug_level = -1, hint = "")
-    debug_head_padding
-    debug "MessageSetEntry".colorize(:cyan)
+    debug "MessageSetEntry", color: :yellow
     size = Int32.from_kafka(io, debug_level_succ, :size)
     sets = [] of MessageSet
 
@@ -28,19 +27,19 @@ module Kafka::Protocol::Structure
   end
 
   def Varbytes.from_kafka(io : IO, debug_level = -1, hint = "", abs_pos = 0)
-    debu_set_head_address(abs: abs_pos)
+    prefix = debug_address(abs: abs_pos)
     name = hint.to_s.empty? ? "" : "(#{hint})"
 
     v = Varint.decode(io)
     size = v.value
 
     if size < 0
-      debug "Varbytes[#{v.read_bytes}+0]#{name} -> (null)".colorize(:cyan)
+      debug "Varbytes[#{v.read_bytes}+0]#{name} -> (null)", color: :cyan, prefix: prefix
       return new(size, Null)
     else
       bytes = Slice(UInt8).new(size).tap { |s| io.read_fully(s) }
       value_hint = String.new(bytes) rescue bytes
-      debug "Varbytes[#{v.read_bytes}+#{size}]#{name} -> (#{size})#{value_hint.inspect}".colorize(:cyan)
+      debug "Varbytes[#{v.read_bytes}+#{size}]#{name} -> (#{size})#{value_hint.inspect}", color: :cyan, prefix: prefix
       return new(size, bytes)
     end
   end
@@ -52,11 +51,11 @@ module Kafka::Protocol::Structure
   end
   
   def VarArray.from_kafka(io : IO, debug_level = -1, hint = "", abs_pos = 0)
-    debu_set_head_address(abs: abs_pos)
+    prefix = debug_address(abs: abs_pos)
     label = self.to_s.gsub(/[A-Za-z]+::/, "") # VarArray(Kafka::Protocol::Structure::Header) -> VarArray(Header)
     var = ZigZag::Varint.decode(io)
     len = var.value
-    debug "#{label} -> #{len}".colorize(:cyan)
+    debug "#{label} -> #{len}", color: :cyan, prefix: prefix
 
     ary = new
     (1..len).each do
@@ -67,7 +66,6 @@ module Kafka::Protocol::Structure
 end
 
 def ZigZag::Var.from_kafka(io : IO, debug_level = -1, hint = "", abs_pos = 0) : Var(T)
-  debu_set_head_address(abs: abs_pos)
   name = hint.to_s.empty? ? "" : "(#{hint})"
   var = decode(io)
 
@@ -75,7 +73,8 @@ def ZigZag::Var.from_kafka(io : IO, debug_level = -1, hint = "", abs_pos = 0) : 
   type_hint = "Varint"  if type_hint =~ /32/
   type_hint = "Varlong" if type_hint =~ /64/
   
-  debug ("#{type_hint}[#{var.read_bytes}]#{name} -> #{var.value}").colorize(:cyan)
+  debug "#{type_hint}[#{var.read_bytes}]#{name} -> #{var.value}", color: :cyan, prefix: debug_address(abs: abs_pos)
+
   return var
 end
 

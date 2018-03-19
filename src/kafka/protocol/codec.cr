@@ -13,46 +13,46 @@ end
 {% end %}
 
 def String.from_kafka(io : IO, debug_level = -1, hint = "")
-  debu_set_head_address(abs: io.pos)
+  prefix = debug_address(abs: io.pos)
   name = hint.to_s.empty? ? "" : "(#{hint})"
 
   len = Int16.from_kafka(io)
   
   if len == -1
-    debug "String[2]#{name} -> (null)", color: :cyan
+    debug "String[2]#{name} -> (null)", color: :cyan, prefix: prefix
     return ""
   else
     slice = Slice(UInt8).new(len).tap { |s| io.read_fully(s) }
     str = String.new(slice)
-    debug "String[2]#{name} -> (#{len})#{str.inspect}", color: :cyan
+    debug "String[2]#{name} -> (#{len})#{str.inspect}", color: :cyan, prefix: prefix
     return str
   end
 end
 
 def Slice.from_kafka(io : IO, debug_level = -1, hint = "")
-  debu_set_head_address
+  prefix = debug_address(abs: io.pos)
   len = Int32.from_kafka(io)
 
   name = hint.to_s.empty? ? "" : "(#{hint})"
   if len == -1
-    debug "Binary[4]#{name} -> (-1)(null)".colorize(:cyan)
+    debug "Binary[4]#{name} -> (-1)(null)", color: :cyan, prefix: prefix
     Slice(UInt8).new(0)
   elsif len == 0
-    debug "Binary[4]#{name} -> (0)(zero?)".colorize(:red)
+    debug "Binary[4]#{name} -> (0)(zero?)", color: :red, prefix: prefix
     Slice(UInt8).new(0)
   else
     binary = Slice(UInt8).new(len).tap { |s| io.read_fully(s) }
-    debug "Binary[4]#{name} -> (#{len})#{binary.inspect}".colorize(:cyan)
+    debug "Binary[4]#{name} -> (#{len})#{binary.inspect}", color: :cyan, prefix: prefix
     return binary
   end
 end
 
 def Array.from_kafka(io : IO, debug_level = -1, hint = "")
-  debu_set_head_address
+  prefix = debug_address(io.pos)
   label = self.to_s.sub(/Kafka::Protocol::Structure::/, "").sub(/^Array/, "Array[4]")
   ary = new
   len = Int32.from_kafka(io)
-  debug "#{label} -> #{len}", color: :cyan
+  debug "#{label} -> #{len}", color: :cyan, prefix: prefix
   (1..len).each do
     ary << T.from_kafka(io, debug_level_succ)
   end

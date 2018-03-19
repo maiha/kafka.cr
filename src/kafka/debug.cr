@@ -18,6 +18,7 @@ class Kafka
   end
 
   def self.debug2=(v : Bool)
+    self.debug = true if v
     @@debug2 = v
   end
 

@@ -13,14 +13,6 @@ macro debug_addr(v)
   end
 end
 
-macro debug_head_padding
-  if debug_level >= 0
-    Kafka.logger_debug_prefix = " " * 9
-  else
-    Kafka.logger_debug_prefix = ""
-  end
-end
-
 macro debug_address(base = nil, abs = nil)
   if debug_level >= 0
     {% if abs %}
@@ -45,22 +37,24 @@ macro debu_set_head_address(base = nil, abs = nil)
   Kafka.logger_debug_prefix = debug_address({{base}}, {{abs}})
 end
 
-macro debug_label
+macro kafka_label
   _label = self.to_s.sub(/^.*::/, "")
   _label = _label.sub(/(Request|Response)(V(\d+))?$/){
     "#{$1} (Version: #{$~[3]? || 0})"
   }
-  debug _label
 end
 
 macro debug(msg, color = nil, prefix = nil)
   if debug_level >= 0
     buf = String.build do |_io_|
-      {% if prefix %}
+      case {{prefix || "nil".id}}
+      when Int32
+        _io_.print debug_address(abs: {{prefix}}.as(Int32))
+      when String
         _io_.print {{prefix}}
-      {% else %}
-        _io_.print Kafka.logger_debug_prefix
-      {% end %}
+      else
+        _io_.print " " * 9
+      end
       _io_.print " " * (debug_level * 2)
       _msg_ = {{msg.id}}.to_s
       {% if color %}

@@ -131,8 +131,7 @@ module Kafka::Protocol::Structure
     io = IO::Memory.new(bytes)
     title = "DefaultRecordBatch(%dbytes[%s..%s])" %
             [bytes.size, debug_addr(orig_pos), debug_addr(orig_pos + bytes.size)]
-    debug_head_padding
-    debug title.colorize(:yellow)
+    debug title, color: :yellow
     new(io, bytes.size, debug_level, orig_pos)
   end
 end
