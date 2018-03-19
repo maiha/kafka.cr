@@ -8,7 +8,7 @@ end
 {% for klass in %w( Bool Int8 Int16 Int32 UInt32 Int64 UInt64 ) %}
   def {{klass.id}}.from_kafka(io : IO, debug_level = -1, hint = "", pos_offset : Int32 = 0)
 
-    io_read_bytes_with_debug(:cyan, {{klass.id}}, prefix: debug_address(abs: pos_offset + io.pos))
+    read_primitive({{klass.id}}, :cyan, prefix: debug_address(abs: pos_offset + io.pos))
   end
 {% end %}
 
@@ -24,7 +24,7 @@ def String.from_kafka(io : IO, debug_level = -1, hint = "")
   else
     slice = Slice(UInt8).new(len).tap { |s| io.read_fully(s) }
     str = String.new(slice)
-    debug "String[2]#{name} -> (#{len})#{str.inspect}", color: :cyan, prefix: prefix
+    debug "String[2+#{len}]#{name} -> #{str.inspect}", color: :cyan, prefix: prefix
     return str
   end
 end
@@ -48,7 +48,7 @@ def Slice.from_kafka(io : IO, debug_level = -1, hint = "")
 end
 
 def Array.from_kafka(io : IO, debug_level = -1, hint = "")
-  prefix = debug_address(io.pos)
+  prefix = debug_address(abs: io.pos)
   label = self.to_s.sub(/Kafka::Protocol::Structure::/, "").sub(/^Array/, "Array[4]")
   ary = new
   len = Int32.from_kafka(io)

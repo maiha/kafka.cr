@@ -16,9 +16,7 @@ module Kafka::Protocol::Structure
       end
     rescue err : IO::EOFError
       if io.pos == limit_pos
-        debu_set_head_address
-        debug "[DONE] expected offset=#{limit_pos}(size=#{size}), current offset=#{io.pos}"
-        # expected size
+        debug2 "[DONE] expected offset=#{limit_pos}(size=#{size}), current offset=#{io.pos}"
       else
         raise err
       end

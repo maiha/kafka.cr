@@ -42,9 +42,9 @@ module Kafka::Protocol::Structure
         end
 
         header_key = String.new(@buffer.read_at(@buffer.pos, header_key_size, &.to_slice))
-        debu_set_head_address(abs: cur_pos)
+        
         title = "Bytes[#{header_key_size}](header_key) -> #{header_key}"
-        debug title.colorize(:cyan)
+        debug title, color: :cyan, prefix: debug_address(abs: cur_pos)
         @buffer.seek(@buffer.pos + header_key_size)
       end
     end
@@ -82,8 +82,8 @@ module Kafka::Protocol::Structure
     io = IO::Memory.new(bytes)
     title = "DefaultRecord(%dbytes[%s..%s])" %
             [bytes.size, debug_addr(orig_pos), debug_addr(orig_pos + bytes.size)]
-    debu_set_head_address(orig_pos)
-    debug title.colorize(:yellow)
+    
+    debug title, color: :yellow, prefix: debug_address(abs: orig_pos)
     new(io, bytes.size, base_offset: base_offset, debug_level: debug_level+1, orig_pos: orig_pos)
   end
 end

@@ -33,10 +33,6 @@ macro debug_address(base = nil, abs = nil)
   end
 end
 
-macro debu_set_head_address(base = nil, abs = nil)
-  Kafka.logger_debug_prefix = debug_address({{base}}, {{abs}})
-end
-
 macro kafka_label
   _label = self.to_s.sub(/^.*::/, "")
   _label = _label.sub(/(Request|Response)(V(\d+))?$/){
@@ -56,7 +52,7 @@ macro debug(msg, color = nil, prefix = nil)
         _io_.print " " * 9
       end
       _io_.print " " * (debug_level * 2)
-      _msg_ = {{msg.id}}.to_s
+      _msg_ = {{msg}}
       {% if color %}
         _msg_ = _msg_.colorize({{color}})
       {% end %}
@@ -76,7 +72,7 @@ macro debug2(msg, group = nil)
   end
 end
 
-macro io_read_bytes_with_debug(color, type, prefix = nil)
+macro read_primitive(klass, color, prefix = nil)
   name = hint.to_s.empty? ? "" : "(#{hint})"
   bytes = {
     "Int64"  => 8,
@@ -85,13 +81,13 @@ macro io_read_bytes_with_debug(color, type, prefix = nil)
     "Int16"  => 2,
     "Int8"   => 1,
     "Bool"   => 1,
-  }[{{type.id}}.to_s] || "?"
-  label = {{type.id}}.to_s + "[#{bytes}]#{name}"
+  }[{{klass.id}}.to_s] || "?"
+  label = {{klass.id}}.to_s + "[#{bytes}]#{name}"
   begin
-    {% if type.id.stringify == "Bool" %}
+    {% if klass.id.stringify == "Bool" %}
       value = io.read_bytes(Int8, IO::ByteFormat::BigEndian)
     {% else %}
-      value = io.read_bytes({{type.id}}, IO::ByteFormat::BigEndian) # {{type.id}}
+      value = io.read_bytes({{klass.id}}, IO::ByteFormat::BigEndian) # {{klass.id}}
     {% end %}
     if hint.to_s == "error_code" && value != 0
       errmsg = Kafka::Protocol.errmsg(value.to_i16)
@@ -100,7 +96,7 @@ macro io_read_bytes_with_debug(color, type, prefix = nil)
       debug "#{label} -> #{value}", color: {{color}}, prefix: {{prefix}}
     end
 
-    {% if type.stringify == "Bool" %}
+    {% if klass.stringify == "Bool" %}
       return (value == 1)
     {% else %}
       return value
@@ -109,8 +105,4 @@ macro io_read_bytes_with_debug(color, type, prefix = nil)
     debug "#{label} (#{err})", color: :red, prefix: {{prefix}}
     raise err
   end
-end
-
-macro io_read_bytes_with_debug(color, prefix = nil)
-  io_read_bytes_with_debug({{color}}, self, prefix)
 end

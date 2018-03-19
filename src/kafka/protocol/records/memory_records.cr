@@ -33,16 +33,16 @@ module Kafka::Protocol::Structure
           return nil
         end
 
-#        debu_set_head_address(abs: cur_pos)
-#        debug "[8](OFFSET)".colorize(:cyan)
         @buffer.seek(@batch_pos + SIZE_OFFSET)
-        debug2 "skip SIZE_OFFSET(#{SIZE_OFFSET})", group: group
-
+        debug "[8](OFFSET)", color: :cyan, prefix: cur_pos
+        
         record_size = Int32.from_kafka(@buffer)
         debug2 "record_size=#{record_size}", group: group
 
         next_iterate_pos = @batch_pos + LOG_OVERHEAD + record_size
 
+        @buffer.seek(@batch_pos)
+        
         if record_size < LegacyRecord::RECORD_OVERHEAD_V0
           raise "CorruptRecordException: Record size is less than the minimum record overhead (%d)" % LegacyRecord::RECORD_OVERHEAD_V0
         end
@@ -106,9 +106,8 @@ module Kafka::Protocol::Structure
     pos = io.pos
     byte_size = Int32.from_kafka(io)
     orig_pos = io.pos
-
-    debu_set_head_address(abs: pos)
-    debug "RECORDS[4] -> #{byte_size} bytes".colorize(:yellow)
+    
+    debug "RECORDS[4] -> #{byte_size} bytes", color: :yellow, prefix: debug_address(abs: pos)
 
     bytes = Bytes.new(byte_size)
     io.read_fully(bytes)
