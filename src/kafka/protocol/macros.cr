@@ -10,7 +10,7 @@ module Kafka::Protocol::Structure
 
       def self.from_kafka(io : IO, debug_level = nil, hint = "")
         debug_level ||= Kafka.logger_debug_level_default
-        debug kafka_label, color: :yellow
+        debug kafka_label, color: :yellow # prefix: debug_address(abs: io.pos)
         new({{ *properties.map { |field| "#{field.type}.from_kafka(io, debug_level_succ, :#{field.var})".id } }})
       end
 

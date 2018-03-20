@@ -1,26 +1,26 @@
          [33mMetadataResponse (Version: 5)[0m
-(0000008)  [36mInt32[4](correlation_id) -> 1[0m
-(000000c)  [36mInt32[4](throttle_time_ms) -> 0[0m
+(0000004)  [36mInt32[4](correlation_id) -> 1[0m
+(0000008)  [36mInt32[4](throttle_time_ms) -> 0[0m
 (000000c)  [36mArray[4](BrokerV5) -> 1[0m
              [33mBrokerV5[0m
-(0000014)      [36mInt32[4](node_id) -> 1001[0m
+(0000010)      [36mInt32[4](node_id) -> 1001[0m
 (0000014)      [36mString[2+10](host) -> "172.20.0.3"[0m
-(0000024)      [36mInt32[4](port) -> 9092[0m
+(0000020)      [36mInt32[4](port) -> 9092[0m
 (0000024)      [36mString[2](rack) -> (null)[0m
 (0000026)  [36mString[2+22](cluster_id) -> "j4mXlfIzRw2PqUtBYTdN5w"[0m
-(0000042)  [36mInt32[4](controller_id) -> 1001[0m
+(000003e)  [36mInt32[4](controller_id) -> 1001[0m
 (0000042)  [36mArray[4](TopicMetadataV5) -> 1[0m
              [33mTopicMetadataV5[0m
-(0000048)      [36mInt16[2](error_code) -> 0[0m
+(0000046)      [36mInt16[2](error_code) -> 0[0m
 (0000048)      [36mString[2+4](name) -> "test"[0m
-(000004f)      [36mBool[1](is_internal) -> 0[0m
+(000004e)      [36mBool[1](is_internal) -> 0[0m
 (000004f)      [36mArray[4](PartitionMetadataV5) -> 1[0m
                  [33mPartitionMetadataV5[0m
-(0000055)          [36mInt16[2](error_code) -> 0[0m
-(0000059)          [36mInt32[4](id) -> 0[0m
-(000005d)          [36mInt32[4](leader) -> 1001[0m
+(0000053)          [36mInt16[2](error_code) -> 0[0m
+(0000055)          [36mInt32[4](id) -> 0[0m
+(0000059)          [36mInt32[4](leader) -> 1001[0m
 (000005d)          [36mArray[4](Int32) -> 1[0m
-(0000065)            [36mInt32[4] -> 1001[0m
+(0000061)            [36mInt32[4] -> 1001[0m
 (0000065)          [36mArray[4](Int32) -> 1[0m
-(000006d)            [36mInt32[4] -> 1001[0m
+(0000069)            [36mInt32[4] -> 1001[0m
 (000006d)          [36mArray[4](Int32) -> 0[0m

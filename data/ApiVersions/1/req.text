@@ -1,5 +1,5 @@
            [33mApiVersionsRequest (Version: 1)[0m
-(0000006)    [36mInt16[2](api_key) -> 18[0m
-(0000008)    [36mInt16[2](api_version) -> 1[0m
-(000000c)    [36mInt32[4](correlation_id) -> 0[0m
+(0000004)    [36mInt16[2](api_key) -> 18[0m
+(0000006)    [36mInt16[2](api_version) -> 1[0m
+(0000008)    [36mInt32[4](correlation_id) -> 0[0m
 (000000c)    [36mString[2+1](client_id) -> "x"[0m

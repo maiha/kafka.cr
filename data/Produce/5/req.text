@@ -1,23 +1,23 @@
            [33mProduceRequest (Version: 5)[0m
-(0000006)    [36mInt16[2](api_key) -> 0[0m
-(0000008)    [36mInt16[2](api_version) -> 5[0m
-(000000c)    [36mInt32[4](correlation_id) -> 4[0m
+(0000004)    [36mInt16[2](api_key) -> 0[0m
+(0000006)    [36mInt16[2](api_version) -> 5[0m
+(0000008)    [36mInt32[4](correlation_id) -> 4[0m
 (000000c)    [36mString[2+1](client_id) -> "x"[0m
 (000000f)    [36mString[2](transactional_id) -> (null)[0m
-(0000013)    [36mInt16[2](acks) -> -1[0m
-(0000017)    [36mInt32[4](timeout) -> 30000[0m
+(0000011)    [36mInt16[2](acks) -> -1[0m
+(0000013)    [36mInt32[4](timeout) -> 30000[0m
 (0000017)    [36mArray[4](ProduceRequestV5::TopicData) -> 1[0m
                [33mTopicData[0m
 (000001b)        [36mString[2+4](topic) -> "test"[0m
 (0000021)        [36mArray[4](ProduceRequestV5::PartitionRecordSet) -> 1[0m
                    [33mPartitionRecordSet[0m
-(0000029)            [36mInt32[4](partition) -> 0[0m
+(0000025)            [36mInt32[4](partition) -> 0[0m
 (0000029)            [33mRECORDS[4] -> 69 bytes[0m
                      [33m(MemoryRecords)[0m
 (0000035)              [36m[8](OFFSET)[0m
                        [33mDefaultRecordBatch(69bytes[2d..72])[0m
 (000006b)                [33mDefaultRecord(7bytes[6b..72])[0m
-(000006c)                  [36mInt8[1](attributes) -> 0[0m
+(000006b)                  [36mInt8[1](attributes) -> 0[0m
 (000006c)                  [36mVarlong[1](timestamp_delta) -> 0[0m
 (000006d)                  [36mVarint[1](offset_delta) -> 0[0m
 (000006e)                  [36mVarbytes[1+0](key) -> (null)[0m

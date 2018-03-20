@@ -10,7 +10,13 @@ module Kafka::Protocol::Structure
     property key : Varbytes
     property val : Varbytes
     property headers : VarArray(Header)
-    
+
+    # attributes : Int8
+    # timestamp_delta : Varlong
+    # offset_delta : Varint
+    # key : Varbytes
+    # val : Varbytes
+
     def initialize(@buffer : IO::Memory, @max_message_size : Int32, @base_offset : Int64, @debug_level : Int32, @orig_pos : Int32)
       @record_start    = 0
       @attributes      = Int8.from_kafka(@buffer, debug_level, :attributes, cur_pos)
@@ -42,7 +48,6 @@ module Kafka::Protocol::Structure
         end
 
         header_key = String.new(@buffer.read_at(@buffer.pos, header_key_size, &.to_slice))
-        
         title = "Bytes[#{header_key_size}](header_key) -> #{header_key}"
         debug title, color: :cyan, prefix: debug_address(abs: cur_pos)
         @buffer.seek(@buffer.pos + header_key_size)

@@ -8,7 +8,8 @@ end
 {% for klass in %w( Bool Int8 Int16 Int32 UInt32 Int64 UInt64 ) %}
   def {{klass.id}}.from_kafka(io : IO, debug_level = -1, hint = "", pos_offset : Int32 = 0)
 
-    read_primitive({{klass.id}}, :cyan, prefix: debug_address(abs: pos_offset + io.pos))
+    prefix = debug_address(abs: pos_offset + io.pos)
+    read_primitive({{klass.id}}, :cyan, prefix: prefix)
   end
 {% end %}
 

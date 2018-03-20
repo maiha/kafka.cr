@@ -1,8 +1,8 @@
            [33mMetadataRequest (Version: 5)[0m
-(0000006)    [36mInt16[2](api_key) -> 3[0m
-(0000008)    [36mInt16[2](api_version) -> 5[0m
-(000000c)    [36mInt32[4](correlation_id) -> 1[0m
+(0000004)    [36mInt16[2](api_key) -> 3[0m
+(0000006)    [36mInt16[2](api_version) -> 5[0m
+(0000008)    [36mInt32[4](correlation_id) -> 1[0m
 (000000c)    [36mString[2+1](client_id) -> "x"[0m
 (000000f)    [36mArray[4](String) -> 1[0m
 (0000013)      [36mString[2+4] -> "test"[0m
-(000001a)    [36mBool[1](allow_auto_topic_creation) -> 1[0m
+(0000019)    [36mBool[1](allow_auto_topic_creation) -> 1[0m
