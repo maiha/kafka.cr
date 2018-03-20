@@ -56,9 +56,6 @@ module Kafka::Protocol::Structure
       @producer_id       = getLong(PRODUCER_ID_OFFSET)
       @producer_epoch    = getShort(PRODUCER_EPOCH_OFFSET)
       @base_sequence     = getInt(BASE_SEQUENCE_OFFSET)
-
-      # eagar loading
-      each(&.to_s) if Kafka.debug?
     end
 
     def last_offset : Int64

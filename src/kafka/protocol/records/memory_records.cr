@@ -7,9 +7,6 @@ module Kafka::Protocol::Structure
     def initialize(@buffer : IO::Memory, @max_message_size : Int32, @orig_pos : Int32, @debug_level = -1)
       @batch_pos = 0
       @each_index = -1
-
-      # eagar loading
-      each(&.to_s) if Kafka.debug?
     end
 
     def each(&block : RecordBatch -> _)
@@ -18,6 +15,14 @@ module Kafka::Protocol::Structure
 
       while batch = next_batch?
         block.call(batch.as(RecordBatch))
+      end
+    end
+
+    def each_records(&block : Record -> _)
+      each do |batch|
+        batch.each do |record|
+          block.call(record)
+        end
       end
     end
 
@@ -113,6 +118,11 @@ module Kafka::Protocol::Structure
     io.read_fully(bytes)
 
     debug "(MemoryRecords)", color: :yellow
-    return new(IO::Memory.new(bytes), bytes.size, orig_pos.to_i32, debug_level+1)
+    record_set = new(IO::Memory.new(bytes), bytes.size, orig_pos.to_i32, debug_level+1)
+
+    # read all records for eagar loading
+    record_set.each_records(&.to_s)
+
+    return record_set
   end
 end
