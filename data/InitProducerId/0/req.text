@@ -1,0 +1,7 @@
+           [33mInitProducerIdRequest (Version: 0)[0m
+(0000006)    [36mInt16[2](api_key) -> 22[0m
+(0000008)    [36mInt16[2](api_version) -> 0[0m
+(000000c)    [36mInt32[4](correlation_id) -> 2[0m
+(000000c)    [36mString[2+1](client_id) -> "x"[0m
+(000000f)    [36mString[2](transactional_id) -> (null)[0m
+(0000015)    [36mInt32[4](transaction_timeout_ms) -> 2147483647[0m

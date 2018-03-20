@@ -32,6 +32,8 @@ Example:
 EOF
 
   def execute
+    Kafka.logger = STDOUT
+
     paths = args.dup
     base_names = paths.map{|i| File.basename(i)}
     max_head_size = base_names.map(&.size).max
@@ -42,14 +44,12 @@ EOF
       binary_history << bin
       request_found(bin)  if bin.is_a?(Request)
       response_found(bin) if bin.type.response?
-      # head = "%-#{max_head_size}s:" % base_names[i]
-      head = "[#{i+1}]"
-      do_show(bin, head: head)
+      do_show(bin, i, paths.size)
       prev = bin
     end
   end
 
-  protected def do_show(bin : Binary, head : String)
+  protected def do_show(bin : Binary, index : Int32, total : Int32)
     if raw
       if verbose
         body = bin.bytes.to_s
@@ -69,7 +69,11 @@ EOF
     else
       body = body.colorize.yellow
     end
-    puts "#{head} #{body}"
+
+    # don't show numbering when there is only one file and verbose mode
+    if !(verbose && total == 1)
+      puts "[#{index+1}] #{body}"
+    end
 
     if verbose
       if klass = bin.klass?
@@ -119,14 +123,14 @@ EOF
 
   private def guess_type(path : String) : Type
     if guess_type_by_filename
-      basename = path.sub(/\.[^.]+$/, "")
       # 1st priority
-      case basename
-      when /request/i  ; return Type::Request
-      when /response/i ; return Type::Response
+      case path
+      when /\b(req|request)\b/i  ; return Type::Request
+      when /\b(res|response)\b/i ; return Type::Response
       end
 
       # 2nd priority
+      basename = path.sub(/\.[^.]+$/, "")
       case basename
       when /d$/i ; return Type::Request
       when /s$/i ; return Type::Response
@@ -140,20 +144,28 @@ EOF
   end
 
   private def guess_api_key_and_ver(path : String) : {Kafka::Api?, Int16?}
+    # complete api_key by path name
+    if api_key == -1
+      if guessed = Kafka::Api.guess?(path)
+        self.api_key = guessed.value
+      end
+    end
+
+    # 1st priority: cli argments
     if api_key >= 0 && api_ver >=0
       return {Kafka::Api.from_value(api_key), api_ver.to_i16}
-    else
-      File.open(path) do |io|
-        io.read_bytes(Int32, IO::ByteFormat::BigEndian) # strip first
-        # check first Int16
-        # a) request  header # api_key => INT16
-        # b) response header # correlation_id => INT32
-        got_key = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
-        got_ver = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
-        key = Kafka::Api.from_value?((api_key >= 0) ? api_key : got_key)
-        ver = ((api_ver >= 0) ? api_ver : got_ver).to_i16
-        return {key, ver}
-      end
+    end
+
+    File.open(path) do |io|
+      io.read_bytes(Int32, IO::ByteFormat::BigEndian) # strip first
+      # check first Int16
+      # a) request  header # api_key => INT16
+      # b) response header # correlation_id => INT32
+      got_key = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
+      got_ver = io.read_bytes(Int16, IO::ByteFormat::BigEndian)
+      key = Kafka::Api.from_value?((api_key >= 0) ? api_key : got_key)
+      ver = ((api_ver >= 0) ? api_ver : got_ver).to_i16
+      return {key, ver}
     end
   end
 
@@ -189,6 +201,6 @@ EOF
     end
 
     # Otherwise, this should be a response.
-    return Response.new(bytes, request: guess_previous_request?)
+    return Response.new(bytes, request: guess_previous_request?, api: api, ver: ver)
   end
 end

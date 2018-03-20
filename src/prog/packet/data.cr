@@ -66,7 +66,7 @@
     include Binary
     getter bytes
 
-    def initialize(@bytes : Bytes, @request : Request?)
+    def initialize(@bytes : Bytes, @request : Request?, @api : Kafka::Api?, @ver : Int16)
     end
 
     def type
@@ -74,7 +74,11 @@
     end
 
     def klass?
-      @request.try(&.klass?.try(&.response))
+      if (api = @api) && (klass = Kafka::Protocol.request?(api.value, @ver))
+        return klass.response
+      else
+        @request.try(&.klass?.try(&.response))
+      end
     end
 
     def implemented? : Bool

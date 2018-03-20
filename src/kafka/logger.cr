@@ -7,12 +7,16 @@ class Kafka
     @@logger
   end
 
-  def self.logger=(v)
+  def self.logger=(v : Logger)
     @@logger = v
   end
 
+  def self.logger=(io : IO)
+    @@logger = Logger.new(io)
+  end
+
   def logger=(v)
-    @@logger = v
+    self.class.logger = v
   end
 
   @@logger_debug_prefix : String = ""

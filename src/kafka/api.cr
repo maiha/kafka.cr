@@ -38,4 +38,13 @@ enum Kafka::Api
   DescribeLogDirs      = 35
   SaslAuthenticate     = 36
   CreatePartitions     = 37
+
+  def self.guess?(v : String) : Api?
+    each do |member, value|
+      if v =~ /\b#{member}\b/i
+        return member
+      end
+    end
+    return nil
+  end
 end

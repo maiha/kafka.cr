@@ -113,6 +113,6 @@ module Kafka::Protocol::Structure
     io.read_fully(bytes)
 
     debug "(MemoryRecords)", color: :yellow
-    return new(IO::Memory.new(bytes), bytes.size, orig_pos, debug_level+1)
+    return new(IO::Memory.new(bytes), bytes.size, orig_pos.to_i32, debug_level+1)
   end
 end

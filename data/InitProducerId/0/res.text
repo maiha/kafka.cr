@@ -1,0 +1,6 @@
+         [33mInitProducerIdResponse (Version: 0)[0m
+(0000008)  [36mInt32[4](correlation_id) -> 2[0m
+(000000c)  [36mInt32[4](throttle_time_ms) -> 0[0m
+(000000e)  [36mInt16[2](error_code) -> 0[0m
+(0000016)  [36mInt64[8](producer_id) -> 1005[0m
+(0000018)  [36mInt16[2](producer_epoch) -> 0[0m

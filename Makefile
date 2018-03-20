@@ -7,6 +7,7 @@ SRCDIR = ./src/bin
 BINDIR = ./bin
 SRCS = ${wildcard src/bin/*.cr}
 BINS = $(addprefix $(BINDIR)/, $(SRCS:src/bin/%.cr=%))
+DATA_GEN = ./bin/kafka-packet -v -X --api-ver
 
 VERSION=
 CURRENT_VERSION=$(shell git tag -l | sort -V | tail -1)
@@ -69,3 +70,13 @@ version:
 .PHONY : bump
 bump:
 	make version VERSION=$(GUESSED_VERSION) -s
+
+data-gen: bin/kafka-packet
+	$(DATA_GEN) 5 data/Produce/5/req.pcap > data/Produce/5/req.text
+	$(DATA_GEN) 5 data/Produce/5/res.pcap > data/Produce/5/res.text
+	$(DATA_GEN) 5 data/Metadata/5/req.pcap > data/Metadata/5/req.text
+	$(DATA_GEN) 5 data/Metadata/5/res.pcap > data/Metadata/5/res.text
+	$(DATA_GEN) 1 data/ApiVersions/1/req.pcap > data/ApiVersions/1/req.text
+	$(DATA_GEN) 1 data/ApiVersions/1/res.pcap > data/ApiVersions/1/res.text
+	$(DATA_GEN) 0 data/InitProducerId/0/req.pcap > data/InitProducerId/0/req.text
+	$(DATA_GEN) 0 data/InitProducerId/0/res.pcap > data/InitProducerId/0/res.text
