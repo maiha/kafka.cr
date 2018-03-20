@@ -24,13 +24,13 @@ services:
       KAFKA_CREATE_TOPICS: "test:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
   crystal:
-    image: crystallang/crystal:0.24.1
+    image: crystallang/crystal:0.24.2
     command: 'crystal --version'
     volumes:
       - $PWD:/mnt
     working_dir: /mnt
   spec:
-    image: crystallang/crystal:0.24.1
+    image: crystallang/crystal:0.24.2
     # TODO: wait neatly until service is up
     command: 'bash -c "sleep 10; crystal spec -v"'
     volumes:
