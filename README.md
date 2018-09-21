@@ -7,7 +7,7 @@
 
 ##### versions
 - **kafka**: `1.0`
-- **crystal**: `0.24.1`
+- **crystal**: `0.26.1`
 
 ## Example
 
@@ -41,7 +41,7 @@ Add it to `shard.yml`
 dependencies:
   kafka:
     github: maiha/kafka.cr
-    version: 0.6.6
+    version: 0.7.0
 ```
 
 ```crystal
