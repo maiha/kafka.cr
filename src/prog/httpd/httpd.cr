@@ -39,7 +39,7 @@ EOF
   end
 
   private def start_httpd(host, port, broker, valid_topics)
-    server = HTTP::Server.new(host, port) do |context|
+    server = HTTP::Server.new do |context|
       log_request(context)
       case context.request.path
       when %r{\A/([a-z0-9_.]+)\.json\Z}
@@ -53,7 +53,7 @@ EOF
         do_invalid_request(context, 404, "NOT FOUND")
       end
     end
-    server.listen
+    server.listen(host, port)
   end
 
   private def log_request(context)

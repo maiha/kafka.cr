@@ -4,6 +4,11 @@ version: 0.6.6
 authors:
   - maiha <maiha@wota.jp>
 
+dependencies:
+  composite_logger:
+    github: maiha/composite_logger.cr
+    version: ">= 0.3.0"
+
 development_dependencies:
   msgpack:
     github: benoist/msgpack-crystal
